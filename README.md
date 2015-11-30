@@ -66,11 +66,11 @@
             Install it
     
     4. Install terminal fonts:
-                4.2.1 Download fonts-master:
-                https://github.com/Lokaltog/powerline-fonts
-                4.2.2 Run ./install.sh in this package
-                4.3.3 Edit ~/.vimrc(Integrate with powerline font)
-                    Add a statement:
-                    let g:airline_powerline_fonts = 1
+        4.2.1 Download fonts-master:
+        https://github.com/Lokaltog/powerline-fonts
+        4.2.2 Run ./install.sh in this package
+        4.3.3 Edit ~/.vimrc(Integrate with powerline font)
+            Add a statement:
+            let g:airline_powerline_fonts = 1
 
-                4.3.4 Change terminal font to "Powerline" Fonts.
+        4.3.4 Change terminal font to "Powerline" Fonts.
