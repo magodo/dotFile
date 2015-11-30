@@ -1,0 +1,6 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =4
+let g:netrw_dirhist_1='/run/network'
+let g:netrw_dirhist_2='/tmp/test/a/b/c'
+let g:netrw_dirhist_3='/home/magodo/.ipython/profile_default'
+let g:netrw_dirhist_4='/home/magodo/Conti/SWIScripts/SWISGMBasicScripts/SWPackageMappingListPopulator'
