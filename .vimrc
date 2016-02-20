@@ -1,27 +1,4 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Maintainer: 
-"       Amir Salihefendic
-"       http://amix.dk - amix@amix.dk
-"
-" Version: 
-"       5.0 - 29/05/12 15:43:36
-"
-" Blog_post: 
-"       http://amix.dk/blog/post/19691#The-ultimate-Vim-configuration-on-Github
-"
-" Awesome_version:
-"       Get this config, nice color schemes and lots of plugins!
-"
-"       Install the awesome version from:
-"
-"           https://github.com/amix/vimrc
-"
-" Syntax_highlighted:
-"       http://amix.dk/vim/vimrc.html
-"
-" Raw_version: 
-"       http://amix.dk/vim/vimrc.txt
-"
 " Sections:
 "    -> General
 "    -> VIM user interface
@@ -60,21 +37,18 @@ set autoread
 let mapleader = ","
 let g:mapleader = ","
 
-" Fast saving
-nmap <leader>w :w!<cr>
+" map <ESC> to jj
+inoremap jj <ESC>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set 7 lines to the cursor - when moving vertically using j/k
-set so=7
+set scrolloff=7
 
 " Turn on the WiLd menu
 set wildmenu
-
-" Ignore compiled files
-set wildignore=*.o,*~,*.pyc
 
 "Always show current position
 set ruler
@@ -82,12 +56,9 @@ set ruler
 " Height of the command bar
 set cmdheight=2
 
-" A buffer becomes hidden when it is abandoned
-set hid
-
 " Configure backspace so it acts as it should act
 set backspace=eol,start,indent
-set whichwrap+=<,>,h,l
+"set whichwrap+=<,>,h,l
 
 " Ignore case when searching
 set ignorecase
@@ -109,8 +80,9 @@ set magic
 
 " Show matching brackets when text indicator is over them
 set showmatch
+
 " How many tenths of a second to blink when matching brackets
-set mat=2
+set matchtime=2
 
 " No annoying sound on errors
 set noerrorbells
@@ -119,18 +91,21 @@ set t_vb=
 set tm=500
 
 " Set line number
-set nu
-
+"set nu
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Colors and Fonts
+" => Colors, Fonts and Encoding
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Enable syntax highlighting
 syntax enable
 
 "set background=dark
-colorscheme jellybeans
+"colorscheme jellybeans
 "colorscheme molokai
+
+" cursorcolumn
+set cursorcolumn
+hi CursorColumn cterm=NONE ctermbg=darkgrey ctermfg=white
 
 " Set extra options when running in GUI mode
 if has("gui_running")
@@ -157,7 +132,6 @@ set nobackup
 set nowb
 set noswapfile
 
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Text, tab and indent related
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -168,19 +142,20 @@ set expandtab
 set smarttab
 
 " 1 tab == 4 spaces
-set shiftwidth=4
-set tabstop=4
+set shiftwidth=4        " a <Tab> width in front of a line
+set tabstop=4           " a <Tab> width in other place
 
-" Linebreak on 500 characters
-set lbr
-set tw=500
+" Wrap a long line at a character in 'breakat'(just visually)
+set linebreak
 
-set ai "Auto indent
+" Copy indent from current line when starting a new line(via 'o'/'O')
+set autoindent 
+
+"Smart indent
+set smartindent
+
 " Press F3 before paste something to Vim. Afterwards, press again to enable ai
 set pastetoggle=<F3>
-
-"set si "Smart indent
-set wrap "Wrap lines
 
 
 """"""""""""""""""""""""""""""
@@ -195,16 +170,10 @@ vnoremap <silent> # :call VisualSelection('b')<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Moving around, tabs, windows and buffers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Treat long lines as break lines (useful when moving around in them)
-map j gj
-map k gk
 
 " Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
 map <space> /
-map <c-space> ?
-
-" Disable highlight when <leader><cr> is pressed
-map <silent> <leader><cr> :noh<cr>
+"map <c-space> ? " Since this conflicts with input method
 
 " Smart way to move between windows
 map <C-j> <C-W>j
@@ -249,8 +218,6 @@ set viminfo^=%
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing mappings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Remap VIM 0 to first non-blank character
-map 0 ^
 
 " Move a line of text using ALT+[jk] or Comamnd+[jk] on mac
 nmap <M-j> mz:m+<cr>`z
@@ -471,9 +438,8 @@ let g:winManagerWindowLayout='FileExplorer|TagList'
 nmap wm :WMToggle<cr>
 
 "---------------------- Airline -------------------------------
-set laststatus=2
-set cursorcolumn
-let g:airline_powerline_fonts = 1
+set laststatus=1
+let g:airline_powerline_fonts = 0
 set t_Co=256   " Make terminal has 256 colors
 
 "---------------------- Ctags ---------------------------------
@@ -483,7 +449,6 @@ imap <F6> <ESC>:!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :Tli
 set tags=tags
 set tags+=/usr/include/tags "add current directory's generated tags file
 set tags+=~/code/C/Linux_Advanced/Book/apue.3e/tags "add current directory's generated tags file
-set tags+=~/home/magodo/code/python/Speech/ghmm/ghmm/tags "add current directory's generated tags file
 
 "------------------------- File Header ------------------------
 " New created .c, .h, .sh, .java, .py files, automatically insert file header
@@ -526,4 +491,9 @@ map <leader>tl <Plug>TaskList
 "------------------------- GundoToggle ----------------------
 " review history
 map <leader>gd :GundoToggle<CR>
+
+"------------------------- macros ----------------------------
+
+let @h='i{}i%%i highlight CPP linenos o{}i%% ?kbi endli?kb?kbho?kbighlight O'
+
 
