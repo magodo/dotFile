@@ -12,7 +12,7 @@
 "    -> Spell checking
 "    -> Misc
 "    -> Helper functions
-"
+"    -> Plugins
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
@@ -37,8 +37,11 @@ set autoread
 let mapleader = ","
 let g:mapleader = ","
 
-" map <ESC> to jj
-inoremap jj <ESC>
+" map <ESC> to jk
+inoremap jk <ESC>
+
+" make '.' useful in Visual Mode
+vnoremap . :norm.<CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -249,7 +252,7 @@ autocmd BufWrite *.coffee :call DeleteTrailingWS()
 vnoremap <silent> gv :call VisualSelection('gv')<CR>
 
 " Open vimgrep and put the cursor in the right position
-map <leader>g :vimgrep // **/*.<left><left><left><left><left><left><left>
+map <leader>gr :vimgrep // **/*.<left><left><left><left><left><left><left>
 
 " Vimgreps in the current file
 map <leader><space> :vimgrep // <C-R>%<C-A><right><right><right><right><right><right><right><right><right>
@@ -397,6 +400,10 @@ func SetTitle()
 endfunc
 
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Plugins
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 "------------------------- Vundle ----------------------------------
 filetype off                  " required
 
@@ -414,6 +421,7 @@ Plugin 'vim-scripts/winmanager--Fox'
 Plugin 'vim-scripts/TaskList.vim'
 Plugin 'sjl/gundo.vim'
 Plugin 'vim-scripts/pep8'
+Plugin 'tpope/vim-surround'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -438,9 +446,11 @@ let g:winManagerWindowLayout='FileExplorer|TagList'
 nmap wm :WMToggle<cr>
 
 "---------------------- Airline -------------------------------
-set laststatus=1
-let g:airline_powerline_fonts = 0
-set t_Co=256   " Make terminal has 256 colors
+set laststatus=2
+let g:airline_powerline_fonts = 1
+set t_Co=256" Make terminal has 256 colors
+" default theme not work with tmux
+let g:airline_theme='wombat'
 
 "---------------------- Ctags ---------------------------------
 " 按下F6重新生成tag文件，并更新taglist
