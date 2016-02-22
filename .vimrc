@@ -174,6 +174,10 @@ vnoremap <silent> # :call VisualSelection('b')<CR>
 " => Moving around, tabs, windows and buffers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+" Treat long lines as break lines (userful when moving around in them)
+map j gj
+map k gk
+
 " Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
 map <space> /
 "map <c-space> ? " Since this conflicts with input method
@@ -503,7 +507,4 @@ map <leader>tl <Plug>TaskList
 map <leader>gd :GundoToggle<CR>
 
 "------------------------- macros ----------------------------
-
-let @h='i{}i%%i highlight CPP linenos o{}i%% ?kbi endli?kb?kbho?kbighlight O'
-
 
