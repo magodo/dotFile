@@ -1,5 +1,7 @@
-.vim and .vimrc for setting up environment on Ubuntu
+Kinds of dot files
 ---
+
+# VIM
 
 1. Install VIM74:
 
@@ -106,3 +108,7 @@
         let g:airline_powerline_fonts = 1
 
     * Change terminal font to "Powerline" Fonts.
+
+# TMUX config
+
+# ZSH
