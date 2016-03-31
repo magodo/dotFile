@@ -1,6 +1,10 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =4
-let g:netrw_dirhist_1='/run/network'
-let g:netrw_dirhist_2='/tmp/test/a/b/c'
-let g:netrw_dirhist_3='/home/magodo/.ipython/profile_default'
-let g:netrw_dirhist_4='/home/magodo/Conti/SWIScripts/SWISGMBasicScripts/SWPackageMappingListPopulator'
+let g:netrw_dirhist_cnt =8
+let g:netrw_dirhist_1='/usr/include/c++/4.6/tr1'
+let g:netrw_dirhist_2='/home/magodo/blog/magodo.github.com/_posts'
+let g:netrw_dirhist_3='/home/magodo/blog/magodo.github.com/_drafts'
+let g:netrw_dirhist_4='/home/magodo/blog/magodo.github.com/_posts'
+let g:netrw_dirhist_5='/home/magodo/code/VIMRC'
+let g:netrw_dirhist_6='/home/magodo/Documents/Genivi/AudioManager/cmake'
+let g:netrw_dirhist_7='/home/magodo/Documents/Genivi/AudioManager/AudioManagerDaemon/include'
+let g:netrw_dirhist_8='/home/magodo/Documents/Genivi/AudioManager/googleMock/include/gmock'

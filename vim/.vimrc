@@ -376,10 +376,9 @@ func SetTitle()
         call append(line(".")+1, "\#########################################################################")
         call append(line(".")+2, "\# Author: Zhaoting Weng")
         call append(line(".")+3, "\# Created Time: ".strftime("%c"))
-        call append(line(".")+4, "\# File Name: ".expand("%"))
-        call append(line(".")+5, "\# Description: ")
-        call append(line(".")+6, "\#########################################################################")
-        call append(line(".")+7, "")
+        call append(line(".")+4, "\# Description: ")
+        call append(line(".")+5, "\#########################################################################")
+        call append(line(".")+6, "")
     elseif &filetype == 'python'
         call setline(1, "\#!/usr/bin/env python")
         call append(line("."), "\# -*- coding: utf-8 -*-")
@@ -387,19 +386,17 @@ func SetTitle()
         call append(line(".")+2, "\#########################################################################")
         call append(line(".")+3, "\# Author: Zhaoting Weng")
         call append(line(".")+4, "\# Created Time: ".strftime("%c"))
-        call append(line(".")+5, "\# File Name: ".expand("%"))
-        call append(line(".")+6, "\# Description: ")
-        call append(line(".")+7, "\#########################################################################")
-        call append(line(".")+8, "")
+        call append(line(".")+5, "\# Description: ")
+        call append(line(".")+6, "\#########################################################################")
+        call append(line(".")+7, "")
     else
         call setline(1, "/*************************************************************************")
         call append(line("."), " Author: Zhaoting Weng")
         call append(line(".")+1, " Created Time: ".strftime("%c"))
-        call append(line(".")+2, " File Name: ".expand("%"))
-        call append(line(".")+3, " Description: ")
-        call append(line(".")+4, " ************************************************************************/")
-        call append(line(".")+5, "") 
-        call append(line(".")+6, "")
+        call append(line(".")+2, " Description: ")
+        call append(line(".")+3, " ************************************************************************/")
+        call append(line(".")+4, "") 
+        call append(line(".")+5, "")
     endif
 endfunc
 
@@ -424,7 +421,7 @@ Plugin 'vim-scripts/taglist.vim'
 Plugin 'vim-scripts/winmanager--Fox'
 Plugin 'vim-scripts/TaskList.vim'
 Plugin 'sjl/gundo.vim'
-Plugin 'vim-scripts/pep8'
+Plugin 'nvie/vim-flake8'
 Plugin 'tpope/vim-surround'
 
 " All of your Plugins must be added before the following line
@@ -447,6 +444,7 @@ let Tlist_Show_One_File=1
 
 "---------------------- WinManager -----------------------------
 let g:winManagerWindowLayout='FileExplorer|TagList'
+let g:winManagerWidth = 40
 nmap wm :WMToggle<cr>
 
 "---------------------- Airline -------------------------------
@@ -466,11 +464,9 @@ set tags+=~/code/C/Linux_Advanced/Book/apue.3e/tags "add current directory's gen
 
 "------------------------- File Header ------------------------
 " New created .c, .h, .sh, .java, .py files, automatically insert file header
-filetype plugin on
-autocmd BufNewFile *.[ch],*.sh,*.java,*.py,*.cpp exec ":call SetTitle()"
+autocmd BufNewFile *.[ch],*.sh,*.java,*.py,*.cpp,*cc exec ":call SetTitle()"
 " After insertion, jump to the next line
 autocmd BufNewFile * normal G
-filetype plugin off
 
 "------------------------- Markdown ---------------------------
 nnoremap <leader>md :%!/usr/local/bin/Markdown.pl --html4tags <CR>
@@ -491,8 +487,8 @@ autocmd BufRead *.py set go+=b
 "------------------- Bash Support------------------------------
 autocmd BufRead *.sh nmap <F7> :!bash %<CR>
 
-"------------------- pep8 ------------------------------
-let g:pep8_map='<leader>8'
+"-------------------  vim-flake8 ------------------------------
+autocmd FileType python map <buffer> <F3> :call Flake8()<CR>
 
 "------------------------- code folding -----------------------
 set foldmethod=indent
@@ -505,6 +501,4 @@ map <leader>tl <Plug>TaskList
 "------------------------- GundoToggle ----------------------
 " review history
 map <leader>gd :GundoToggle<CR>
-
-"------------------------- macros ----------------------------
 

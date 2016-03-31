@@ -53,7 +53,7 @@ plugins=(git)
 
 # User configuration
 
-  export PATH="/home/magodo/android/android-ndk-r8c:/home/magodo/android/android-sdk_r21-linux/platform-tools:/home/magodo/android/android-sdk_r21-linux/tools:/home/magodo/android/android-ndk-r8c:/home/magodo/android/android-sdk_r21-linux/platform-tools:/home/magodo/android/android-sdk_r21-linux/tools:/usr/lib/lightdm/lightdm:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/home/magodo/.rvm/bin"
+  export PATH="/home/magodo/android/android-ndk-r8c:/home/magodo/android/android-sdk_r21-linux/platform-tools:/home/magodo/android/android-sdk_r21-linux/tools:/home/magodo/android/android-ndk-r8c:/home/magodo/android/android-sdk_r21-linux/platform-tools:/home/magodo/android/android-sdk_r21-linux/tools:/usr/lib/lightdm/lightdm:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/home/magodo/.rvm/bin:/home/magodo/bin"
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/oh-my-zsh.sh
@@ -84,15 +84,20 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 ##############################################
-#
+#-----------------
 # python
+#-----------------
 export PYTHONSTARTUP=/home/magodo/.pythonstartup
 export PYTHONDONTWRITEBYTECODE=1
  
+#-----------------
 # coredump
+#-----------------
 #ulimit -c unlimited
  
+#-----------------
 # Android
+#-----------------
 export ANDROIDSDK=/home/magodo/android/android-sdk_r21-linux
 export ANDROIDNDK=/home/magodo/android/android-ndk-r8c
 export ANDROIDNDKVER=r8c
@@ -100,19 +105,23 @@ export ANDROIDAPI=14
 export ANDROID_EMULATOR_FORCE_32BIT=true
 export PATH=$ANDROIDNDK:$ANDROIDSDK/platform-tools:$ANDROIDSDK/tools:$PATH
  
+#-----------------
 # dia bug fix
+#-----------------
 alias dia="env LIBOVERLAY_SCROLLBAR=0 dia"
 
-#-------------------
+#-----------------
 # vim binding in zsh
-#-------------------
+#-----------------
+## Open vim binding
+#bindkey -v
+## Bind <ESC> to 'jk'
+#bindkey -M viins 'jk' vi-cmd-mode
+## Keep <C-R> history roll-back function
+#bindkey '^R' history-incremental-search-backward
 
-# Open vim binding
-bindkey -v
-
-# Bind <ESC> to 'jk'
-bindkey -M viins 'jk' vi-cmd-mode
-
-# Keep <C-R> history roll-back function
-bindkey '^R' history-incremental-search-backward
+#-----------------
+# Disable history share
+#-----------------
+unsetopt share_history
 
