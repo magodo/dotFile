@@ -475,7 +475,6 @@ let g:vim_markdown_folding_disabled=1
 " Highlighting YAML frontmatter as used by Jekyll
 let g:vim_markdown_frontmatter=1
 
-
 "------------------------- Python Support ----------------------
 autocmd BufRead *.py set makeprg=python\ -c\ \"import\ py_compile,sys;\ sys.stderr=sys.stdout;\ py_compile.compile(r'%')\"
 autocmd BufRead *.py set efm=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m
