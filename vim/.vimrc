@@ -155,7 +155,7 @@ set linebreak
 set autoindent 
 
 "Smart indent
-set smartindent
+"set smartindent
 
 " Press F3 before paste something to Vim. Afterwards, press again to enable ai
 set pastetoggle=<F3>
@@ -487,7 +487,7 @@ autocmd BufRead *.py set go+=b
 autocmd BufRead *.sh nmap <F7> :!bash %<CR>
 
 "-------------------  vim-flake8 ------------------------------
-autocmd FileType python map <buffer> <F3> :call Flake8()<CR>
+autocmd FileType python map <buffer> <F8> :call Flake8()<CR>
 
 "------------------------- code folding -----------------------
 set foldmethod=indent
