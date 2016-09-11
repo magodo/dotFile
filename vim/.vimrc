@@ -43,6 +43,9 @@ inoremap jk <ESC>
 " make '.' useful in Visual Mode
 vnoremap . :norm.<CR>
 
+" use system clipboard all the way
+set clipboard=unnamed
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
@@ -94,7 +97,7 @@ set t_vb=
 set tm=500
 
 " Set line number
-"set nu
+set nu
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors, Fonts and Encoding
@@ -431,10 +434,17 @@ filetype plugin indent on    " required
 
 "---------------------- YouCompleteMe -----------------------------
 let g:ycm_confirm_extra_conf=0
-autocmd InsertLeave * if pumvisible() == 0|pclose|endif
-let g:ycm_collect_identifiers_from_tags_files=1 
-let g:ycm_cache_omnifunc=0
-let g:ycm_seed_identifiers_with_syntax=1
+"autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+let g:ycm_collect_identifiers_from_tags_files=1
+"let g:ycm_seed_identifiers_with_syntax=0
+
+" this is the only way I find to disable semantic completion engine for C family(otherwise, '.', '->', ':' will trigger semantic completion for C family, which will somehow blocks)
+let g:ycm_filetype_specific_completion_to_disable = {
+    \ 'gitcommit': 1,
+    \ 'c': 1,
+    \ 'cpp': 1,
+    \}
+
 nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
 "---------------------- Taglists -----------------------------
@@ -456,11 +466,10 @@ let g:airline_theme='wombat'
 
 "---------------------- Ctags ---------------------------------
 " 按下F6重新生成tag文件，并更新taglist
-map <F6> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
-imap <F6> <ESC>:!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
+"map <F6> :!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
+"imap <F6> <ESC>:!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
 set tags=tags
-set tags+=/usr/include/tags "add current directory's generated tags file
-set tags+=~/code/C/Linux_Advanced/Book/apue.3e/tags "add current directory's generated tags file
+set tags+=~/code/tags/include.tags
 
 "------------------------- File Header ------------------------
 " New created .c, .h, .sh, .java, .py files, automatically insert file header

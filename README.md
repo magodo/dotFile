@@ -15,7 +15,7 @@ Kinds of dot files
 
   * Install prerequisite libraries:
 
-        $ apt-get install ncurses-dev build-essential mercurial
+        $ apt-get install ncurses-dev build-essential mercurial python-dev
 
   * Build Vim from sources:
 
@@ -50,15 +50,7 @@ Kinds of dot files
 
         $ sudo apt-get install build-essential cmake python-dev
 
-  * Compiling YCM with semantic support for C-family languages
-
-        $ cd ~/.vim/bundle/YouCompleteMe
-        $ ./install.sh --clang-completer
-
-  * Compiling YCM without semantic support for C-family languages
-
-        $ cd ~/.vim/bundle/YouCompleteMe
-        $ ./install.sh
+  * Compiling YCM: Refer to [YCM Official Manual](https://github.com/Valloric/YouCompleteMe)
 
 6. Customise:
 
@@ -95,7 +87,7 @@ Kinds of dot files
 
     * Installed in .vimrc by Vundle
 
-  * Install terminal fonts:
+  * Install terminal fonts(this font is compatible with *vim-airline*):
 
     * Download fonts-master:
 
