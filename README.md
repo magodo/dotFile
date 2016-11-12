@@ -3,6 +3,8 @@ Kinds of dot files
 
 # VIM
 
+## Ubuntu 12.04 - LTS
+
 1. Install VIM74:
 
   * Remove the installed old version:
@@ -100,6 +102,25 @@ Kinds of dot files
         let g:airline_powerline_fonts = 1
 
     * Change terminal font to "Powerline" Fonts.
+
+# Arch - Linux version 4.8.6-1-ARCH
+
+* Install vim
+* Install vundle
+* Install plugins via vundle
+* Install powerline, powerline-vim, powerline-font via pacman
+* Install color scheme:
+
+  * download:
+
+    molokai: https://github.com/tomasr/molokai
+    jellybeans:
+
+  * cp the .vim file into:
+
+    ~/.vim/colors
+
+  * edit colorscheme in ~/.vimrc
 
 # TMUX config
 

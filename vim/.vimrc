@@ -106,12 +106,28 @@ set nu
 syntax enable
 
 "set background=dark
+""""""""""""
+" jellybeans
+""""""""""""
 "colorscheme jellybeans
-"colorscheme molokai
+
+" support for italics font
+let g:jellybeans_use_term_italics = 1  
+
+" terminal background
+let g:jellybeans_overrides = {
+\    'background': { 'ctermbg': 'none', '256ctermbg': 'none' },
+\}
+
+
+""""""""""""
+" molokai
+""""""""""""
+colorscheme molokai
 
 " cursorcolumn
 set cursorcolumn
-hi CursorColumn cterm=NONE ctermbg=darkgrey ctermfg=white
+"hi CursorColumn cterm=NONE ctermbg=darkgrey ctermfg=white
 
 " Set extra options when running in GUI mode
 if has("gui_running")
@@ -417,7 +433,7 @@ call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
 Plugin 'Valloric/YouCompleteMe'
-Plugin 'bling/vim-airline'
+"Plugin 'bling/vim-airline'
 Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
 Plugin 'vim-scripts/taglist.vim'
@@ -457,19 +473,22 @@ let g:winManagerWindowLayout='FileExplorer|TagList'
 let g:winManagerWidth = 40
 nmap wm :WMToggle<cr>
 
+"---------------------- Powerline -------------------------------
+let g:powerline_pycmd='py3'
+
 "---------------------- Airline -------------------------------
-set laststatus=2
-let g:airline_powerline_fonts = 1
-set t_Co=256" Make terminal has 256 colors
-" default theme not work with tmux
-let g:airline_theme='wombat'
+"set laststatus=2
+"let g:airline_powerline_fonts = 1
+"set t_Co=256" Make terminal has 256 colors
+"" default theme not work with tmux
+"let g:airline_theme='wombat'
 
 "---------------------- Ctags ---------------------------------
 " 按下F6重新生成tag文件，并更新taglist
 "map <F6> :!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
 "imap <F6> <ESC>:!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
 set tags=tags
-set tags+=~/code/tags/include.tags
+set tags+=~/ctags/system.tags
 
 "------------------------- File Header ------------------------
 " New created .c, .h, .sh, .java, .py files, automatically insert file header
@@ -509,4 +528,3 @@ map <leader>tl <Plug>TaskList
 "------------------------- GundoToggle ----------------------
 " review history
 map <leader>gd :GundoToggle<CR>
-
