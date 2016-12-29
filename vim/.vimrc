@@ -105,10 +105,10 @@ set nu
 " Enable syntax highlighting
 syntax enable
 
+
 "set background=dark
-""""""""""""
-" jellybeans
-""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""""""""
 "colorscheme jellybeans
 
 " support for italics font
@@ -118,12 +118,12 @@ let g:jellybeans_use_term_italics = 1
 let g:jellybeans_overrides = {
 \    'background': { 'ctermbg': 'none', '256ctermbg': 'none' },
 \}
-
-
-""""""""""""
-" molokai
-""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""
 colorscheme molokai
+"""""""""""""""""""""""""""""""""""""""""""""
+"colorschem Tomorrow-Night
+"""""""""""""""""""""""""""""""""""""""""""""
+
 
 " cursorcolumn
 set cursorcolumn
@@ -142,6 +142,9 @@ endif
 set encoding=utf8
 set fileencodings=utf8,gbk
 set fileencoding=utf8
+
+" Visual mode text selection color
+hi Visual term=reverse cterm=reverse guibg=Grey
 
 " Use Unix as the standard file type
 set ffs=unix,dos,mac
@@ -399,7 +402,7 @@ func SetTitle()
         call append(line(".")+5, "\#########################################################################")
         call append(line(".")+6, "")
     elseif &filetype == 'python'
-        call setline(1, "\#!/usr/bin/env python")
+        call setline(1, "\#!/usr/bin/env python2")
         call append(line("."), "\# -*- coding: utf-8 -*-")
         call append(line(".")+1, "\ ")
         call append(line(".")+2, "\#########################################################################")
@@ -433,6 +436,7 @@ call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
 Plugin 'Valloric/YouCompleteMe'
+Plugin 'rdnetto/YCM-Generator'
 "Plugin 'bling/vim-airline'
 Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
@@ -449,17 +453,20 @@ filetype plugin indent on    " required
 
 
 "---------------------- YouCompleteMe -----------------------------
-let g:ycm_confirm_extra_conf=0
-"autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+let g:global_ycm_extra_conf = "/home/magodo/.vim/bundle/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py"
+
+"let g:ycm_confirm_extra_conf=0
+
+autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 let g:ycm_collect_identifiers_from_tags_files=1
 "let g:ycm_seed_identifiers_with_syntax=0
 
 " this is the only way I find to disable semantic completion engine for C family(otherwise, '.', '->', ':' will trigger semantic completion for C family, which will somehow blocks)
-let g:ycm_filetype_specific_completion_to_disable = {
-    \ 'gitcommit': 1,
-    \ 'c': 1,
-    \ 'cpp': 1,
-    \}
+"let g:ycm_filetype_specific_completion_to_disable = {
+"    \ 'gitcommit': 1,
+"    \ 'c': 1,
+"    \ 'cpp': 1,
+"    \}
 
 nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
