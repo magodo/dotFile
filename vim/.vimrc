@@ -74,6 +74,7 @@ set smartcase
 
 " Highlight search results
 set hlsearch
+hi Search guibg=Yellow guifg=Black ctermbg=Yellow ctermfg=Black
 
 " Makes search act like search in modern browsers
 set incsearch
@@ -112,14 +113,14 @@ syntax enable
 "colorscheme jellybeans
 
 " support for italics font
-let g:jellybeans_use_term_italics = 1  
+"let g:jellybeans_use_term_italics = 1  
 
 " terminal background
-let g:jellybeans_overrides = {
-\    'background': { 'ctermbg': 'none', '256ctermbg': 'none' },
-\}
+"let g:jellybeans_overrides = {
+"\    'background': { 'ctermbg': 'none', '256ctermbg': 'none' },
+"\}
 """""""""""""""""""""""""""""""""""""""""""""
-colorscheme molokai
+"colorscheme molokai
 """""""""""""""""""""""""""""""""""""""""""""
 "colorschem Tomorrow-Night
 """""""""""""""""""""""""""""""""""""""""""""
