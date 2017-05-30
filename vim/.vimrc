@@ -120,7 +120,7 @@ syntax enable
 "\    'background': { 'ctermbg': 'none', '256ctermbg': 'none' },
 "\}
 """""""""""""""""""""""""""""""""""""""""""""
-"colorscheme molokai
+colorscheme molokai
 """""""""""""""""""""""""""""""""""""""""""""
 "colorschem Tomorrow-Night
 """""""""""""""""""""""""""""""""""""""""""""
@@ -437,7 +437,7 @@ call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
 Plugin 'Valloric/YouCompleteMe'
-Plugin 'rdnetto/YCM-Generator'
+"Plugin 'rdnetto/YCM-Generator'
 "Plugin 'bling/vim-airline'
 Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
@@ -454,7 +454,8 @@ filetype plugin indent on    " required
 
 
 "---------------------- YouCompleteMe -----------------------------
-let g:global_ycm_extra_conf = "/home/magodo/.vim/bundle/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py"
+let g:ycm_server_python_interpreter = "/usr/bin/python2"
+"let g:global_ycm_extra_conf = "/home/magodo/.vim/bundle/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py"
 
 "let g:ycm_confirm_extra_conf=0
 
@@ -497,6 +498,7 @@ let g:powerline_pycmd='py3'
 "imap <F6> <ESC>:!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
 set tags=tags
 set tags+=~/ctags/system.tags
+set tags+=/home/magodo/Continental/GWM/EarlyApp/01_code/01_origin/tags
 
 "------------------------- File Header ------------------------
 " New created .c, .h, .sh, .java, .py files, automatically insert file header
