@@ -43,8 +43,6 @@ inoremap jk <ESC>
 " make '.' useful in Visual Mode
 vnoremap . :norm.<CR>
 
-" use system clipboard all the way
-set clipboard=unnamed
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -99,6 +97,8 @@ set tm=500
 
 " Set line number
 set nu
+
+set clipboard=unnamedplus
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors, Fonts and Encoding
@@ -436,7 +436,7 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
-Plugin 'Valloric/YouCompleteMe'
+"Plugin 'Valloric/YouCompleteMe'
 "Plugin 'rdnetto/YCM-Generator'
 "Plugin 'bling/vim-airline'
 Plugin 'godlygeek/tabular'
@@ -447,6 +447,8 @@ Plugin 'vim-scripts/TaskList.vim'
 Plugin 'sjl/gundo.vim'
 Plugin 'nvie/vim-flake8'
 Plugin 'tpope/vim-surround'
+Plugin 'flazz/vim-colorschemes'
+Plugin 'vim-airline/vim-airline'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -454,14 +456,18 @@ filetype plugin indent on    " required
 
 
 "---------------------- YouCompleteMe -----------------------------
+let g:ycm_server_use_vim_stdout = 0
+let g:ycm_server_keep_logfiles = 1
+let g:ycm_server_log_level = 'debug'
 let g:ycm_server_python_interpreter = "/usr/bin/python2"
 "let g:global_ycm_extra_conf = "/home/magodo/.vim/bundle/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py"
 
 "let g:ycm_confirm_extra_conf=0
 
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif
-let g:ycm_collect_identifiers_from_tags_files=1
-"let g:ycm_seed_identifiers_with_syntax=0
+
+" Below config might cause ycm server DOWN
+"let g:ycm_collect_identifiers_from_tags_files=1
 
 " this is the only way I find to disable semantic completion engine for C family(otherwise, '.', '->', ':' will trigger semantic completion for C family, which will somehow blocks)
 "let g:ycm_filetype_specific_completion_to_disable = {
@@ -486,8 +492,8 @@ nmap wm :WMToggle<cr>
 let g:powerline_pycmd='py3'
 
 "---------------------- Airline -------------------------------
-"set laststatus=2
-"let g:airline_powerline_fonts = 1
+set laststatus=2
+let g:airline_powerline_fonts = 1
 "set t_Co=256" Make terminal has 256 colors
 "" default theme not work with tmux
 "let g:airline_theme='wombat'
