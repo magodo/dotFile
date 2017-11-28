@@ -2,7 +2,7 @@
 " Sections:
 "    -> General
 "    -> VIM user interface
-"    -> Colors and Fonts
+"    -> Fonts
 "    -> Files and backups
 "    -> Text, tab and indent related
 "    -> Visual mode related
@@ -101,30 +101,10 @@ set nu
 set clipboard=unnamedplus
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Colors, Fonts and Encoding
+" => Fonts and Encoding
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Enable syntax highlighting
 syntax enable
-
-
-"set background=dark
-
-"""""""""""""""""""""""""""""""""""""""""""""
-"colorscheme jellybeans
-
-" support for italics font
-"let g:jellybeans_use_term_italics = 1  
-
-" terminal background
-"let g:jellybeans_overrides = {
-"\    'background': { 'ctermbg': 'none', '256ctermbg': 'none' },
-"\}
-"""""""""""""""""""""""""""""""""""""""""""""
-colorscheme molokai
-"""""""""""""""""""""""""""""""""""""""""""""
-"colorschem Tomorrow-Night
-"""""""""""""""""""""""""""""""""""""""""""""
-
 
 " cursorcolumn
 set cursorcolumn
@@ -436,7 +416,7 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
-"Plugin 'Valloric/YouCompleteMe'
+Plugin 'Valloric/YouCompleteMe'
 "Plugin 'rdnetto/YCM-Generator'
 "Plugin 'bling/vim-airline'
 Plugin 'godlygeek/tabular'
@@ -454,6 +434,23 @@ Plugin 'vim-airline/vim-airline'
 call vundle#end()            " required
 filetype plugin indent on    " required
 
+"-------------------- Color Scheme -------------------
+"set background=dark
+"""""""""""""""""""""""""""""""""""""""""""""
+"colorscheme jellybeans
+
+" support for italics font
+"let g:jellybeans_use_term_italics = 1  
+
+" terminal background
+"let g:jellybeans_overrides = {
+"\    'background': { 'ctermbg': 'none', '256ctermbg': 'none' },
+"\}
+"""""""""""""""""""""""""""""""""""""""""""""
+colorscheme molokai
+"""""""""""""""""""""""""""""""""""""""""""""
+"colorschem Tomorrow-Night
+"""""""""""""""""""""""""""""""""""""""""""""
 
 "---------------------- YouCompleteMe -----------------------------
 let g:ycm_server_use_vim_stdout = 0
