@@ -403,7 +403,7 @@ func SetTitle()
         call append(line(".")+5, "\#########################################################################")
         call append(line(".")+6, "")
     elseif &filetype == 'python'
-        call setline(1, "\#!/usr/bin/env python2")
+        call setline(1, "\#!/usr/bin/env python3")
         call append(line("."), "\# -*- coding: utf-8 -*-")
         call append(line(".")+1, "\ ")
         call append(line(".")+2, "\#########################################################################")
@@ -436,7 +436,7 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
-"Plugin 'Valloric/YouCompleteMe'
+Plugin 'Valloric/YouCompleteMe'
 "Plugin 'rdnetto/YCM-Generator'
 "Plugin 'bling/vim-airline'
 Plugin 'godlygeek/tabular'
@@ -460,7 +460,7 @@ let g:ycm_server_use_vim_stdout = 0
 let g:ycm_server_keep_logfiles = 1
 let g:ycm_server_log_level = 'debug'
 let g:ycm_server_python_interpreter = "/usr/bin/python2"
-"let g:global_ycm_extra_conf = "/home/magodo/.vim/bundle/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py"
+"let g:global_ycm_extra_conf = "/home/magodo/.ycm_extra_conf.py"
 
 "let g:ycm_confirm_extra_conf=0
 
@@ -504,7 +504,8 @@ let g:airline_powerline_fonts = 1
 "imap <F6> <ESC>:!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
 set tags=tags
 set tags+=~/ctags/system.tags
-set tags+=/home/magodo/Continental/GWM/EarlyApp/01_code/01_origin/tags
+set tags+=~/ctags/linux-headers.tags
+"set tags+=/home/magodo/Continental/GWM/EarlyApp/01_code/01_origin/tags
 
 "------------------------- File Header ------------------------
 " New created .c, .h, .sh, .java, .py files, automatically insert file header
