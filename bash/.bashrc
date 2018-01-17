@@ -1,3 +1,14 @@
+# colorize $(tree) output
+eval "$(dircolors)"
+
+# colorize grep
+export GREP_COLORS="ms=01;31:mc=01;31:sl=:cx=:fn=35:ln=32:bn=32:se=36"
+alias grep='grep --color'
+
+#
+export EDITOR=/usr/bin/vim
+
+#
 alias ls="ls --color"
 alias l="ls"
 alias ll="ls -l"
@@ -32,4 +43,3 @@ hide()
     #gsettings list-keys "org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$profile/" 
     gsettings set "org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$profile/" background-transparency-percent $1
 }
-
