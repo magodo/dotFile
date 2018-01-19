@@ -96,7 +96,7 @@ set t_vb=
 set tm=500
 
 " Set line number
-set nu
+"set nu
 
 set clipboard=unnamedplus
 
@@ -448,9 +448,36 @@ filetype plugin indent on    " required
 "\}
 """""""""""""""""""""""""""""""""""""""""""""
 colorscheme molokai
-"""""""""""""""""""""""""""""""""""""""""""""
-"colorschem Tomorrow-Night
-"""""""""""""""""""""""""""""""""""""""""""""
+
+" keep terminal background (for transparent support)
+hi Normal ctermbg=NONE
+hi NonText ctermbg=NONE
+
+" ---
+" function to change background transparent
+" ---
+
+" make sure vim redraw interface after silent commands finishes
+command! -nargs=1 Silent
+\   execute 'silent !' . <q-args>
+\ | execute 'redraw!'
+
+let g:trans_rate=0
+func! HideTerminalToggle()
+    let old_flag = &shellcmdflag " remember it
+    set shellcmdflag=-ci
+    if g:trans_rate == 0
+        :Silent hide 50
+        let g:trans_rate = 50
+    else
+        :Silent hide 0
+        let g:trans_rate = 0
+    endif
+    let &shellcmdflag = old_flag " restore it (`let` will use variable,
+                                 "             while `set` only use literals)
+endfunction
+
+nnoremap <leader>hd :call HideTerminalToggle()<cr>
 
 "---------------------- YouCompleteMe -----------------------------
 let g:ycm_server_use_vim_stdout = 0
