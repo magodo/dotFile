@@ -372,7 +372,7 @@ endfunction
 
 " Function: SetTitle
 " Automatically insert file header
-func SetTitle()
+func! SetTitle()
     if &filetype == 'sh'
         call setline(1, "\#!/bin/bash")
         call append(line("."), "\ ")
@@ -428,6 +428,7 @@ Plugin 'sjl/gundo.vim'
 Plugin 'nvie/vim-flake8'
 Plugin 'tpope/vim-surround'
 Plugin 'flazz/vim-colorschemes'
+"Plugin 'rafi/awesome-vim-colorschemes'
 Plugin 'vim-airline/vim-airline'
 
 " All of your Plugins must be added before the following line
@@ -435,19 +436,8 @@ call vundle#end()            " required
 filetype plugin indent on    " required
 
 "-------------------- Color Scheme -------------------
-"set background=dark
-"""""""""""""""""""""""""""""""""""""""""""""
-"colorscheme jellybeans
 
-" support for italics font
-"let g:jellybeans_use_term_italics = 1  
-
-" terminal background
-"let g:jellybeans_overrides = {
-"\    'background': { 'ctermbg': 'none', '256ctermbg': 'none' },
-"\}
-"""""""""""""""""""""""""""""""""""""""""""""
-colorscheme molokai
+colorscheme jellybeans
 
 " keep terminal background (for transparent support)
 hi Normal ctermbg=NONE
@@ -467,8 +457,8 @@ func! HideTerminalToggle()
     let old_flag = &shellcmdflag " remember it
     set shellcmdflag=-ci
     if g:trans_rate == 0
-        :Silent hide 50
-        let g:trans_rate = 50
+        :Silent hide 30
+        let g:trans_rate = 30
     else
         :Silent hide 0
         let g:trans_rate = 0
@@ -478,6 +468,9 @@ func! HideTerminalToggle()
 endfunction
 
 nnoremap <leader>hd :call HideTerminalToggle()<cr>
+
+" source vimrc
+map <F6> :so $MYVIMRC<cr>
 
 "---------------------- YouCompleteMe -----------------------------
 let g:ycm_server_use_vim_stdout = 0
@@ -523,9 +516,9 @@ let g:airline_powerline_fonts = 1
 "let g:airline_theme='wombat'
 
 "---------------------- Ctags ---------------------------------
-" 按下F6重新生成tag文件，并更新taglist
-"map <F6> :!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
-"imap <F6> <ESC>:!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
+" update taglist
+"map <F4> :!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
+"imap <F4> <ESC>:!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
 set tags=tags
 set tags+=~/ctags/system.tags
 set tags+=~/ctags/linux-headers.tags
