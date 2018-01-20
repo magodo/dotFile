@@ -477,8 +477,8 @@ let g:ycm_server_use_vim_stdout = 0
 let g:ycm_server_keep_logfiles = 1
 let g:ycm_server_log_level = 'debug'
 let g:ycm_server_python_interpreter = "/usr/bin/python2"
-"let g:global_ycm_extra_conf = "/home/magodo/.ycm_extra_conf.py"
 
+"let g:global_ycm_extra_conf = ""
 "let g:ycm_confirm_extra_conf=0
 
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif
@@ -494,6 +494,16 @@ autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 "    \}
 
 nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
+" Avoid YCM process other file types
+let g:ycm_filetype_whitelist = { 
+            \"cpp": 1,
+            \ "c": 1,
+            \ "python": 1}
+
+" Below will not overload the default one(i.e. "." and "->"), but append.
+let g:ycm_semantic_triggers =  {
+            \ 'c,cpp' : ['re!\w{3}']}
 
 "---------------------- Taglists -----------------------------
 nnoremap <silent> <F9> :TlistToggle<cr>
