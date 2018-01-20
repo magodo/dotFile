@@ -437,7 +437,7 @@ filetype plugin indent on    " required
 
 "-------------------- Color Scheme -------------------
 
-colorscheme jellybeans
+colorscheme molokai
 
 " keep terminal background (for transparent support)
 hi Normal ctermbg=NONE
