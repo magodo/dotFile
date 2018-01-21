@@ -124,9 +124,6 @@ set encoding=utf8
 set fileencodings=utf8,gbk
 set fileencoding=utf8
 
-" Visual mode text selection color
-hi Visual term=reverse cterm=reverse guibg=Grey
-
 " Use Unix as the standard file type
 set ffs=unix,dos,mac
 
@@ -443,31 +440,34 @@ colorscheme molokai
 hi Normal ctermbg=NONE
 hi NonText ctermbg=NONE
 
+" Visual mode text selection color
+hi Visual term=reverse cterm=reverse  guibg=Grey
+
 " ---
 " function to change background transparent
 " ---
 
-" make sure vim redraw interface after silent commands finishes
-command! -nargs=1 Silent
-\   execute 'silent !' . <q-args>
-\ | execute 'redraw!'
-
-let g:trans_rate=0
-func! HideTerminalToggle()
-    let old_flag = &shellcmdflag " remember it
-    set shellcmdflag=-ci
-    if g:trans_rate == 0
-        :Silent hide 30
-        let g:trans_rate = 30
-    else
-        :Silent hide 0
-        let g:trans_rate = 0
-    endif
-    let &shellcmdflag = old_flag " restore it (`let` will use variable,
-                                 "             while `set` only use literals)
-endfunction
-
-nnoremap <leader>hd :call HideTerminalToggle()<cr>
+"" make sure vim redraw interface after silent commands finishes
+"command! -nargs=1 Silent
+"\   execute 'silent !' . <q-args>
+"\ | execute 'redraw!'
+"
+"let g:trans_rate=0
+"func! HideTerminalToggle()
+"    let old_flag = &shellcmdflag " remember it
+"    set shellcmdflag=-ci
+"    if g:trans_rate == 0
+"        :Silent hide 30
+"        let g:trans_rate = 30
+"    else
+"        :Silent hide 0
+"        let g:trans_rate = 0
+"    endif
+"    let &shellcmdflag = old_flag " restore it (`let` will use variable,
+"                                 "             while `set` only use literals)
+"endfunction
+"
+"nnoremap <leader>hd :call HideTerminalToggle()<cr>
 
 " source vimrc
 map <F6> :so $MYVIMRC<cr>
@@ -499,7 +499,8 @@ nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 let g:ycm_filetype_whitelist = { 
             \"cpp": 1,
             \ "c": 1,
-            \ "python": 1}
+            \ "python": 1,
+            \ "sh": 1}
 
 " Below will not overload the default one(i.e. "." and "->"), but append.
 let g:ycm_semantic_triggers =  {

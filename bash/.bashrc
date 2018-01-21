@@ -40,6 +40,20 @@ hide()
 {
     profile=$(gsettings get org.gnome.Terminal.ProfilesList default)
     profile=${profile:1:-1} # remove leading and trailing single quotes
-    #gsettings list-keys "org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$profile/" 
-    gsettings set "org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$profile/" background-transparency-percent $1
+
+    if [[ $1 ]]; then
+        gsettings set "org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$profile/" background-transparency-percent $1
+    else
+        local cur_val
+        local new_val
+
+        cur_val=$(gsettings get "org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$profile/" background-transparency-percent)
+
+        if [[ $cur_val = 0 ]]; then
+            new_val=30
+        else
+            new_val=0
+        fi
+        gsettings set "org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$profile/" background-transparency-percent $new_val
+    fi
 }
