@@ -49,10 +49,10 @@ hide()
 
         cur_val=$(gsettings get "org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$profile/" background-transparency-percent)
 
-        if [[ $cur_val = 0 ]]; then
+        if [[ $cur_val != 30 ]]; then
             new_val=30
         else
-            new_val=0
+            new_val=2
         fi
         gsettings set "org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$profile/" background-transparency-percent $new_val
     fi

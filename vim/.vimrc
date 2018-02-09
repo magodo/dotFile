@@ -96,7 +96,7 @@ set t_vb=
 set tm=500
 
 " Set line number
-"set nu
+set nu
 
 set clipboard=unnamedplus
 
@@ -532,8 +532,11 @@ let g:airline_powerline_fonts = 1
 "imap <F4> <ESC>:!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
 set tags=tags
 set tags+=~/ctags/system.tags
-set tags+=~/ctags/linux-headers.tags
-"set tags+=/home/magodo/Continental/GWM/EarlyApp/01_code/01_origin/tags
+"set tags+=~/ctags/linux-headers.tags
+set tags+=~/ctags/ucloud/wiwo.tags
+set tags+=~/ctags/ucloud/message.tags
+set tags+=~/ctags/ucloud/aioplug.tags
+set tags+=~/ctags/ucloud/udb.tags
 
 "------------------------- File Header ------------------------
 " New created .c, .h, .sh, .java, .py files, automatically insert file header

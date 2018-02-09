@@ -93,4 +93,6 @@ Kinds of dot files
 
 # TMUX config
 
+There is a cool config repo [here](https://github.com/samoshkin/tmux-config), which supports nested tmux sessions. This is really helpful...
+
 # ZSH
