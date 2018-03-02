@@ -372,11 +372,11 @@ endfunction
 func! SetTitle()
     if &filetype == 'sh'
         call setline(1, "\#!/bin/bash")
-        call append(line("."), "\ ")
+        call append(line("."), "")
         call append(line(".")+1, "\#########################################################################")
         call append(line(".")+2, "\# Author: Zhaoting Weng")
         call append(line(".")+3, "\# Created Time: ".strftime("%c"))
-        call append(line(".")+4, "\# Description: ")
+        call append(line(".")+4, "\# Description:")
         call append(line(".")+5, "\#########################################################################")
         call append(line(".")+6, "")
     elseif &filetype == 'python'
@@ -386,14 +386,14 @@ func! SetTitle()
         call append(line(".")+2, "\#########################################################################")
         call append(line(".")+3, "\# Author: Zhaoting Weng")
         call append(line(".")+4, "\# Created Time: ".strftime("%c"))
-        call append(line(".")+5, "\# Description: ")
+        call append(line(".")+5, "\# Description:")
         call append(line(".")+6, "\#########################################################################")
         call append(line(".")+7, "")
     else
         call setline(1, "/*************************************************************************")
         call append(line("."), " Author: Zhaoting Weng")
         call append(line(".")+1, " Created Time: ".strftime("%c"))
-        call append(line(".")+2, " Description: ")
+        call append(line(".")+2, " Description:")
         call append(line(".")+3, " ************************************************************************/")
         call append(line(".")+4, "") 
         call append(line(".")+5, "")
@@ -576,3 +576,12 @@ map <leader>tl <Plug>TaskList
 "------------------------- GundoToggle ----------------------
 " review history
 map <leader>gd :GundoToggle<CR>
+
+"------------------------ GIT -------------
+" automatically wrap at 72 text width when git commit
+func! AutoWrap()
+    set formatoptions+=t
+    set tw=72
+endfunc
+
+au FileType gitcommit exec ":call AutoWrap()"
