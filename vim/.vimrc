@@ -531,10 +531,10 @@ let g:airline_powerline_fonts = 1
 " update taglist
 "map <F4> :!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
 "imap <F4> <ESC>:!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
-set tags+=~/aioplug.tags
-set tags+=~/system.tags
-set tags+=~/udb.tags
-set tags+=~/wiwo.tags
+set tags+=~/ctags/aioplug.tags
+set tags+=~/ctags/system.tags
+set tags+=~/ctags/udb.tags
+set tags+=~/ctags/wiwo.tags
 
 "------------------------- File Header ------------------------
 " New created .c, .h, .sh, .java, .py files, automatically insert file header
