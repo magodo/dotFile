@@ -251,10 +251,6 @@ tmux_conf_copy_to_os_clipboard=true
 # start with mouse mode enabled
 #set -g mouse on
 
-#Toggle mouse support
-bind -T root F10 \
-    set -g mouse
-
 # force Vi mode
 #   really you should export VISUAL or EDITOR environment variable, see manual
 #set -g status-keys vi
@@ -272,3 +268,10 @@ bind C-q send-prefix
 
 # Reload tmux configuration 
 bind C-r source-file ~/.tmux.conf \; display "Config reloaded"
+
+# Restore default window navigation
+unbind C-l
+unbind C-h
+bind -r p previous-window # select previous window
+bind -r n next-window     # select next window
+

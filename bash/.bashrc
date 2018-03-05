@@ -57,3 +57,7 @@ hide()
         gsettings set "org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$profile/" background-transparency-percent $new_val
     fi
 }
+
+# golang
+export GOPATH=$HOME/github/go_workspace
+export PATH=$PATH:$GOPATH/bin

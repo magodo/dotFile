@@ -427,6 +427,7 @@ Plugin 'tpope/vim-surround'
 Plugin 'flazz/vim-colorschemes'
 "Plugin 'rafi/awesome-vim-colorschemes'
 Plugin 'vim-airline/vim-airline'
+Plugin 'fatih/vim-go'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -473,7 +474,7 @@ hi Visual term=reverse cterm=reverse  guibg=Grey
 map <F6> :so $MYVIMRC<cr>
 
 "---------------------- YouCompleteMe -----------------------------
-let g:ycm_server_use_vim_stdout = 0
+"let g:ycm_server_use_vim_stdout = 0
 let g:ycm_server_keep_logfiles = 1
 let g:ycm_server_log_level = 'debug'
 let g:ycm_server_python_interpreter = "/usr/bin/python2"
