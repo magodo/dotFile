@@ -275,3 +275,5 @@ unbind C-h
 bind -r p previous-window # select previous window
 bind -r n next-window     # select next window
 
+# disable renumber windows
+set -g renumber-windows off
