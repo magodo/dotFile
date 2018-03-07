@@ -59,5 +59,5 @@ hide()
 }
 
 # golang
-export GOPATH=$HOME/github/go_workspace
+export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
