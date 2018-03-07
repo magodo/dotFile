@@ -19,7 +19,7 @@
 # new window retains current path, possible values are:
 #   - true
 #   - false (default)
-tmux_conf_new_window_retain_current_path=false
+tmux_conf_new_window_retain_current_path=true
 
 # new pane retains current path, possible values are:
 #   - true (default)
@@ -277,3 +277,7 @@ bind -r n next-window     # select next window
 
 # disable renumber windows
 set -g renumber-windows off
+
+# decrease repeat-time
+set -sg repeat-time 100
+

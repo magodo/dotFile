@@ -155,7 +155,7 @@ set linebreak
 set autoindent 
 
 "Smart indent
-"set smartindent
+set smartindent
 
 " Press F3 before paste something to Vim. Afterwards, press again to enable ai
 set pastetoggle=<F3>
@@ -428,6 +428,8 @@ Plugin 'flazz/vim-colorschemes'
 "Plugin 'rafi/awesome-vim-colorschemes'
 Plugin 'vim-airline/vim-airline'
 Plugin 'fatih/vim-go'
+Plugin 'mattn/emmet-vim'
+Plugin 'iamcco/markdown-preview.vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -501,14 +503,15 @@ let g:ycm_filetype_whitelist = {
             \"cpp": 1,
             \ "c": 1,
             \ "python": 1,
-            \ "sh": 1}
+            \ "sh": 1,
+            \ "go": 1}
 
 " Below will not overload the default one(i.e. "." and "->"), but append.
 let g:ycm_semantic_triggers =  {
             \ 'c,cpp' : ['re!\w{3}']}
 
 "---------------------- Taglists -----------------------------
-nnoremap <silent> <F9> :TlistToggle<cr>
+"nmap tl :TlistToggle<cr>
 let Tlist_Exit_OnlyWindow=1
 let Tlist_Show_One_File=1
 
@@ -582,4 +585,15 @@ func! AutoWrap()
     set tw=72
 endfunc
 
-au FileType gitcommit exec ":call AutoWrap()"
+autocmd  FileType gitcommit exec ":call AutoWrap()"
+
+"------------------------ emmet -------------
+" enable just for html/css
+let g:user_emmet_install_global = 0
+autocmd FileType html,css EmmetInstall
+
+"------------------------ markdown-preview ----------
+autocmd FileType markdown nmap <silent> <F8> <Plug>MarkdownPreview        " 普通模式
+autocmd FileType markdown imap <silent> <F8> <Plug>MarkdownPreview        " 插入模式
+autocmd FileType markdown nmap <silent> <F9> <Plug>StopMarkdownPreview    " 普通模式
+autocmd FileType markdown imap <silent> <F9> <Plug>StopMarkdownPreview    " 插入模式
