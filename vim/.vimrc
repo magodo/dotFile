@@ -191,8 +191,16 @@ map <C-l> <C-W>l
 " Close the current buffer
 map <leader>bd :Bclose<cr>
 
+" hide (instead of unload) modified but not saved buffer
+set hidden
+
 " Close all the buffers
 map <leader>ba :1,1000 bd!<cr>
+
+" Move to the next/previous buffer
+nmap <leader>p :bnext<CR>
+nmap <leader>n :bprevious<CR>
+
 
 " Useful mappings for managing tabs
 map <leader>tn :tabnew<cr>
@@ -277,8 +285,6 @@ vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>
 "
 map <leader>cc :botright cope<cr>
 map <leader>co ggVGy:tabnew<cr>:set syntax=qf<cr>pgg
-map <leader>n :cn<cr>
-map <leader>p :cp<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -302,10 +308,6 @@ noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
 
 " Quickly open a buffer for scripbble
 map <leader>q :e ~/buffer<cr>
-
-" Toggle paste mode on and off
-map <leader>pp :setlocal paste!<cr>
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Helper functions
@@ -427,9 +429,13 @@ Plugin 'tpope/vim-surround'
 Plugin 'flazz/vim-colorschemes'
 "Plugin 'rafi/awesome-vim-colorschemes'
 Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+Plugin 'tpope/vim-fugitive.git'
 Plugin 'fatih/vim-go'
 Plugin 'mattn/emmet-vim'
 Plugin 'iamcco/markdown-preview.vim'
+Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'jeetsukumaran/vim-buffergator'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -504,7 +510,8 @@ let g:ycm_filetype_whitelist = {
             \ "c": 1,
             \ "python": 1,
             \ "sh": 1,
-            \ "go": 1}
+            \ "go": 1,
+            \ "javascript": 1}
 
 " Below will not overload the default one(i.e. "." and "->"), but append.
 let g:ycm_semantic_triggers =  {
@@ -528,8 +535,9 @@ set laststatus=2
 let g:airline_powerline_fonts = 1
 "set t_Co=256" Make terminal has 256 colors
 "" default theme not work with tmux
-"let g:airline_theme='wombat'
-
+let g:airline_theme='molokai'
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 "---------------------- Ctags ---------------------------------
 " update taglist
 "map <F4> :!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
@@ -558,7 +566,6 @@ let g:vim_markdown_frontmatter=1
 "------------------------- Python Support ----------------------
 autocmd BufRead *.py set makeprg=python\ -c\ \"import\ py_compile,sys;\ sys.stderr=sys.stdout;\ py_compile.compile(r'%')\"
 autocmd BufRead *.py set efm=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m
-autocmd BufRead *.py nmap <F5> :!python -i %<CR>
 autocmd BufRead *.py set tabstop=4
 autocmd BufRead *.py set nowrap
 autocmd BufRead *.py set go+=b
