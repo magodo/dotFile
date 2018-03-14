@@ -607,3 +607,11 @@ autocmd FileType markdown nmap <silent> <F8> <Plug>MarkdownPreview        " 普�
 autocmd FileType markdown imap <silent> <F8> <Plug>MarkdownPreview        " 插入模式
 autocmd FileType markdown nmap <silent> <F9> <Plug>StopMarkdownPreview    " 普通模式
 autocmd FileType markdown imap <silent> <F9> <Plug>StopMarkdownPreview    " 插入模式
+
+"------------------------ vimdiff ----------------
+if &diff
+    highlight DiffAdd    cterm=bold ctermfg=10 ctermbg=17 gui=none guifg=bg guibg=Red
+    highlight DiffDelete cterm=bold ctermfg=10 ctermbg=17 gui=none guifg=bg guibg=Red
+    highlight DiffChange cterm=bold ctermfg=10 ctermbg=17 gui=none guifg=bg guibg=Red
+    highlight DiffText   cterm=bold ctermfg=10 ctermbg=88 gui=none guifg=bg guibg=Red
+endif
