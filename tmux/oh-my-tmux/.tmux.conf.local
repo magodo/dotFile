@@ -279,5 +279,4 @@ bind -r n next-window     # select next window
 set -g renumber-windows off
 
 # decrease repeat-time
-set -sg repeat-time 100
-
+set -sg repeat-time 300

@@ -198,8 +198,8 @@ set hidden
 map <leader>ba :1,1000 bd!<cr>
 
 " Move to the next/previous buffer
-nmap <leader>p :bnext<CR>
-nmap <leader>n :bprevious<CR>
+nmap <leader>n :bnext<CR>
+nmap <leader>p :bprevious<CR>
 
 
 " Useful mappings for managing tabs
@@ -577,8 +577,8 @@ autocmd BufRead *.sh nmap <F7> :!bash %<CR>
 autocmd FileType python map <buffer> <F8> :call Flake8()<CR>
 
 "------------------------- code folding -----------------------
-set foldmethod=indent
-set foldlevel=99
+"set foldmethod=indent
+"set foldlevel=99
 
 "------------------------- Task List ------------------------
 " show every 'FIXME'

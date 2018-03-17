@@ -5,10 +5,9 @@ eval "$(dircolors)"
 export GREP_COLORS="ms=01;31:mc=01;31:sl=:cx=:fn=35:ln=32:bn=32:se=36"
 alias grep='grep --color'
 
-#
 export EDITOR=/usr/bin/vim
 
-#
+# colorize ls
 alias ls="ls --color"
 alias l="ls"
 alias ll="ls -l"
@@ -61,3 +60,12 @@ hide()
 # golang
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
+
+# todo
+export TODO_DIR=~/.todo/data
+alias todo="todo.sh"
+todo ls | cowsay -f stegosaurus.cow -n
+
+# python
+export PYTHONDONTWRITEBYTECODE=1
+
