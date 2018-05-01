@@ -420,7 +420,8 @@ Plugin 'Valloric/YouCompleteMe'
 "Plugin 'bling/vim-airline'
 Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
-Plugin 'vim-scripts/taglist.vim'
+"Plugin 'vim-scripts/taglist.vim'
+Plugin 'majutsushi/tagbar'
 Plugin 'vim-scripts/winmanager--Fox'
 Plugin 'vim-scripts/TaskList.vim'
 Plugin 'sjl/gundo.vim'
@@ -432,10 +433,18 @@ Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'tpope/vim-fugitive.git'
 Plugin 'fatih/vim-go'
+Plugin 'AndrewRadev/splitjoin.vim'
+Plugin 'SirVer/ultisnips'
 Plugin 'mattn/emmet-vim'
 Plugin 'iamcco/markdown-preview.vim'
-Plugin 'ctrlpvim/ctrlp.vim'
+"Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'jeetsukumaran/vim-buffergator'
+"Plugin 'vim-ctrlspace/vim-ctrlspace'
+"Plugin 'vim-syntastic/syntastic'
+Plugin 'w0rp/ale'
+Plugin 'Chiel92/vim-autoformat'
+Plugin 'ludovicchabant/vim-gutentags'
+Plugin 'skywind3000/vim-preview'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -486,6 +495,7 @@ map <F6> :so $MYVIMRC<cr>
 let g:ycm_server_keep_logfiles = 1
 let g:ycm_server_log_level = 'debug'
 let g:ycm_server_python_interpreter = "/usr/bin/python2"
+let g:ycm_python_binary_path = '/usr/bin/python3'
 
 "let g:global_ycm_extra_conf = ""
 "let g:ycm_confirm_extra_conf=0
@@ -519,13 +529,49 @@ let g:ycm_semantic_triggers =  {
 
 "---------------------- Taglists -----------------------------
 "nmap tl :TlistToggle<cr>
-let Tlist_Exit_OnlyWindow=1
-let Tlist_Show_One_File=1
+"let Tlist_Exit_OnlyWindow=1
+"let Tlist_Show_One_File=1
+
+"---------------------- Tagbar  -----------------------------
+
+let g:tagbar_type_go = {
+	\ 'ctagstype' : 'go',
+	\ 'kinds'     : [
+		\ 'p:package',
+		\ 'i:imports:1',
+		\ 'c:constants',
+		\ 'v:variables',
+		\ 't:types',
+		\ 'n:interfaces',
+		\ 'w:fields',
+		\ 'e:embedded',
+		\ 'm:methods',
+		\ 'r:constructor',
+		\ 'f:functions'
+	\ ],
+	\ 'sro' : '.',
+	\ 'kind2scope' : {
+		\ 't' : 'ctype',
+		\ 'n' : 'ntype'
+	\ },
+	\ 'scope2kind' : {
+		\ 'ctype' : 't',
+		\ 'ntype' : 'n'
+	\ },
+	\ 'ctagsbin'  : 'gotags',
+	\ 'ctagsargs' : '-sort -silent'
+\ }
+
+nmap tl :TagbarToggle<CR>
 
 "---------------------- WinManager -----------------------------
-let g:winManagerWindowLayout='FileExplorer|TagList'
-let g:winManagerWidth = 40
-nmap wm :WMToggle<cr>
+"func! OpenBrowser()
+"    :WMToggle
+"    :TagbarToggle
+"endfunc
+"let g:winManagerWindowLayout='FileExplorer'
+"let g:winManagerWidth = 40
+"nmap wm :WMToggle<cr>
 
 "---------------------- Powerline -------------------------------
 let g:powerline_pycmd='py3'
@@ -542,13 +588,15 @@ let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 " update taglist
 "map <F4> :!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
 "imap <F4> <ESC>:!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
-set tags=tags
-set tags+=~/ctags/system.tags
-"set tags+=~/ctags/linux-headers.tags
-set tags+=~/ctags/ucloud/wiwo.tags
-set tags+=~/ctags/ucloud/message.tags
-set tags+=~/ctags/ucloud/aioplug.tags
-set tags+=~/ctags/ucloud/udb.tags
+"set tags=tags
+"set tags+=~/ctags/system.tags
+"set tags+=~/ctags/sysstat.tags
+""set tags+=~/ctags/linux-headers.tags
+"set tags+=~/ctags/ucloud/wiwo.tags
+"set tags+=~/ctags/ucloud/message.tags
+"set tags+=~/ctags/ucloud/aioplug.tags
+"set tags+=~/ctags/ucloud/udb.tags
+"set tags+=~/ctags/ucloud/udb2.tags
 
 "------------------------- File Header ------------------------
 " New created .c, .h, .sh, .java, .py files, automatically insert file header
@@ -615,3 +663,93 @@ if &diff
     highlight DiffChange cterm=bold ctermfg=10 ctermbg=17 gui=none guifg=bg guibg=Red
     highlight DiffText   cterm=bold ctermfg=10 ctermbg=88 gui=none guifg=bg guibg=Red
 endif
+
+"------------------------ golang ----------------
+" run :GoBuild or :GoTestCompile based on the go file
+function! s:build_go_files()
+  let l:file = expand('%')
+  if l:file =~# '^\f\+_test\.go$'
+    call go#test#Test(0, 1)
+  elseif l:file =~# '^\f\+\.go$'
+    call go#cmd#Build(0)
+  endif
+endfunction
+autocmd FileType go nmap <F7> :<C-u>call <SID>build_go_files()<CR>
+
+" Whenever you save file goimports updates your Go import lines, adding missing ones and
+" removing unreferenced ones. Also arrange import path group by package. 
+" Furthermore, it does what gofmt does.
+let g:go_fmt_command = "goimports"
+
+"------------------------ ultisnips ----------------
+let g:UltiSnipsExpandTrigger="<c-j>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+"------------------------ ctrl space ----------------
+
+"------------------------- vim-syntastic ------------
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1 "  the error window will be neither opened nor closed automatically
+let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_wq = 1
+let g:syntastic_mode_map = {
+    \ "mode": "passive",
+    \ "active_filetypes": [],
+    \ "passive_filetypes": [] }
+
+"------------------------- autoformat --------------
+map <leader>f :Autoformat<CR>
+
+"------------------------- gtags --------------
+"let $GTAGSLABEL = 'native-pygments'
+"let $GTAGSCONF = '/home/magodo/.config/gtags.conf'
+
+"------------------------- gutentags --------------
+" gutentags 搜索工程目录的标志，当前文件路径向上递归直到碰到这些文件/目录名
+let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
+
+" 所生成的数据文件的名称
+let g:gutentags_ctags_tagfile = '.tags'
+
+" 同时开启 ctags 和 gtags 支持：
+let g:gutentags_modules = []
+if executable('ctags')
+	let g:gutentags_modules += ['ctags']
+endif
+"if executable('gtags-cscope') && executable('gtags')
+"	let g:gutentags_modules += ['gtags_cscope']
+"endif
+
+" 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+let g:gutentags_cache_dir = expand('~/.cache/tags')
+
+" 配置 ctags 的参数
+let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+
+" 如果使用 universal ctags 需要增加下面一行
+"let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
+
+" 禁用 gutentags 自动加载 gtags 数据库的行为
+"let g:gutentags_auto_add_gtags_cscope = 0
+
+"------------------------- ale --------------
+"let g:ale_linters_explicit = 1
+let g:ale_completion_delay = 500
+let g:ale_echo_delay = 20
+let g:ale_lint_delay = 500
+let g:ale_echo_msg_format = '[%linter%] %code: %%s'
+let g:ale_lint_on_text_changed = 'normal'
+let g:ale_lint_on_insert_leave = 1
+let g:airline#extensions#ale#enabled = 1
+
+let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
+let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
+let g:ale_c_cppcheck_options = ''
+let g:ale_cpp_cppcheck_options = ''
+
+
+let g:ale_sign_error = "✖"
+let g:ale_sign_warning = "!"
