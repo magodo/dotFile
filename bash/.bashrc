@@ -75,7 +75,8 @@ ucloud_dev()
 {
     export GOPATH=$HOME/UCloud/Project/go_workspace/
     export PATH=$HOME/.local/bin-ucloud:$HOME/UCloud/Project/go_workspace/bin:$PATH
-    export UDB_CONFIG_DIR=$HOME/UCloud/Project/udb-config
+    #export UDB_CONFIG_DIR=$HOME/UCloud/Project/udb-config
+    . ~/.udb_bashrc
 }
 
 # http(s) proxy
@@ -137,3 +138,5 @@ git_check_commit()
     done < <(git diff HEAD^1 --raw)
     return $is_fail
 }
+
+alias cdgo="cd $GOPATH/src/github.com/magodo/go_snippet"

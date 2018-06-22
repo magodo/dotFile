@@ -391,6 +391,15 @@ func! SetTitle()
         call append(line(".")+5, "\# Description:")
         call append(line(".")+6, "\#########################################################################")
         call append(line(".")+7, "")
+    elseif &filetype == 'javascript'
+        call setline(1, "/* @flow */")
+        call append(line("."), "/*************************************************************************")
+        call append(line(".")+1, " Author: Zhaoting Weng")
+        call append(line(".")+2, " Created Time: ".strftime("%c"))
+        call append(line(".")+3, " Description:")
+        call append(line(".")+4, " ************************************************************************/")
+        call append(line(".")+5, "") 
+        call append(line(".")+6, "") 
     else
         call setline(1, "/*************************************************************************")
         call append(line("."), " Author: Zhaoting Weng")
@@ -425,7 +434,7 @@ Plugin 'majutsushi/tagbar'
 Plugin 'vim-scripts/winmanager--Fox'
 Plugin 'vim-scripts/TaskList.vim'
 Plugin 'sjl/gundo.vim'
-Plugin 'nvie/vim-flake8'
+"Plugin 'nvie/vim-flake8'
 Plugin 'tpope/vim-surround'
 Plugin 'flazz/vim-colorschemes'
 "Plugin 'rafi/awesome-vim-colorschemes'
@@ -445,6 +454,8 @@ Plugin 'w0rp/ale'
 Plugin 'Chiel92/vim-autoformat'
 Plugin 'ludovicchabant/vim-gutentags'
 Plugin 'skywind3000/vim-preview'
+Plugin 'aklt/plantuml-syntax'
+Plugin 'maksimr/vim-jsbeautify'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -494,8 +505,8 @@ map <F6> :so $MYVIMRC<cr>
 "let g:ycm_server_use_vim_stdout = 0
 let g:ycm_server_keep_logfiles = 1
 let g:ycm_server_log_level = 'debug'
-let g:ycm_server_python_interpreter = "/usr/bin/python2"
-let g:ycm_python_binary_path = '/usr/bin/python3'
+let g:ycm_server_python_interpreter = "/usr/bin/python"
+let g:ycm_python_binary_path = '/usr/bin/python'
 
 "let g:global_ycm_extra_conf = ""
 "let g:ycm_confirm_extra_conf=0
@@ -520,8 +531,10 @@ let g:ycm_filetype_whitelist = {
             \ "c": 1,
             \ "python": 1,
             \ "sh": 1,
-            \ "go": 1,
-            \ "javascript": 1}
+            \ "go": 0,
+            \ "javascript": 1,
+            \ "java": 1,
+            \ "uml": 1}
 
 " Below will not overload the default one(i.e. "." and "->"), but append.
 let g:ycm_semantic_triggers =  {
@@ -600,7 +613,7 @@ let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 
 "------------------------- File Header ------------------------
 " New created .c, .h, .sh, .java, .py files, automatically insert file header
-autocmd BufNewFile *.[ch],*.sh,*.java,*.py,*.cpp,*cc exec ":call SetTitle()"
+autocmd BufNewFile *.[ch],*.sh,*.java,*.py,*.cpp,*cc,*.js exec ":call SetTitle()"
 " After insertion, jump to the next line
 autocmd BufNewFile * normal G
 
@@ -620,9 +633,12 @@ autocmd BufRead *.py set go+=b
 
 "------------------- Bash Support------------------------------
 autocmd BufRead *.sh nmap <F7> :!bash %<CR>
+"
+"------------------- Python Support------------------------------
+autocmd FileType python nmap <F7> :!python %<CR>
 
 "-------------------  vim-flake8 ------------------------------
-autocmd FileType python map <buffer> <F8> :call Flake8()<CR>
+"autocmd FileType python map <buffer> <F8> :call Flake8()<CR>
 
 "------------------------- code folding -----------------------
 "set foldmethod=indent
@@ -750,6 +766,23 @@ let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
 let g:ale_c_cppcheck_options = ''
 let g:ale_cpp_cppcheck_options = ''
 
-
 let g:ale_sign_error = "✖"
 let g:ale_sign_warning = "!"
+
+" Limit linters used for JavaScript.
+"let g:ale_linters = {
+"\  'javascript': ['flow']
+"\}
+" Map keys to navigate between lines with errors and warnings.
+nnoremap <leader>an :ALENextWrap<cr>
+nnoremap <leader>ap :ALEPreviousWrap<cr>
+"
+"------------------- Js Support------------------------------
+autocmd FileType javascript nmap <F7> :!node %<CR>
+
+"------------------- Js beautify ------------------------------
+autocmd FileType javascript noremap <buffer>  <c-f> :call JsBeautify()<cr>
+autocmd FileType json noremap <buffer> <c-f> :call JsonBeautify()<cr>
+autocmd FileType jsx noremap <buffer> <c-f> :call JsxBeautify()<cr>
+autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
+autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
