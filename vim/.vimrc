@@ -398,7 +398,7 @@ func! SetTitle()
         call append(line(".")+2, " Created Time: ".strftime("%c"))
         call append(line(".")+3, " Description:")
         call append(line(".")+4, " ************************************************************************/")
-        call append(line(".")+5, "") 
+        call append(line(".")+5, "'use strict';")
         call append(line(".")+6, "") 
     else
         call setline(1, "/*************************************************************************")
@@ -456,6 +456,7 @@ Plugin 'ludovicchabant/vim-gutentags'
 Plugin 'skywind3000/vim-preview'
 Plugin 'aklt/plantuml-syntax'
 Plugin 'maksimr/vim-jsbeautify'
+Plugin 'scrooloose/nerdcommenter'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -786,3 +787,24 @@ autocmd FileType json noremap <buffer> <c-f> :call JsonBeautify()<cr>
 autocmd FileType jsx noremap <buffer> <c-f> :call JsxBeautify()<cr>
 autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
 autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
+
+"------------------- NerdCommenter ---------------------------
+" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+" Use compact syntax for prettified multi-line comments
+let g:NERDCompactSexyComs = 1
+" Align line-wise comment delimiters flush left instead of following code indentation
+let g:NERDDefaultAlign = 'start'
+" Set a language to use its alternate delimiters by default
+"let g:NERDAltDelims_java = 1
+" Add your own custom formats or override the defaults
+"let g:NERDCustomDelimiters = { 
+"            \ 'c': { 'left': '/**','right': '*/' },
+"            \ 'cpp': { 'left': '/**','right': '*/' }
+"            \ }
+" Allow commenting and inverting empty lines (useful when commenting a region)
+let g:NERDCommentEmptyLines = 1
+" Enable trimming of trailing whitespace when uncommenting
+let g:NERDTrimTrailingWhitespace = 1
+" Enable NERDCommenterToggle to check all selected lines is commented or not 
+let g:NERDToggleCheckAllLines = 1

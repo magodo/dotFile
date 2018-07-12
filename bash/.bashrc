@@ -90,8 +90,8 @@ privoxy_setup()
 alias db_root='mycli -uroot -p123'
 alias db_magodo='mycli -umagodo -p123'
 
-# jshint
-export PATH=$PATH:$HOME/node_modules/jshint/bin
+# js tools
+export PATH=$PATH:$HOME/node_modules/.bin
 
 # shellcheck
 git_check()
