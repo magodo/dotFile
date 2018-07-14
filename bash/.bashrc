@@ -140,3 +140,5 @@ git_check_commit()
 }
 
 alias cdgo="cd $GOPATH/src/github.com/magodo/go_snippet"
+
+export PS1="\u@\H \W 💤 "

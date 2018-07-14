@@ -1,127 +1,156 @@
-# Path to your oh-my-zsh installation.
-  export ZSH=/home/magodo/.oh-my-zsh
+# enable zsh-completions
+autoload -U compinit
+compinit
 
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
-ZSH_THEME="awesomepanda"
+# autoload prompt theme
+autoload -Uz promptinit
+promptinit
 
-# Uncomment the following line to use case-sensitive completion.
-CASE_SENSITIVE="true"
+PROMPT='%n%f@%m%f %F{yellow}%1~ %f💤 '
 
-# Uncomment the following line to use hyphen-insensitive completion. Case
-# sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
+# keybinding
+bindkey -e
+bindkey \^U backward-kill-line
 
-# Uncomment the following line to disable bi-weekly auto-update checks.
-DISABLE_AUTO_UPDATE="true"
+# colorize $(tree) output
+eval "$(dircolors)"
 
-# Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
+# colorize grep
+export GREP_COLORS="ms=01;31:mc=01;31:sl=:cx=:fn=35:ln=32:bn=32:se=36"
+alias grep='grep --color'
 
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
+export EDITOR=/usr/bin/vim
 
-# Uncomment the following line to disable auto-setting terminal title.
-DISABLE_AUTO_TITLE="true"
+# colorize ls
+alias ls="ls --color"
+alias l="ls"
+alias ll="ls -l"
 
-# Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
+# input method
+export GTK_IM_MODULE=ibus
+export XMODIFIERS=@im=ibus
+export QT_IM_MODULE=ibus
 
-# Uncomment the following line to display red dots whilst waiting for completion.
-# COMPLETION_WAITING_DOTS="true"
+# dictionary
+alias def="/usr/bin/sdcv"
 
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
+# ruby gems
+GEM_HOME=$(ls -t -U | ruby -e 'puts Gem.user_dir')
+GEM_PATH=$GEM_HOME
+export PATH=$PATH:$GEM_HOME/bin
 
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# HIST_STAMPS="mm/dd/yyyy"
+# path
+export PATH=$HOME/github/tool/MyUtilities:$HOME/.local/bin/:$PATH
 
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
+# reset psmouse
+reset_psmouse()
+{
+    sudo modprobe -r psmouse && sudo modprobe psmouse
+}
 
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+# set terminal transparency
+hide()
+{
+    profile=$(gsettings get org.gnome.Terminal.ProfilesList default)
+    profile=${profile:1:-1} # remove leading and trailing single quotes
 
-# User configuration
+    if [[ $1 ]]; then
+        gsettings set "org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$profile/" background-transparency-percent "$1"
+    else
+        local cur_val
+        local new_val
 
-  export PATH="/home/magodo/android/android-ndk-r8c:/home/magodo/android/android-sdk_r21-linux/platform-tools:/home/magodo/android/android-sdk_r21-linux/tools:/home/magodo/android/android-ndk-r8c:/home/magodo/android/android-sdk_r21-linux/platform-tools:/home/magodo/android/android-sdk_r21-linux/tools:/usr/lib/lightdm/lightdm:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/home/magodo/.rvm/bin:/home/magodo/bin"
-# export MANPATH="/usr/local/man:$MANPATH"
+        cur_val=$(gsettings get "org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$profile/" background-transparency-percent)
 
-source $ZSH/oh-my-zsh.sh
+        if [[ $cur_val != 30 ]]; then
+            new_val=30
+        else
+            new_val=2
+        fi
+        gsettings set "org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$profile/" background-transparency-percent $new_val
+    fi
+}
 
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
+# golang
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
 
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
+# todo
+export TODO_DIR=~/.todo/data
+alias todo="todo.sh"
+#todo ls | cowsay -n  -d
+todo ls
 
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
-# ssh
-# export SSH_KEY_PATH="~/.ssh/dsa_id"
-
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-
-##############################################
-#-----------------
 # python
-#-----------------
-export PYTHONSTARTUP=/home/magodo/.pythonstartup
 export PYTHONDONTWRITEBYTECODE=1
- 
-#-----------------
-# coredump
-#-----------------
-#ulimit -c unlimited
- 
-#-----------------
-# Android
-#-----------------
-export ANDROIDSDK=/home/magodo/android/android-sdk_r21-linux
-export ANDROIDNDK=/home/magodo/android/android-ndk-r8c
-export ANDROIDNDKVER=r8c
-export ANDROIDAPI=14
-export ANDROID_EMULATOR_FORCE_32BIT=true
-export PATH=$ANDROIDNDK:$ANDROIDSDK/platform-tools:$ANDROIDSDK/tools:$PATH
- 
-#-----------------
-# dia bug fix
-#-----------------
-alias dia="env LIBOVERLAY_SCROLLBAR=0 dia"
 
-#-----------------
-# vim binding in zsh
-#-----------------
-## Open vim binding
-#bindkey -v
-## Bind <ESC> to 'jk'
-#bindkey -M viins 'jk' vi-cmd-mode
-## Keep <C-R> history roll-back function
-#bindkey '^R' history-incremental-search-backward
+# ucloud go
+ucloud_dev()
+{
+    export GOPATH=$HOME/UCloud/Project/go_workspace/
+    export PATH=$HOME/.local/bin-ucloud:$HOME/UCloud/Project/go_workspace/bin:$PATH
+    #export UDB_CONFIG_DIR=$HOME/UCloud/Project/udb-config
+    . ~/.udb_bashrc
+}
 
-#-----------------
-# Disable history share
-#-----------------
-unsetopt share_history
+# http(s) proxy
+privoxy_setup()
+{
+    export http_proxy=http://127.0.0.1:8118
+    export https_proxy=https://127.0.0.1:8118
+}
 
+# DB
+alias db_root='mycli -uroot -p123'
+alias db_magodo='mycli -umagodo -p123'
+
+# js tools
+export PATH=$PATH:$HOME/node_modules/.bin
+
+# shellcheck
+git_check()
+{
+    if (( $(git status --porcelain|wc -l) != 0 )); then
+        git_check_index
+    else
+        git_check_commit
+    fi
+    return $?
+}
+
+git_check_index()
+{
+    local is_fail mode XY filename X Y
+
+    is_fail=0
+    while read -r XY filename; do
+        X=${XY:0:1}
+        Y=${XY:1:1}
+        if [[ -n $Y ]]; then
+            mode=$Y
+        else
+            mode=$X
+        fi
+        if [[ $mode != "D" ]]; then
+            [[ ${filename##*.} = "sh" ]] && { shellcheck "$(git rev-parse --show-toplevel)/$filename" || is_fail=1; }
+            [[ ${filename##*.} = "js" ]] && { jshint "$(git rev-parse --show-toplevel)/$filename" || is_fail=1; }
+        fi
+    done < <(git status --porcelain)
+    return $is_fail
+}
+
+git_check_commit()
+{
+    local is_fail mode filename
+
+    is_fail=0
+    while read -r _ _ _ _ mode filename; do
+        if [[ $mode != "D" ]]; then
+            [[ ${filename##*.} = "sh" ]] && { shellcheck "$(git rev-parse --show-toplevel)/$filename" || is_fail=1; }
+            [[ ${filename##*.} = "js" ]] && { jshint "$(git rev-parse --show-toplevel)/$filename" || is_fail=1; }
+        fi
+    done < <(git diff HEAD^1 --raw)
+    return $is_fail
+}
+
+alias cdgo="cd $GOPATH/src/github.com/magodo/go_snippet"
