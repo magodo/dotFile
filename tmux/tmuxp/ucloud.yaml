@@ -1,0 +1,26 @@
+session_name: ucloud
+windows:
+- focus: 'true'
+  options:
+    automatic-rename: 'off'
+  panes:
+  - focus: 'true'
+  start_directory: /home/magodo/go/src/ucloud.cn/udb
+  shell_command: ucloud_dev
+  window_name: v2
+- panes:
+  - focus: 'true'
+  start_directory: /home/magodo/UCloud/Project/udb
+  window_name: udb
+- panes:
+  - focus: 'true'
+  start_directory: /home/magodo/UCloud/Project/udb/script
+  window_name: udb-script
+- panes:
+  - focus: 'true'
+  start_directory: /home/magodo/UCloud/Project/udb-api-gateway
+  window_name: api
+- panes:
+  - focus: 'true'
+  start_directory: /home/magodo/UCloud/Project/message
+  window_name: message

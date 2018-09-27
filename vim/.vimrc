@@ -416,54 +416,61 @@ endfunc
 " => Plugins
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-"------------------------- Vundle ----------------------------------
-filetype off                  " required
+" auto install vim-plug if not exists
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+call plug#begin('~/.vim/plugged')
 
-Plugin 'gmarik/Vundle.vim'
-Plugin 'Valloric/YouCompleteMe'
-"Plugin 'rdnetto/YCM-Generator'
-"Plugin 'bling/vim-airline'
-Plugin 'godlygeek/tabular'
-Plugin 'plasticboy/vim-markdown'
-"Plugin 'vim-scripts/taglist.vim'
-Plugin 'majutsushi/tagbar'
-Plugin 'vim-scripts/winmanager--Fox'
-Plugin 'vim-scripts/TaskList.vim'
-Plugin 'sjl/gundo.vim'
-"Plugin 'nvie/vim-flake8'
-Plugin 'tpope/vim-surround'
-Plugin 'flazz/vim-colorschemes'
-"Plugin 'rafi/awesome-vim-colorschemes'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'tpope/vim-fugitive.git'
-Plugin 'fatih/vim-go'
-Plugin 'AndrewRadev/splitjoin.vim'
-Plugin 'SirVer/ultisnips'
-Plugin 'mattn/emmet-vim'
-Plugin 'iamcco/markdown-preview.vim'
-"Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'jeetsukumaran/vim-buffergator'
-"Plugin 'vim-ctrlspace/vim-ctrlspace'
-"Plugin 'vim-syntastic/syntastic'
-Plugin 'w0rp/ale'
-Plugin 'Chiel92/vim-autoformat'
-Plugin 'ludovicchabant/vim-gutentags'
-Plugin 'skywind3000/vim-preview'
-Plugin 'aklt/plantuml-syntax'
-Plugin 'maksimr/vim-jsbeautify'
-Plugin 'scrooloose/nerdcommenter'
+" deoplete
+"Plug 'roxma/nvim-yarp'
+"Plug 'roxma/vim-hug-neovim-rpc'
+"Plug 'Shougo/deoplete.nvim'
+"Plug 'zchee/deoplete-go', { 'do': 'make'}
 
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
+Plug 'Valloric/YouCompleteMe'
+"Plug 'rdnetto/YCM-Generator'
+"Plug 'bling/vim-airline'
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
+"Plug 'vim-scripts/taglist.vim'
+Plug 'majutsushi/tagbar'
+Plug 'vim-scripts/winmanager--Fox'
+Plug 'vim-scripts/TaskList.vim'
+Plug 'sjl/gundo.vim'
+"Plug 'nvie/vim-flake8'
+Plug 'tpope/vim-surround'
+Plug 'flazz/vim-colorschemes'
+"Plug 'rafi/awesome-vim-colorschemes'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'https://github.com/tpope/vim-fugitive.git'
+Plug 'fatih/vim-go'
+Plug 'AndrewRadev/splitjoin.vim'
+Plug 'SirVer/ultisnips'
+Plug 'mattn/emmet-vim'
+Plug 'iamcco/markdown-preview.vim'
+"Plug 'ctrlpvim/ctrlp.vim'
+Plug 'jeetsukumaran/vim-buffergator'
+"Plug 'vim-ctrlspace/vim-ctrlspace'
+"Plug 'vim-syntastic/syntastic'
+Plug 'w0rp/ale'
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'skywind3000/vim-preview'
+Plug 'aklt/plantuml-syntax'
+Plug 'maksimr/vim-jsbeautify'
+Plug 'scrooloose/nerdcommenter'
+Plug 'pearofducks/ansible-vim'
+Plug 'Chiel92/vim-autoformat'
+Plug 'sheerun/vim-polyglot'
+call plug#end()
 
 "-------------------- Color Scheme -------------------
 
+"colorscheme jellybeans
 colorscheme molokai
 
 " keep terminal background (for transparent support)
@@ -532,10 +539,12 @@ let g:ycm_filetype_whitelist = {
             \ "c": 1,
             \ "python": 1,
             \ "sh": 1,
-            \ "go": 0,
+            \ "go": 1,
             \ "javascript": 1,
             \ "java": 1,
-            \ "uml": 1}
+            \ "uml": 1,
+            \ "yaml": 1,
+            \ "yaml.ansible": 1}
 
 " Below will not overload the default one(i.e. "." and "->"), but append.
 let g:ycm_semantic_triggers =  {
@@ -702,6 +711,8 @@ let g:go_fmt_command = "goimports"
 let g:UltiSnipsExpandTrigger="<c-j>"
 let g:UltiSnipsJumpForwardTrigger="<c-b>"
 let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+let g:UltiSnipsSnippetsDir=$HOME.'/.vim/UltiSnips'
+let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips']
 
 "------------------------ ctrl space ----------------
 
@@ -715,8 +726,9 @@ let g:syntastic_mode_map = {
     \ "active_filetypes": [],
     \ "passive_filetypes": [] }
 
-"------------------------- autoformat --------------
-map <leader>f :Autoformat<CR>
+""------------------------- yapf --------------
+"autocmd FileType python nnoremap <leader>f :0,$!yapf<Cr><C-o>
+"autocmd BufWritePre *.py 0,$!yapf
 
 "------------------------- gtags --------------
 "let $GTAGSLABEL = 'native-pygments'
@@ -751,6 +763,9 @@ let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 
 " 禁用 gutentags 自动加载 gtags 数据库的行为
 "let g:gutentags_auto_add_gtags_cscope = 0
+
+let g:gutentags_ctags_exclude = ['*.yaml', '*.markdown', '*.md', '*.html', '*.js']
+let g:gutentags_ctags_exclude_wildignore = 1
 
 "------------------------- ale --------------
 "let g:ale_linters_explicit = 1
@@ -808,3 +823,19 @@ let g:NERDCommentEmptyLines = 1
 let g:NERDTrimTrailingWhitespace = 1
 " Enable NERDCommenterToggle to check all selected lines is commented or not 
 let g:NERDToggleCheckAllLines = 1
+
+"------------------- Autoformat ------------------------------
+noremap <leader>f :Autoformat<CR>
+"autocmd BufWrite * :Autoformat
+
+" When no formatprogram exists (or no formatprogram is installed) for a
+" certain filetype, vim-autoformat falls back by default to indenting, (using
+" vim's auto indent functionality), retabbing and removing trailing
+" whitespace.
+" BUT... We don't need it, hence disable it..
+let g:autoformat_autoindent = 0
+let g:autoformat_retab = 0
+let g:autoformat_remove_trailing_spaces = 0
+
+"------------------- deoplete ------------------------------
+let g:deoplete#enable_at_startup = 1

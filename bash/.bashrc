@@ -65,7 +65,7 @@ export PATH=$PATH:$GOPATH/bin
 export TODO_DIR=~/.todo/data
 alias todo="todo.sh"
 #todo ls | cowsay -n  -d
-todo ls
+#todo ls
 
 # python
 export PYTHONDONTWRITEBYTECODE=1
@@ -142,3 +142,5 @@ git_check_commit()
 alias cdgo="cd $GOPATH/src/github.com/magodo/go_snippet"
 
 export PS1="\u@\H \W 💤 "
+
+

@@ -1,0 +1,54 @@
+snippet MYDIR "MYDIR for script" b
+MYDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MYNAME="$(basename "${BASH_SOURCE[0]}")"
+endsnippet
+
+snippet usage "usage function" b
+usage() {
+	cat << EOF
+Usage: ./${MYNAME} [options] $1
+
+Options:
+	-h|--help			show this message
+
+Arguments:
+
+EOF
+}
+endsnippet
+
+snippet parse "parse input argument" b
+while :; do
+	case \$1 in
+		-h|--help)
+			$1
+			exit 1
+			;;
+		--)
+			shift
+			break
+			;;
+		*)
+			break
+			;;
+	esac
+	shift
+done
+endsnippet
+
+######################################## UDB specific #####################################################
+
+snippet ulog "Setup log output" b
+# if standard error is not bound to terminal, this means the script is invoked by wiwo. Then redirect log to file.
+if [[ ! -t 2 ]]; then
+    exec 1> >(ulog 1 -)
+    exec 2> >(ulog 3 -)
+fi
+endsnippet
+
+snippet expect_n_arg "expect n arguments" b
+local expect_n_arg
+expect_n_arg=$1
+[[ $# = "$expect_n_arg" ]] || die "wrong arguments (expected: $expect_n_arg, got: $#)"
+endsnippet
+

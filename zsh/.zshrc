@@ -63,8 +63,8 @@ ZSH_THEME="cloud-emoji"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   zsh-completions
-  #zsh-autosuggestions
   git
+  docker
 )
 
 
@@ -180,7 +180,7 @@ export PATH=$PATH:$GOPATH/bin
 export TODO_DIR=~/.todo/data
 alias todo="todo.sh"
 #todo ls | cowsay -n  -d
-todo ls
+#todo ls
 
 # python
 export PYTHONDONTWRITEBYTECODE=1
@@ -189,14 +189,15 @@ export PYTHONDONTWRITEBYTECODE=1
 ucloud_dev()
 {
     export GOPATH=$HOME/UCloud/Project/go_workspace/
-    export PATH=$HOME/.local/bin-ucloud:$HOME/UCloud/Project/go_workspace/bin:$PATH
-    #export UDB_CONFIG_DIR=$HOME/UCloud/Project/udb-config
-    . ~/.udb_bashrc
+    export PATH=$HOME/.local/bin-ucloud:$GOPATH/bin:$PATH
+    export UDB_CONFIG_DIR=$HOME/UCloud/Project/udb-config
+    #. ~/.udb_bashrc
 }
 
 # http(s) proxy
 privoxy_setup()
 {
+    sudo systemctl start privoxy
     export http_proxy=http://127.0.0.1:8118
     export https_proxy=https://127.0.0.1:8118
 }
@@ -255,4 +256,28 @@ git_check_commit()
 }
 
 alias cdgo="cd $GOPATH/src/github.com/magodo/go_snippet"
+
+
+alias git_bigfile="git rev-list --objects --all \
+| git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' \
+| sed -n 's/^blob //p' \
+| sort --numeric-sort --key=2 \
+| cut -c 1-12,41- \
+| numfmt --field=2 --to=iec-i --suffix=B --padding=7 --round=nearest"
+
+# fabric
+export PATH=$PATH:$HOME/fabric-samples/bin
+
+# node version manager
+export NVM_DIR="$HOME/.nvm"
+#[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# python version manager
+#export PYENV_ROOT="$HOME/.pyenv"
+#export PATH="$PYENV_ROOT/bin:$PATH"
+#command -v pyenv 1>/dev/null 2>&1 && eval "$(pyenv init -)"
+
+# golang version manager
+#[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
 
