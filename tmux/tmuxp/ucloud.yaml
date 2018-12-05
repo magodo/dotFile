@@ -5,7 +5,7 @@ windows:
     automatic-rename: 'off'
   panes:
   - focus: 'true'
-  start_directory: /home/magodo/go/src/ucloud.cn/udb
+  start_directory: /home/magodo/projects/go_workspace/src/ucloud.cn/udb/
   shell_command: ucloud_dev
   window_name: v2
 - panes:
@@ -24,3 +24,7 @@ windows:
   - focus: 'true'
   start_directory: /home/magodo/UCloud/Project/message
   window_name: message
+- panes:
+  - focus: 'true'
+  start_directory: /home/magodo/UCloud/Project/udb-config
+  window_name: config

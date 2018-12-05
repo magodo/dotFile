@@ -38,8 +38,23 @@ endsnippet
 
 ######################################## UDB specific #####################################################
 
+snippet ulog_ret "Setup log output, some output should be used as return value" b
+# 需要返回的内容需要重定向到描述符8
+exec 8>&1
+if [[ -t 2 ]]; then
+    # 如果原本的标准错误是终端，这意味着脚本是在终端被直接调用的
+    # 因此，将fd1,fd2重定向到终端，这样用户可以看到debug信息，并且不影响返回输出。
+    exec 1>&2
+else
+    # 否则，将fd1和fd2重定向到ulog的debug log和error log
+    exec 1> >(ulog 1 -)
+    exec 2> >(ulog 3 -)
+fi
+endsnippet
+
 snippet ulog "Setup log output" b
-# if standard error is not bound to terminal, this means the script is invoked by wiwo. Then redirect log to file.
+# 如果原本的标准错误是终端，这意味着脚本是在终端被直接调用的
+# 因此，将fd1,fd2重定向到终端
 if [[ ! -t 2 ]]; then
     exec 1> >(ulog 1 -)
     exec 2> >(ulog 3 -)
@@ -52,3 +67,9 @@ expect_n_arg=$1
 [[ $# = "$expect_n_arg" ]] || die "wrong arguments (expected: $expect_n_arg, got: $#)"
 endsnippet
 
+snippet die "die" b
+die() {
+    echo "$@" >&2
+	exit 1
+}
+endsnippet

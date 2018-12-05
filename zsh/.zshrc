@@ -146,6 +146,7 @@ export PATH=$HOME/github/tool/MyUtilities:$HOME/.local/bin/:$PATH
 # reset psmouse
 reset_psmouse()
 {
+    #sudo modprobe -r psmouse && sudo modprobe psmouse proto=imps
     sudo modprobe -r psmouse && sudo modprobe psmouse
 }
 
@@ -188,7 +189,7 @@ export PYTHONDONTWRITEBYTECODE=1
 # ucloud go
 ucloud_dev()
 {
-    export GOPATH=$HOME/UCloud/Project/go_workspace/
+    #export GOPATH=$HOME/UCloud/Project/go_workspace
     export PATH=$HOME/.local/bin-ucloud:$GOPATH/bin:$PATH
     export UDB_CONFIG_DIR=$HOME/UCloud/Project/udb-config
     #. ~/.udb_bashrc
@@ -281,3 +282,6 @@ export NVM_DIR="$HOME/.nvm"
 # golang version manager
 #[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
 
+# android
+export ANDROID_SDK_ROOT=$HOME/Android/Sdk
+export PATH=$PATH:"$HOME/Android/Sdk/platform-tools"

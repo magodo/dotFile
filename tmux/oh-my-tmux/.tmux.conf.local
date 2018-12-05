@@ -267,7 +267,7 @@ bind C-q send-prefix
 #set -g status-position top
 
 # Reload tmux configuration 
-bind C-r source-file ~/.tmux.conf \; display "Config reloaded"
+#bind C-r source-file ~/.tmux.conf \; display "Config reloaded"
 
 # Restore default window navigation
 unbind C-l

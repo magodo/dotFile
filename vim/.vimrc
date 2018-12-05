@@ -541,9 +541,11 @@ let g:ycm_filetype_whitelist = {
             \ "sh": 1,
             \ "go": 1,
             \ "javascript": 1,
+            \ "javascript.jsx": 1,
             \ "java": 1,
             \ "uml": 1,
             \ "yaml": 1,
+            \ "markdown": 1,
             \ "yaml.ansible": 1}
 
 " Below will not overload the default one(i.e. "." and "->"), but append.
