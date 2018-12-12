@@ -120,6 +120,9 @@ eval "$(dircolors)"
 export GREP_COLORS="ms=01;31:mc=01;31:sl=:cx=:fn=35:ln=32:bn=32:se=36"
 alias grep='grep --color'
 
+# colorize cat
+alias cat=ccat
+
 export EDITOR=/usr/bin/vim
 
 # colorize ls
@@ -275,9 +278,9 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # python version manager
-#export PYENV_ROOT="$HOME/.pyenv"
-#export PATH="$PYENV_ROOT/bin:$PATH"
-#command -v pyenv 1>/dev/null 2>&1 && eval "$(pyenv init -)"
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+command -v pyenv 1>/dev/null 2>&1 && eval "$(pyenv init -)"
 
 # golang version manager
 #[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
@@ -285,3 +288,24 @@ export NVM_DIR="$HOME/.nvm"
 # android
 export ANDROID_SDK_ROOT=$HOME/Android/Sdk
 export PATH=$PATH:"$HOME/Android/Sdk/platform-tools"
+
+# go mod graph
+go_dep() {
+    f_unver=$(mktemp)
+    f_graph=$(mktemp)
+    f_img=$(mktemp)
+    go list -m &>/dev/null || { echo "no go module found!" 2>&1; return 1; }
+    go mod graph | sed -Ee 's/@[^[:blank:]]+//g' | sort | uniq > $f_unver
+    cat << EOF > $f_graph
+digraph {
+    graph [overlap=false, size=14];
+    root="$(go list -m)";
+    node [ shape = plaintext, fontsize=24];
+    "(go list -m)" [style=filled, fillcolor="#E94762"];
+EOF
+    cat $f_unver | awk '{print "\""$1"\" -> \""$2"\""};' >> $f_graph
+    echo "}" >> $f_graph
+    dot -Tsvg -o $f_img $f_graph
+    eog $f_img
+    rm $f_img $f_graph $f_unver
+}
