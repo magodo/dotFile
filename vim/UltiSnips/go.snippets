@@ -1,6 +1,36 @@
 snippet errw "wrap error" b
-if err != nil {
-	err = errors.Wrap(err, "$1")
+if $1 != nil {
+	$1 = errors.Wrap($1, "$2")
+	return $1
+}
+endsnippet
+
+snippet ierrw "wrap error" b
+if $1 err := $2; err != nil {
+	err = errors.Wrap(err, "$3")
 	return err
+}
+endsnippet
+
+snippet testcase "simple test case" b
+func TestFoo(t *testing.T) {
+	cases := []struct {
+	}{
+		{
+		},
+	}
+
+	for _, c := range cases {
+		out := 
+		if out != {
+			t.Fatalf()
+		}
+	}
+}
+endsnippet
+
+snippet errg "grpc error" b
+if $1 != nil {
+	return status.Error(codes.$2, "failed to $3: " + $1.Error())
 }
 endsnippet

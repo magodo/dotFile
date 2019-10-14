@@ -432,7 +432,7 @@ call plug#begin('~/.vim/plugged')
 "Plug 'zchee/deoplete-go', { 'do': 'make'}
 
 Plug 'Valloric/YouCompleteMe'
-"Plug 'rdnetto/YCM-Generator'
+Plug 'rdnetto/YCM-Generator'
 "Plug 'bling/vim-airline'
 Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
@@ -466,6 +466,8 @@ Plug 'scrooloose/nerdcommenter'
 Plug 'pearofducks/ansible-vim'
 Plug 'Chiel92/vim-autoformat'
 Plug 'sheerun/vim-polyglot'
+"Plug 'natebosch/vim-lsc'
+"Plug 'godoctor/godoctor.vim'
 call plug#end()
 
 "-------------------- Color Scheme -------------------
@@ -535,11 +537,10 @@ nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
 " Avoid YCM process other file types
 let g:ycm_filetype_whitelist = { 
-            \"cpp": 1,
+            \"go": 0,
             \ "c": 1,
             \ "python": 1,
             \ "sh": 1,
-            \ "go": 1,
             \ "javascript": 1,
             \ "javascript.jsx": 1,
             \ "java": 1,
@@ -676,7 +677,8 @@ autocmd  FileType gitcommit exec ":call AutoWrap()"
 "------------------------ emmet -------------
 " enable just for html/css
 let g:user_emmet_install_global = 0
-autocmd FileType html,css EmmetInstall
+let g:user_emmet_leader_key=','
+autocmd FileType html,css,vue EmmetInstall
 
 "------------------------ markdown-preview ----------
 autocmd FileType markdown nmap <silent> <F8> <Plug>MarkdownPreview        " 普通模式
@@ -711,8 +713,8 @@ let g:go_fmt_command = "goimports"
 
 "------------------------ ultisnips ----------------
 let g:UltiSnipsExpandTrigger="<c-j>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+let g:UltiSnipsJumpForwardTrigger="<c-f>"
+let g:UltiSnipsJumpBackwardTrigger="<c-b>"
 let g:UltiSnipsSnippetsDir=$HOME.'/.vim/UltiSnips'
 let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips']
 
@@ -791,10 +793,12 @@ let g:ale_sign_warning = "!"
 "let g:ale_linters = {
 "\  'javascript': ['flow']
 "\}
+
 " Map keys to navigate between lines with errors and warnings.
-nnoremap <leader>an :ALENextWrap<cr>
-nnoremap <leader>ap :ALEPreviousWrap<cr>
-"
+nnoremap <C-n> :ALENextWrap<cr>
+nnoremap <C-p> :ALEPreviousWrap<cr>
+
+
 "------------------- Js Support------------------------------
 autocmd FileType javascript nmap <F7> :!node %<CR>
 
@@ -841,3 +845,15 @@ let g:autoformat_remove_trailing_spaces = 0
 
 "------------------- deoplete ------------------------------
 let g:deoplete#enable_at_startup = 1
+
+"------------------- vim-go ------------------------------
+let g:go_def_mode = 'gopls'
+let g:go_info_mode = 'gopls'
+noremap <leader>i :GoInfo<CR>
+
+"------------------- vim-lsc ------------------------------
+let g:lsc_server_commands = {'dart': 'dart_language_server'}
+let g:lsc_auto_map = v:true
+
+"------------------- polyglot -----------------------------
+"let g:polyglot_dsabled = ['liquid']

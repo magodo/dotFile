@@ -210,9 +210,6 @@ privoxy_setup()
 alias db_root='mycli -uroot -p123'
 alias db_magodo='mycli -umagodo -p123'
 
-# js tools
-export PATH=$PATH:$HOME/node_modules/.bin
-
 # shellcheck
 git_check()
 {
@@ -259,9 +256,6 @@ git_check_commit()
     return $is_fail
 }
 
-alias cdgo="cd $GOPATH/src/github.com/magodo/go_snippet"
-
-
 alias git_bigfile="git rev-list --objects --all \
 | git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' \
 | sed -n 's/^blob //p' \
@@ -287,7 +281,7 @@ command -v pyenv 1>/dev/null 2>&1 && eval "$(pyenv init -)"
 
 # android
 export ANDROID_SDK_ROOT=$HOME/Android/Sdk
-export PATH=$PATH:"$HOME/Android/Sdk/platform-tools"
+export PATH=$PATH:"$HOME/Android/Sdk/platform-tools":"$HOME/Android/Sdk/emulator"
 
 # go mod graph
 go_dep() {
@@ -309,3 +303,80 @@ EOF
     eog $f_img
     rm $f_img $f_graph $f_unver
 }
+
+####################################################################################
+# minikube
+####################################################################################
+if [[ -x /usr/bin/kubectl ]]; then source <(kubectl completion zsh); fi
+if [ /usr/bin/minikube ]; then 
+    source <(minikube completion zsh)
+    #eval $(minikube docker-env)
+fi
+
+####################################################################################
+# cow
+####################################################################################
+cow_env() {
+    export http_proxy=http://127.0.0.1:7777
+    export https_proxy=http://127.0.0.1:7777
+}
+
+####################################################################################
+# ruby: rvm
+####################################################################################
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+#export PATH="$PATH:$HOME/.rvm/bin"
+
+####################################################################################
+# flutter
+####################################################################################
+export PATH=$PATH:$HOME/FlutterSDK/bin
+export PATH=$PATH:$HOME/.pub-cache/bin
+export PUB_HOSTED_URL=https://pub.flutter-io.cn
+export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
+
+####################################################################################
+# go athens
+####################################################################################
+athens_env() {
+    docker container inspect athens-proxy &> /dev/null || /home/magodo/UCloud/Project/udb-gomod-athens/run.sh
+    export GO111MODULE=on
+    export GOPROXY=http://127.0.0.1:3000
+}
+
+athens_env_pub() {
+    export GO111MODULE=on
+    export GOPROXY=http://172.18.137.171:3000
+}
+
+export GOSUMDB=off
+
+####################################################################################
+# ngrok
+####################################################################################
+export PATH=$PATH:$HOME/.local/ngrok
+
+
+####################################################################################
+# udb pre mgrdb
+####################################################################################
+predb() {
+    mysql -uucloud -pucloud.cn0 -h192.168.152.10 -P3206 udb
+}
+
+[[ -s "/home/magodo/.gvm/scripts/gvm" ]] && source "/home/magodo/.gvm/scripts/gvm"
+
+####################################################################################
+# setup GVM
+####################################################################################
+gvm_setup() {
+    source ~/.gvm/scripts/gvm
+}
+
+####################################################################################
+# setup Azure
+####################################################################################
+. ~/.local/azure-cli/lib/az.completion.source
+export PATH=$PATH:/home/magodo/.local/azure-cli/bin
