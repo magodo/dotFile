@@ -136,15 +136,19 @@ export XMODIFIERS=@im=ibus
 export QT_IM_MODULE=ibus
 
 # dictionary
-alias def="/usr/bin/sdcv"
+def() {
+    pics=(Oro Mato)
+    pic=${pics[$((RANDOM%2+1))]} 
+    sdcv -n "$*" | xcowsay -t 3 --image ~/Pictures/$pic.png
+}
 
 # ruby gems
-GEM_HOME=$(ls -t -U | ruby -e 'puts Gem.user_dir')
-GEM_PATH=$GEM_HOME
-export PATH=$PATH:$GEM_HOME/bin
+#GEM_HOME=$(ls -t -U | ruby -e 'puts Gem.user_dir')
+#GEM_PATH=$GEM_HOME
+#export PATH=$PATH:$GEM_HOME/bin
 
 # path
-export PATH=$HOME/github/tool/MyUtilities:$HOME/.local/bin/:$PATH
+export PATH=$HOME/github/tool/MyUtilities:$HOME/.local/bin/:$HOME/node_modules/.bin:$PATH
 
 # reset psmouse
 reset_psmouse()
@@ -268,7 +272,7 @@ export PATH=$PATH:$HOME/fabric-samples/bin
 
 # node version manager
 export NVM_DIR="$HOME/.nvm"
-#[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # python version manager
@@ -308,7 +312,7 @@ EOF
 # minikube
 ####################################################################################
 if [[ -x /usr/bin/kubectl ]]; then source <(kubectl completion zsh); fi
-if [ /usr/bin/minikube ]; then 
+if [ -f /usr/bin/minikube ]; then 
     source <(minikube completion zsh)
     #eval $(minikube docker-env)
 fi
@@ -320,14 +324,6 @@ cow_env() {
     export http_proxy=http://127.0.0.1:7777
     export https_proxy=http://127.0.0.1:7777
 }
-
-####################################################################################
-# ruby: rvm
-####################################################################################
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-#export PATH="$PATH:$HOME/.rvm/bin"
 
 ####################################################################################
 # flutter
@@ -376,7 +372,24 @@ gvm_setup() {
 }
 
 ####################################################################################
-# setup Azure
+# setup terraform
 ####################################################################################
-. ~/.local/azure-cli/lib/az.completion.source
-export PATH=$PATH:/home/magodo/.local/azure-cli/bin
+alias tf=terraform
+
+####################################################################################
+# THIS SHOULD BE AT LAST LINE, OTHERWISE RVM WILL COMPLAIN
+# ruby: rvm
+####################################################################################
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+
+####################################################################################
+# azure related
+####################################################################################
+export PATH=$PATH:~/MS/projects/utils
+
+if [[ -x az ]]; then
+source /home/magodo/.local/azure-cli/az.completion
+fi
+
+# autoload -U +X bashcompinit && bashcompinit
+# complete -o nospace -C /usr/bin/terraform terraform
