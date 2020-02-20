@@ -432,7 +432,7 @@ call plug#begin('~/.vim/plugged')
 "Plug 'zchee/deoplete-go', { 'do': 'make'}
 
 Plug 'Valloric/YouCompleteMe'
-Plug 'rdnetto/YCM-Generator'
+"Plug 'rdnetto/YCM-Generator'
 "Plug 'bling/vim-airline'
 Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
@@ -468,6 +468,7 @@ Plug 'Chiel92/vim-autoformat'
 Plug 'sheerun/vim-polyglot'
 "Plug 'natebosch/vim-lsc'
 "Plug 'godoctor/godoctor.vim'
+Plug 'rust-lang/rust.vim'
 call plug#end()
 
 "-------------------- Color Scheme -------------------
@@ -512,7 +513,6 @@ hi Visual term=reverse cterm=reverse  guibg=Grey
 map <F6> :so $MYVIMRC<cr>
 
 "---------------------- YouCompleteMe -----------------------------
-"let g:ycm_server_use_vim_stdout = 0
 let g:ycm_server_keep_logfiles = 1
 let g:ycm_server_log_level = 'debug'
 let g:ycm_server_python_interpreter = "/usr/bin/python"
@@ -537,7 +537,8 @@ nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
 " Avoid YCM process other file types
 let g:ycm_filetype_whitelist = { 
-            \"go": 0,
+            \"go": 1,
+            \"rust": 1,
             \ "c": 1,
             \ "python": 1,
             \ "sh": 1,
@@ -559,35 +560,6 @@ let g:ycm_semantic_triggers =  {
 "let Tlist_Show_One_File=1
 
 "---------------------- Tagbar  -----------------------------
-
-let g:tagbar_type_go = {
-	\ 'ctagstype' : 'go',
-	\ 'kinds'     : [
-		\ 'p:package',
-		\ 'i:imports:1',
-		\ 'c:constants',
-		\ 'v:variables',
-		\ 't:types',
-		\ 'n:interfaces',
-		\ 'w:fields',
-		\ 'e:embedded',
-		\ 'm:methods',
-		\ 'r:constructor',
-		\ 'f:functions'
-	\ ],
-	\ 'sro' : '.',
-	\ 'kind2scope' : {
-		\ 't' : 'ctype',
-		\ 'n' : 'ntype'
-	\ },
-	\ 'scope2kind' : {
-		\ 'ctype' : 't',
-		\ 'ntype' : 'n'
-	\ },
-	\ 'ctagsbin'  : 'gotags',
-	\ 'ctagsargs' : '-sort -silent'
-\ }
-
 nmap tl :TagbarToggle<CR>
 
 "---------------------- WinManager -----------------------------
@@ -604,12 +576,13 @@ let g:powerline_pycmd='py3'
 
 "---------------------- Airline -------------------------------
 set laststatus=2
-let g:airline_powerline_fonts = 1
 "set t_Co=256" Make terminal has 256 colors
 "" default theme not work with tmux
+let g:airline_powerline_fonts = 1
 let g:airline_theme='molokai'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
+let g:airline_section_z = "%3p%%%#__accent_bold#%{g:airline_symbols.linenr}%4l%#__restore__#%#__accent_bold#/%L%{g:airline_symbols.maxlinenr}%#__restore__#:%3v% :%o"
 "---------------------- Ctags ---------------------------------
 " update taglist
 "map <F4> :!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
@@ -695,21 +668,6 @@ if &diff
 endif
 
 "------------------------ golang ----------------
-" run :GoBuild or :GoTestCompile based on the go file
-function! s:build_go_files()
-  let l:file = expand('%')
-  if l:file =~# '^\f\+_test\.go$'
-    call go#test#Test(0, 1)
-  elseif l:file =~# '^\f\+\.go$'
-    call go#cmd#Build(0)
-  endif
-endfunction
-autocmd FileType go nmap <F7> :<C-u>call <SID>build_go_files()<CR>
-
-" Whenever you save file goimports updates your Go import lines, adding missing ones and
-" removing unreferenced ones. Also arrange import path group by package. 
-" Furthermore, it does what gofmt does.
-let g:go_fmt_command = "goimports"
 
 "------------------------ ultisnips ----------------
 let g:UltiSnipsExpandTrigger="<c-j>"
@@ -773,21 +731,21 @@ let g:gutentags_ctags_exclude_wildignore = 1
 
 "------------------------- ale --------------
 "let g:ale_linters_explicit = 1
-let g:ale_completion_delay = 500
-let g:ale_echo_delay = 20
-let g:ale_lint_delay = 500
-let g:ale_echo_msg_format = '[%linter%] %code: %%s'
-let g:ale_lint_on_text_changed = 'normal'
-let g:ale_lint_on_insert_leave = 1
-let g:airline#extensions#ale#enabled = 1
-
-let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
-let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
-let g:ale_c_cppcheck_options = ''
-let g:ale_cpp_cppcheck_options = ''
-
-let g:ale_sign_error = "✖"
-let g:ale_sign_warning = "!"
+"let g:ale_completion_delay = 500
+"let g:ale_echo_delay = 20
+"let g:ale_lint_delay = 500
+"let g:ale_echo_msg_format = '[%linter%] %code: %%s'
+"let g:ale_lint_on_text_changed = 'normal'
+"let g:ale_lint_on_insert_leave = 1
+"let g:airline#extensions#ale#enabled = 1
+"
+"let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
+"let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
+"let g:ale_c_cppcheck_options = ''
+"let g:ale_cpp_cppcheck_options = ''
+"
+"let g:ale_sign_error = "✖"
+"let g:ale_sign_warning = "!"
 
 " Limit linters used for JavaScript.
 "let g:ale_linters = {
@@ -849,7 +807,26 @@ let g:deoplete#enable_at_startup = 1
 "------------------- vim-go ------------------------------
 let g:go_def_mode = 'gopls'
 let g:go_info_mode = 'gopls'
+
 noremap <leader>i :GoInfo<CR>
+
+" run :GoBuild or :GoTestCompile based on the go file
+function! s:build_go_files()
+  let l:file = expand('%')
+  if l:file =~# '^\f\+_test\.go$'
+    call go#test#Test(0, 1)
+  elseif l:file =~# '^\f\+\.go$'
+    call go#cmd#Build(0)
+  endif
+endfunction
+autocmd FileType go nmap <F7> :<C-u>call <SID>build_go_files()<CR>
+
+" Whenever you save file goimports updates your Go import lines, adding missing ones and
+" removing unreferenced ones. Also arrange import path group by package. 
+" Furthermore, it does what gofmt does.
+let g:go_fmt_command = "goimports"
+
+let g:go_rename_command = 'gopls'
 
 "------------------- vim-lsc ------------------------------
 let g:lsc_server_commands = {'dart': 'dart_language_server'}
@@ -857,3 +834,6 @@ let g:lsc_auto_map = v:true
 
 "------------------- polyglot -----------------------------
 "let g:polyglot_dsabled = ['liquid']
+
+"------------------- rust -----------------------------
+let g:rustfmt_autosave=1

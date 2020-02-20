@@ -7,7 +7,7 @@ export ZSH=$HOME/.oh-my-zsh
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="cloud-emoji"
+ZSH_THEME="cloud"
 
 # Set list of themes to load
 # Setting this variable when ZSH_THEME=random
@@ -119,20 +119,12 @@ eval "$(dircolors)"
 export GREP_COLORS="ms=01;31:mc=01;31:sl=:cx=:fn=35:ln=32:bn=32:se=36"
 alias grep='grep --color'
 
-# colorize cat
-alias cat=ccat
-
 export EDITOR=/usr/bin/vim
 
 # colorize ls
 alias ls="ls --color"
 alias l="ls"
 alias ll="ls -l"
-
-# input method
-export GTK_IM_MODULE=ibus
-export XMODIFIERS=@im=ibus
-export QT_IM_MODULE=ibus
 
 # dictionary
 def() {
@@ -142,9 +134,9 @@ def() {
 }
 
 # ruby gems
-#GEM_HOME=$(ls -t -U | ruby -e 'puts Gem.user_dir')
-#GEM_PATH=$GEM_HOME
-#export PATH=$PATH:$GEM_HOME/bin
+GEM_HOME=$(ls -t -U | ruby -e 'puts Gem.user_dir')
+GEM_PATH=$GEM_HOME
+export PATH=$PATH:$GEM_HOME/bin
 
 # path
 export PATH=$HOME/github/tool/MyUtilities:$HOME/.local/bin/:$HOME/node_modules/.bin:$PATH
@@ -182,6 +174,15 @@ hide()
 # golang
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
+gofoo() {
+    if [[ -d /tmp/gofoo ]]; then
+        cd /tmp/gofoo
+        return
+    fi
+    mkdir /tmp/gofoo
+    cd /tmp/gofoo
+    go mod init foo
+}
 
 # todo
 export TODO_DIR=~/.todo/data
@@ -390,5 +391,30 @@ if [[ -x az ]]; then
 source /home/magodo/.local/azure-cli/az.completion
 fi
 
+export ZSH_THEME_CLOUD_PREFIX=💤
+
 # autoload -U +X bashcompinit && bashcompinit
 # complete -o nospace -C /usr/bin/terraform terraform
+
+
+####################################################################################
+# TF Linter
+####################################################################################
+
+tflint() {
+    package=$1
+    [[ -z $package ]] && { echo "please specify [package] to be lint"; return 1; }
+    tmpdir=$(mktemp -d)
+    tflint_path="$tmpdir/tflint"
+    pushd /home/magodo/github/terraform-azurerm-provider-linter > /dev/null 2>&1
+    go build -o "$tmpdir/tflint" || return 1
+    popd >/dev/null 2>&1
+    GO111MODULE=on go vet -vettool="$tflint_path" "$package"
+    rm "$tflint_path"
+}
+
+####################################################################################
+# RUST
+####################################################################################
+export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
+export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
