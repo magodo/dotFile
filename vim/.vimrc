@@ -60,6 +60,17 @@ set ruler
 " Height of the command bar
 set cmdheight=2
 
+func! ToggleCmdHeight()
+    let oh = &cmdheight
+    if &cmdheight == 5
+        set cmdheight=2
+    else
+        set cmdheight=5
+    endif
+endfunction
+
+map <F1> :call ToggleCmdHeight()<cr>
+
 " Configure backspace so it acts as it should act
 set backspace=eol,start,indent
 "set whichwrap+=<,>,h,l
@@ -532,8 +543,10 @@ autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 "    \ 'c': 1,
 "    \ 'cpp': 1,
 "    \}
-
-nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+"
+noremap <leader>i :YcmCompleter GetType<CR>
+nnoremap <leader>gd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+nnoremap <leader>gr :YcmCompleter GoToReferences<CR>
 
 " Avoid YCM process other file types
 let g:ycm_filetype_whitelist = { 
@@ -636,7 +649,7 @@ map <leader>tl <Plug>TaskList
 
 "------------------------- GundoToggle ----------------------
 " review history
-map <leader>gd :GundoToggle<CR>
+"map <leader>gd :GundoToggle<CR>
 
 "------------------------ GIT -------------
 " automatically wrap at 72 text width when git commit
@@ -808,7 +821,7 @@ let g:deoplete#enable_at_startup = 1
 let g:go_def_mode = 'gopls'
 let g:go_info_mode = 'gopls'
 
-noremap <leader>i :GoInfo<CR>
+"noremap <leader>i :GoInfo<CR>
 
 " run :GoBuild or :GoTestCompile based on the go file
 function! s:build_go_files()
@@ -827,6 +840,8 @@ autocmd FileType go nmap <F7> :<C-u>call <SID>build_go_files()<CR>
 let g:go_fmt_command = "goimports"
 
 let g:go_rename_command = 'gopls'
+
+"let g:go_metalinter_autosave = 1
 
 "------------------- vim-lsc ------------------------------
 let g:lsc_server_commands = {'dart': 'dart_language_server'}

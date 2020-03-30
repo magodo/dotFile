@@ -42,9 +42,9 @@ endsnippet
 snippet tfdeclres "declare resource" b
 func resourceArm$1() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceArm$1Create,
+		Create: resourceArm$1CreateUpdate,
 		Read:   resourceArm$1Read,
-		Update: resourceArm$1Update,
+		Update: resourceArm$1CreateUpdate,
 		Delete: resourceArm$1Delete,
 
 		Importer: azSchema.ValidateResourceIDPriorToImport(func(id string) error {
@@ -67,9 +67,9 @@ func resourceArm$1() *schema.Resource {
 				ValidateFunc: validate$1Name(),
 			},
 
-			"location": azure.SchemaLocation(),
-
 			"resource_group_name": azure.SchemaResourceGroupName(),
+
+			"location": azure.SchemaLocation(),
 
 			$0
 
@@ -77,9 +77,85 @@ func resourceArm$1() *schema.Resource {
 		},
 	}
 }
+
+func resourceArm$1CreateUpdate(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*clients.Client).$2.$3Client
+	ctx, cancel := timeouts.ForCreateUpdate(meta.(*clients.Client).StopContext, d)
+	defer cancel()
+
+	name := d.Get("name").(string)
+	resourceGroup := d.Get("resource_group_name").(string)
+
+	if d.IsNewResource() {
+		resp, err := client.Get(ctx, resourceGroup, name)
+		if err != nil {
+			if !utils.ResponseWasNotFound(resp.Response) {
+				return fmt.Errorf("failed to check for existing ${1/([A-Z][a-z]+)/$1 /g} %q (Resource Group %q): %+v", name, resourceGroup, err)
+			}
+		}
+
+		if !utils.ResponseWasNotFound(resp.Response) {
+			return tf.ImportAsExistsError("azurerm${1/(\w+)\s*/_\L$1\E/g}", *resp.ID)
+		}
+	}
+
+	// TODO: d.Get() && Create
+
+	resp, err := client.Get(ctx, resourceGroupName, name)
+	if err != nil {
+		return fmt.Errorf("Error retrieving ${1/([A-Z][a-z]+)/$1 /g} %q (Resource Group %q): %+v", name, resourceGroupName, err)
+	}
+	if resp.ID == nil || *resp.ID == nil {
+		return fmt.Errorf("Cannot read ${1/([A-Z][a-z]+)/$1 /g} %q (Resource Group %q) ID", name, resourceGroupName)
+	}
+	d.SetId(*resp.ID)
+
+	return resourceArm$1Read(d, meta)
+}
+
+func resourceArm$1Read(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*clients.Client).$2.$3Client
+	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
+	defer cancel()
+
+	id, err := parse.$1ID(d.Id())
+	if err != nil {
+		return err
+	}
+
+	resp, err := client.Get(ctx, id.ResourceGroup, id.Name)
+	if err != nil {
+		if utils.ResponseWasNotFound(resp.Response) {
+			log.Printf("[DEBUG] ${1/([A-Z][a-z]+)/$1 /g} %q was not found in Resource Group %q - removing from state!", id.Name, id.ResourceGroup)
+			d.SetId("")
+			return nil
+		}
+
+		return fmt.Errorf("failed to retrieve ${1/([A-Z][a-z]+)/$1 /g} %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+	}
+
+	// TODO: d.Set()
+
+	return tags.FlattenAndSet(d, resp.Tags)
+}
+
+func resourceArm$1Delete(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*clients.Client).$2.$3Client
+	ctx, cancel := timeouts.ForDelete(meta.(*clients.Client).StopContext, d)
+	defer cancel()
+
+	id, err := parse.$1ID(d.Id())
+	if err != nil {
+		return err
+	}
+
+	// TODO: delete
+
+	return nil
+}
 endsnippet
 
-snippet tfdecldat "declare data source" b
+snippet tfdeclds "declare data source" b
 func dataSourceArm$1() *schema.Resource {
 	return &schema.Resource{
 		Read: dataSourceArm$1Read,
@@ -95,9 +171,9 @@ func dataSourceArm$1() *schema.Resource {
 				ValidateFunc: validate$1Name(),
 			},
 
-			"location": azure.SchemaLocationForDataSource(),
-
 			"resource_group_name": azure.SchemaResourceGroupNameForDataSource(),
+
+			"location": azure.SchemaLocationForDataSource(),
 
 			$0
 
@@ -105,6 +181,31 @@ func dataSourceArm$1() *schema.Resource {
 		},
 	}
 }
+
+func dataSourceArm$1Read(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*clients.Client).$2.$3Client
+	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
+	defer cancel()
+
+	name := d.Get("name").(string)
+	resourceGroup := d.Get("resource_group_name").(string)
+
+	resp, err := client.Get(ctx, resourceGroup, name)
+	if err != nil {
+		if utils.ResponseWasNotFound(resp.Response) {
+			return fmt.Errorf("${1/([A-Z][a-z]+)/$1 /g} %q (Resource Group %q) was not found", name, resourceGroup)
+		}
+
+		return fmt.Errorf("failed to retrieve ${1/([A-Z][a-z]+)/$1 /g} %q (Resource Group %q): %+v", name, resourceGroup, err)
+	}
+
+	d.SetId(*resp.ID)
+
+	// TODO: d.Set()
+
+	return tags.FlattenAndSet(d, resp.Tags)
+}
+
 endsnippet
 
 snippet tfdeclblk "declare nested block" b
@@ -121,7 +222,7 @@ snippet tfdeclblk "declare nested block" b
 endsnippet
 
 snippet tfctx "create context" b
-client := meta.(*clients.Client).${1:Compute}.${2:VMClient}
+client := meta.(*clients.Client).$1.$2Client
 ctx, cancel := timeouts.For$3(meta.(*clients.Client).StopContext, d)
 defer cancel()
 endsnippet
@@ -130,11 +231,11 @@ snippet tfimport "check import" b
 name := d.Get("name").(string)
 resourceGroup := d.Get("resource_group_name").(string)
 
-if features.ShouldResourcesBeImported() {
-	resp, err := client.Get(ctx, resourceGroup, name, "")
+if d.IsNewResource() {
+	resp, err := client.Get(ctx, resourceGroup, name)
 	if err != nil {
 		if !utils.ResponseWasNotFound(resp.Response) {
-			return fmt.Errorf("Error checking for existing $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
+			return fmt.Errorf("failed to check for existing $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
 		}
 	}
 
@@ -153,32 +254,32 @@ endsnippet
 
 snippet tfcallcreate "call sdk CreateOrUpdate() in sync manner" b
 if _, err := client.CreateOrUpdate(ctx, resourceGroup, name, params); err != nil {
-	return fmt.Errorf("Error creating $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
+	return fmt.Errorf("failed to create $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
 }
 endsnippet
 
 snippet tfcallcreate_async "call sdk CreateOrUpdate() in async manner" b
 future, err := client.CreateOrUpdate(ctx, resourceGroup, name, params)
 if err != nil {
-	return fmt.Errorf("Error creating $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
+	return fmt.Errorf("failed to create $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
 }
 
 if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
-	return fmt.Errorf("Error waiting for creation of $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
+	return fmt.Errorf("failed to wait for creation of $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
 }
 endsnippet
 
-snippet tfsetid "set id in resource data" b
-read, err := client.Get(ctx, resourceGroup, name, "")
+snippet tfsetid "set id into resource data" b
+resp, err := client.Get(ctx, resourceGroup, name)
 if err != nil {
-	return fmt.Errorf("Error retrieving $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
+	return fmt.Errorf("failed to retrieve $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
 }
 
-if read.ID == nil {
-	return fmt.Errorf("Error retrieving $1 %q (Resource Group %q): `id` was nil", name, resourceGroup)
+if resp.ID == nil || *resp.ID == "" {
+	return fmt.Errorf("Cannot read ID for $1 %q (Resource Group %q)", name, resourceGroup)
 }
 
-d.SetId(*read.ID)
+d.SetId(*resp.ID)
 endsnippet
 
 snippet tfretcreate "return statement of create callback" b
@@ -186,7 +287,7 @@ return resource$1Read(d, meta)
 endsnippet
 
 snippet tfparseid "parse resource id" b
-id, err := Parse$1ID(d.Id())
+id, err := parse.$1ID(d.Id())
 if err != nil {
 	return err
 }
@@ -201,7 +302,7 @@ if err != nil {
 		return nil
 	}
 
-	return fmt.Errorf("Error retrieving $1 %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+	return fmt.Errorf("failed to retrieve $1 %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 }
 endsnippet
 
@@ -211,17 +312,17 @@ endsnippet
 
 snippet tfcallupdate "call sdk Update() in sync manner" b
 if _, err := client.Update(ctx, id.ResourceGroup, id.Name, params); err != nil {
-	return fmt.Errorf("Error updating $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
+	return fmt.Errorf("failed to update $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
 }
 endsnippet
 
 snippet tfcallupdate_async "call sdk Update() in async manner" b
 future, err := client.Update(ctx, id.ResourceGroup, id.Name, params)
 if err != nil {
-	return fmt.Errorf("Error updating $1 %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+	return fmt.Errorf("failed to update $1 %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 }
 if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
-	return fmt.Errorf("Error waiting for update of $1 %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+	return fmt.Errorf("failed to wait for update of $1 %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 }
 endsnippet
 
@@ -232,19 +333,19 @@ endsnippet
 snippet tfcalldelete_async "call sdk Delete() in async manner" b
 future, err := client.Delete(ctx, id.ResourceGroup, id.Name)
 if err != nil {
-	return fmt.Errorf("Error deleting $1 %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+	return fmt.Errorf("failed to delete $1 %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 }
 
 if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
 	if !response.WasNotFound(future.Response()) {
-		return fmt.Errorf("Error waiting for deleting $1 %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+		return fmt.Errorf("failed to wait for deleting $1 %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 	}
 }
 endsnippet
 
 snippet tfcalldelete "call sdk Delete() in manner" b
 if _, err := client.Delete(ctx, id.ResourceGroup, id.Name); err != nil {
-	return fmt.Errorf("Error deleting $1 %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+	return fmt.Errorf("failed to delete $1 %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 }
 endsnippet
 
@@ -260,7 +361,7 @@ func flatten$1(input $2) []interface{} {
 
 	$0
 
-	return []interface{
+	return []interface{}{
 		map[string]interface{}{
 		},
 	}
@@ -275,7 +376,7 @@ func flatten$1(input *[]$2) []interface{} {
 
 	output := make([]interface{}, 0)
 
-	for _, v := range *input {
+	for _, e := range *input {
 		output = append(output, $3)
 	}
 
@@ -301,7 +402,7 @@ snippet tfexpand_slice "define expand function which converts slice to pointer o
 func expand$1(input []interface{}) *[]$2 {
 	result := make([]$2, 0)
 
-	for _, v := range input {
+	for _, e := range input {
 		result = append(result, $3)			
 	}
 
@@ -371,8 +472,8 @@ func Test$1ID(t *testing.T) {
 			Error: true,
 		},
 		{
-			Name:  "No Resource Group ID",
-			Input: "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/foo/",
+			Name:  "Resource Group ID",
+			Input: "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resGroup1/",
 			Error: true,
 		},
 	}
@@ -396,7 +497,178 @@ func Test$1ID(t *testing.T) {
 		if actual.Name != v.Expect.Name {
 			t.Fatalf("Expected %q but got %q for Name", v.Expect.Name, actual.Name)
 		}
-
 	}
+}
+endsnippet
+
+snippet tfacctest_res "acc test scaffolding for resource" b
+func TestAccAzureRM$1_basic(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:     func() { acceptance.PreCheck(t) },
+		Providers:    acceptance.SupportedProviders,
+		CheckDestroy: testCheckAzureRM$1Destroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccAzureRM$1_basic(data),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckAzureRM$1Exists(data.ResourceName),
+				),
+			},
+			data.ImportStep(),
+		},
+	})
+}
+
+func TestAccAzureRM$1_complete(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:     func() { acceptance.PreCheck(t) },
+		Providers:    acceptance.SupportedProviders,
+		CheckDestroy: testCheckAzureRM$1Destroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccAzureRM$1_complete(data),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckAzureRM$1Exists(data.ResourceName),
+				),
+			},
+			data.ImportStep(),
+		},
+	})
+}
+
+func TestAccAzureRM$1_update(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:     func() { acceptance.PreCheck(t) },
+		Providers:    acceptance.SupportedProviders,
+		CheckDestroy: testCheckAzureRM$1Destroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccAzureRM$1_basic(data),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckAzureRM$1Exists(data.ResourceName),
+				),
+			},
+			data.ImportStep(),
+			{
+				Config: testAccAzureRM$1_complete(data),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckAzureRM$1Exists(data.ResourceName),
+				),
+			},
+			data.ImportStep(),
+		},
+	})
+}
+
+func TestAccAzureRM$1_requiresImport(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:     func() { acceptance.PreCheck(t) },
+		Providers:    acceptance.SupportedProviders,
+		CheckDestroy: testCheckAzureRM$1Destroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccAzureRM$1_basic(data),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckAzureRM$1Exists(data.ResourceName),
+				),
+			},
+			data.RequiresImportErrorStep(testAccAzureRM$1_requiresImport),
+		},
+	})
+}
+
+func testCheckAzureRM$1Exists(resourceName string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		client := acceptance.AzureProvider.Meta().(*clients.Client).$2.$3Client
+		ctx := acceptance.AzureProvider.Meta().(*clients.Client).StopContext
+
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return fmt.Errorf("${1/([A-Z][a-z]+)/$1 /g}not found: %s", resourceName)
+		}
+
+		id, err := parse.$1ID(rs.Primary.ID)
+		if err != nil {
+			return err
+		}
+
+		if resp, err := client.Get(ctx, id.ResourceGroup, id.Name); err != nil {
+			if utils.ResponseWasNotFound(resp.Response) {
+				return fmt.Errorf("${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q) does not exist", id.Name, id.ResourceGroup)
+			}
+			return fmt.Errorf("failed to get on $2.$3: %+v", err)
+		}
+
+		return nil
+	}
+}
+
+func testCheckAzureRM$1Destroy(s *terraform.State) error {
+	client := acceptance.AzureProvider.Meta().(*clients.Client).$2.$3Client
+	ctx := acceptance.AzureProvider.Meta().(*clients.Client).StopContext
+
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}" {
+			continue
+		}
+
+		id, err := parse.$1ID(rs.Primary.ID)
+		if err != nil {
+			return err
+		}
+
+		if resp, err := client.Get(ctx, id.ResourceGroup, id.Name); err != nil {
+			if !utils.ResponseWasNotFound(resp.Response) {
+				return fmt.Errorf("failed to get on $2.$3: %+v", err)
+			}
+		}
+
+		return nil
+	}
+
+	return nil
+}
+
+func testAccAzureRM$1_basic(data acceptance.TestData) string {
+	template := testAccAzureRM$1_template(data)
+	return fmt.Sprintf(\`
+%s
+
+resource "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}" "test" {
+}
+\`, template)
+}
+
+func testAccAzureRM$1_complete(data acceptance.TestData) string {
+	template := testAccAzureRM$1_template(data)
+	return fmt.Sprintf(\`
+%s
+
+resource "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}" "test" {
+}
+\`, template)
+}
+
+func testAccAzureRM$1_requiresImport(data acceptance.TestData) string {
+	template := testAccAzureRM$1_basic(data)
+	return fmt.Sprintf(\`
+%s
+
+resource "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}" "import" {
+}
+\`, template)
+}
+
+func testAccAzureRM$1_template(data acceptance.TestData) string {
+	return fmt.Sprintf(\`
+\`)
 }
 endsnippet
