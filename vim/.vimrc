@@ -852,3 +852,6 @@ let g:lsc_auto_map = v:true
 
 "------------------- rust -----------------------------
 let g:rustfmt_autosave=1
+
+"------------------- spell check -----------------------------
+"set spell spelllang=en_us

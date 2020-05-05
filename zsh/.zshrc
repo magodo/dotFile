@@ -434,11 +434,6 @@ export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
 export PATH=$PATH:$HOME/.cargo/bin
 
 ####################################################################################
-# HiDPI SCALING
-####################################################################################
-export QT_DEVICE_PIXEL_RATIO=2
-
-####################################################################################
 # SPACESHIP ZSH THEME
 ####################################################################################
 SPACESHIP_CHAR_SYMBOL="💤 "
@@ -448,17 +443,27 @@ SPACESHIP_GOLANG_SYMBOL="🦉 "
 SPACESHIP_EXIT_CODE_SYMBOL="😡 "
 SPACESHIP_EXIT_CODE_SHOW=true
 
-SPACESHIP_GIT_STATUS_UNTRACKED=" ⚡ "
-SPACESHIP_GIT_STATUS_ADDED="⚡"
-SPACESHIP_GIT_STATUS_MODIFIED="⚡"
-SPACESHIP_GIT_STATUS_RENAMED="⚡"
-SPACESHIP_GIT_STATUS_DELETED="⚡"
-SPACESHIP_GIT_STATUS_STASHED=" 🗂 "
-SPACESHIP_GIT_STATUS_UNMERGED=" 💬 "
+# SPACESHIP_GIT_STATUS_UNTRACKED=" ⚡ "
+# SPACESHIP_GIT_STATUS_ADDED=" ➕ "
+# SPACESHIP_GIT_STATUS_DELETED=" ➖ "
+# SPACESHIP_GIT_STATUS_MODIFIED=" ⚡ "
+# SPACESHIP_GIT_STATUS_RENAMED=" ⚡ "
+# SPACESHIP_GIT_STATUS_STASHED=" 🗂 "
+# SPACESHIP_GIT_STATUS_UNMERGED=" 💬 "
 SPACESHIP_GIT_STATUS_AHEAD=""
 SPACESHIP_GIT_STATUS_BEHIND=""
 SPACESHIP_GIT_STATUS_DIVERGED=" 💥 "
-SPACESHIP_GIT_STATUS_SUFFIX=""
-SPACESHIP_GIT_STATUS_PREFIX=""
+# SPACESHIP_GIT_STATUS_SUFFIX=""
+# SPACESHIP_GIT_STATUS_PREFIX=""
 
 SPACESHIP_PROMPT_ORDER=(dir git exec_time line_sep jobs char exit_code golang rust ruby pyenv terraform)
+
+####################################################################################
+# xmodmap disable CapsLock (bt keyboard might break if entering that key)
+####################################################################################
+xmodmap ~/.xmodmap
+
+####################################################################################
+# NPM
+####################################################################################
+export PATH=$PATH:$HOME/node_modules/azure-functions-core-tools/bin
