@@ -468,6 +468,8 @@ Plug 'Chiel92/vim-autoformat'
 Plug 'sheerun/vim-polyglot'
 "Plug 'natebosch/vim-lsc'
 "Plug 'godoctor/godoctor.vim'
+Plug 'vim-ruby/vim-ruby'
+Plug 'tpope/vim-commentary'
 call plug#end()
 
 "-------------------- Color Scheme -------------------
@@ -540,6 +542,7 @@ let g:ycm_filetype_whitelist = {
             \"go": 0,
             \ "c": 1,
             \ "python": 1,
+            \ "ruby": 1,
             \ "sh": 1,
             \ "javascript": 1,
             \ "javascript.jsx": 1,
@@ -847,8 +850,8 @@ let g:autoformat_remove_trailing_spaces = 0
 let g:deoplete#enable_at_startup = 1
 
 "------------------- vim-go ------------------------------
-let g:go_def_mode = 'gopls'
-let g:go_info_mode = 'gopls'
+"let g:go_def_mode = 'gopls'
+"let g:go_info_mode = 'gopls'
 noremap <leader>i :GoInfo<CR>
 
 "------------------- vim-lsc ------------------------------

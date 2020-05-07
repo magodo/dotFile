@@ -182,6 +182,13 @@ hide()
 # golang
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
+gofoo() { 
+    if [[ ! -d /tmp/test ]]; then
+        mkdir /tmp/test
+        cd /tmp/test
+        go mod init foo
+    fi
+}
 
 # todo
 export TODO_DIR=~/.todo/data
