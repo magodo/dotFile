@@ -34,3 +34,761 @@ if $1 != nil {
 	return status.Error(codes.$2, "failed to $3: " + $1.Error())
 }
 endsnippet
+
+###############################################
+# terraform azurerm provider
+###############################################
+
+snippet tfdeclres "declare resource" b
+func resourceArm$1() *schema.Resource {
+	return &schema.Resource{
+		Create: resourceArm$1CreateUpdate,
+		Read:   resourceArm$1Read,
+		Update: resourceArm$1CreateUpdate,
+		Delete: resourceArm$1Delete,
+
+		Importer: azSchema.ValidateResourceIDPriorToImport(func(id string) error {
+			_, err := parse.$1ID(id)
+			return err
+		}),
+
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(30 * time.Minute),
+			Read:   schema.DefaultTimeout(5 * time.Minute),
+			Update: schema.DefaultTimeout(30 * time.Minute),
+			Delete: schema.DefaultTimeout(30 * time.Minute),
+		},
+
+		Schema: map[string]*schema.Schema{
+			"name": {
+				Type:         schema.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: validate$1Name(),
+			},
+
+			"resource_group_name": azure.SchemaResourceGroupName(),
+
+			"location": azure.SchemaLocation(),
+
+			$0
+
+			"tags": tags.Schema(),
+		},
+	}
+}
+
+func resourceArm$1CreateUpdate(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*clients.Client).$2.$3Client
+	ctx, cancel := timeouts.ForCreateUpdate(meta.(*clients.Client).StopContext, d)
+	defer cancel()
+
+	name := d.Get("name").(string)
+	resourceGroup := d.Get("resource_group_name").(string)
+
+	if d.IsNewResource() {
+		resp, err := client.Get(ctx, resourceGroup, name)
+		if err != nil {
+			if !utils.ResponseWasNotFound(resp.Response) {
+				return fmt.Errorf("checking for existing ${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q): %+v", name, resourceGroup, err)
+			}
+		}
+
+		if resp.ID != nil && *resp.ID != "" {
+			return tf.ImportAsExistsError("azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", *resp.ID)
+		}
+	}
+
+	// TODO: d.Get() && Create
+
+	resp, err := client.Get(ctx, resourceGroup, name)
+	if err != nil {
+		return fmt.Errorf("retrieving ${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q): %+v", name, resourceGroup, err)
+	}
+	if resp.ID == nil || *resp.ID == "" {
+		return fmt.Errorf("empty or nil ID returned for ${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q) ID", name, resourceGroup)
+	}
+	d.SetId(*resp.ID)
+
+	return resourceArm$1Read(d, meta)
+}
+
+func resourceArm$1Read(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*clients.Client).$2.$3Client
+	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
+	defer cancel()
+
+	id, err := parse.$1ID(d.Id())
+	if err != nil {
+		return err
+	}
+
+	resp, err := client.Get(ctx, id.ResourceGroup, id.Name)
+	if err != nil {
+		if utils.ResponseWasNotFound(resp.Response) {
+			log.Printf("[DEBUG] ${1/([A-Z][a-z]+)/$1 /g}%q was not found in Resource Group %q - removing from state!", id.Name, id.ResourceGroup)
+			d.SetId("")
+			return nil
+		}
+
+		return fmt.Errorf("retrieving ${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+	}
+
+	// TODO: d.Set()
+
+	return tags.FlattenAndSet(d, resp.Tags)
+}
+
+func resourceArm$1Delete(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*clients.Client).$2.$3Client
+	ctx, cancel := timeouts.ForDelete(meta.(*clients.Client).StopContext, d)
+	defer cancel()
+
+	id, err := parse.$1ID(d.Id())
+	if err != nil {
+		return err
+	}
+
+	if _, err := client.Delete(ctx, id.ResourceGroup, id.Name); err != nil {
+		return fmt.Errorf("deleting ${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+	}
+
+	return nil
+}
+endsnippet
+
+snippet tfdeclds "declare data source" b
+func dataSourceArm$1() *schema.Resource {
+	return &schema.Resource{
+		Read: dataSourceArm$1Read,
+
+		Timeouts: &schema.ResourceTimeout{
+			Read: schema.DefaultTimeout(5 * time.Minute),
+		},
+
+		Schema: map[string]*schema.Schema{
+			"name": {
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validate$1Name(),
+			},
+
+			"resource_group_name": azure.SchemaResourceGroupNameForDataSource(),
+
+			"location": azure.SchemaLocationForDataSource(),
+
+			$0
+
+			"tags": tags.SchemaDataSource(),
+		},
+	}
+}
+
+func dataSourceArm$1Read(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*clients.Client).$2.$3Client
+	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
+	defer cancel()
+
+	name := d.Get("name").(string)
+	resourceGroup := d.Get("resource_group_name").(string)
+
+	resp, err := client.Get(ctx, resourceGroup, name)
+	if err != nil {
+		if utils.ResponseWasNotFound(resp.Response) {
+			return fmt.Errorf("${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q) was not found", name, resourceGroup)
+		}
+
+		return fmt.Errorf("retrieving ${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q): %+v", name, resourceGroup, err)
+	}
+
+	if resp.ID == nil || *resp.ID == "" {
+		return fmt.Errorf("empty or nil ID returned for ${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q) ID", name, resourceGroup)
+	}
+
+	d.SetId(*resp.ID)
+
+	// TODO: d.Set()
+
+	return tags.FlattenAndSet(d, resp.Tags)
+}
+
+endsnippet
+
+snippet tfdeclblk "declare nested block" b
+"$1": {
+	Type: schema.TypeList,
+	MaxItems: 1,
+	$2: true,
+	Elem: &schema.Resource{
+		Schema: map[string]*schema.Schema {
+			$0
+		},
+	},
+},
+endsnippet
+
+snippet tfctx "create context" b
+client := meta.(*clients.Client).$1.$2Client
+ctx, cancel := timeouts.For$3(meta.(*clients.Client).StopContext, d)
+defer cancel()
+endsnippet
+
+snippet tfimport "check import" b
+name := d.Get("name").(string)
+resourceGroup := d.Get("resource_group_name").(string)
+
+if d.IsNewResource() {
+	resp, err := client.Get(ctx, resourceGroup, name)
+	if err != nil {
+		if !utils.ResponseWasNotFound(resp.Response) {
+			return fmt.Errorf("checking for existing $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
+		}
+	}
+
+	if !utils.ResponseWasNotFound(resp.Response) {
+		return tf.ImportAsExistsError("azurerm${1/(\w+)\s*/_\L$1\E/g}", *resp.ID)
+	}
+}
+endsnippet
+
+snippet tfgetok "d.GetOk()" b
+if v, ok := d.GetOk("$1"); ok {
+	$0
+}
+endsnippet
+
+
+snippet tfcallcreate "call sdk CreateOrUpdate() in sync manner" b
+if _, err := client.CreateOrUpdate(ctx, resourceGroup, name, param); err != nil {
+	return fmt.Errorf("creating $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
+}
+endsnippet
+
+snippet tfcallcreate_async "call sdk CreateOrUpdate() in async manner" b
+future, err := client.CreateOrUpdate(ctx, resourceGroup, name, param)
+if err != nil {
+	return fmt.Errorf("creating $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
+}
+
+if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
+	return fmt.Errorf("waiting for creation of $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
+}
+endsnippet
+
+snippet tfsetid "set id into resource data" b
+resp, err := client.Get(ctx, resourceGroup, name)
+if err != nil {
+	return fmt.Errorf("retrieving $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
+}
+
+if resp.ID == nil || *resp.ID == "" {
+	return fmt.Errorf("empty or nil ID returned for $1 %q (Resource Group %q)", name, resourceGroup)
+}
+
+d.SetId(*resp.ID)
+endsnippet
+
+snippet tfretcreate "return statement of create callback" b
+return resource$1Read(d, meta)
+endsnippet
+
+snippet tfparseid "parse resource id" b
+id, err := parse.$1ID(d.Id())
+if err != nil {
+	return err
+}
+endsnippet
+
+snippet tfcallget "call sdk Get() in read callback" b
+resp, err := client.Get(ctx, id.ResourceGroup, id.Name, "")
+if err != nil {
+	if utils.ResponseWasNotFound(resp.Response) {
+		log.Printf("[DEBUG] $1 %q was not found in Resource Group %q - removing from state!", id.Name, id.ResourceGroup)
+		d.SetId("")
+		return nil
+	}
+
+	return fmt.Errorf("retrieving $1 %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+}
+endsnippet
+
+snippet tfretread "return statement of read callback" b
+return tags.FlattenAdnSet(d, resp.Tags)
+endsnippet
+
+snippet tfcallupdate "call sdk Update() in sync manner" b
+if _, err := client.Update(ctx, id.ResourceGroup, id.Name, param); err != nil {
+	return fmt.Errorf("updateing $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
+}
+endsnippet
+
+snippet tfcallupdate_async "call sdk Update() in async manner" b
+future, err := client.Update(ctx, id.ResourceGroup, id.Name, param)
+if err != nil {
+	return fmt.Errorf("updating $1 %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+}
+if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
+	return fmt.Errorf("waiting for update of $1 %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+}
+endsnippet
+
+snippet tfretupdate "return statement of update callback" b
+return resource$1Read(d, meta)
+endsnippet
+
+snippet tfcalldelete_async "call sdk Delete() in async manner" b
+future, err := client.Delete(ctx, id.ResourceGroup, id.Name)
+if err != nil {
+	return fmt.Errorf("deleting $1 %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+}
+
+if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
+	if !response.WasNotFound(future.Response()) {
+		return fmt.Errorf("waiting for deleting $1 %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+	}
+}
+endsnippet
+
+snippet tfcalldelete "call sdk Delete() in manner" b
+if _, err := client.Delete(ctx, id.ResourceGroup, id.Name); err != nil {
+	return fmt.Errorf("deleting $1 %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+}
+endsnippet
+
+snippet tfretdelete "return statement of delete callback" b
+return nil
+endsnippet
+
+snippet tfflatten_map "define flatten function which converts sdk type into nested block (i.e. one length slice of map)" b
+func flatten$1(input $2) []interface{} {
+	if input == nil {
+		return []interface{}{}
+	}
+
+	$0
+
+	return []interface{}{
+		map[string]interface{}{
+		},
+	}
+}
+endsnippet
+
+snippet tfflatten_slice "define flatten function which converts pointer of slice of sdk type into slice" b
+func flatten$1(input *[]$2) []interface{} {
+	if input == nil {
+		return []interface{}{}
+	}
+
+	output := make([]interface{}, 0)
+
+	for _, e := range *input {
+		output = append(output, $3)
+	}
+
+	return output
+}
+endsnippet
+
+snippet tfexpand_map "define expand function which converts nested block to sdk type" b
+func expand$1(input []interface{}) *$2 {
+	if len(input) == 0 {
+		return nil
+	}
+
+	raw := input[0].(map[string]interface{})
+	output := &$2{
+	}
+
+	return output
+}
+endsnippet
+
+snippet tfexpand_slice "define expand function which converts slice to pointer of slice of sdk type" b
+func expand$1(input []interface{}) *[]$2 {
+	result := make([]$2, 0)
+
+	for _, e := range input {
+		result = append(result, $3)			
+	}
+
+	return &result
+}
+endsnippet
+
+snippet tfparseiddef "define parseid function" b
+import (
+	"fmt"
+
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/azure"
+)
+
+type $1Id struct {
+	ResourceGroup string
+	Name string
+}
+
+func $1ID(input string) (*$1Id, error) {
+	id, err := azure.ParseAzureResourceID(input)
+	if err != nil {
+		return nil, fmt.Errorf("parsing ${1/([A-Z][a-z]+)/$1 /g}ID %q: %+v", input, err)
+	}
+
+	$3 := $1Id {
+		ResourceGroup: id.ResourceGroup,	
+	}
+
+	if $3.Name, err = id.PopSegment("$2"); err != nil {
+		return nil, err
+	}
+
+	if err := id.ValidateNoEmptySegments(input); err != nil {
+		return nil, err
+	}
+
+	return &$3, nil
+}
+endsnippet
+
+snippet tfparseidtest "define ut for parseid function" b
+import (
+	"testing"
+)
+
+func Test$1ID(t *testing.T) {
+	testData := []struct {
+		Name   string
+		Input  string
+		Error  bool
+		Expect *$1Id
+	}{
+		{
+			Name:  "Empty",
+			Input: "",
+			Error: true,
+		},
+		{
+			Name:  "No Resource Groups Segment",
+			Input: "/subscriptions/00000000-0000-0000-0000-000000000000",
+			Error: true,
+		},
+		{
+			Name:  "No Resource Groups Value",
+			Input: "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/",
+			Error: true,
+		},
+	}
+
+	for _, v := range testData {
+		t.Logf("[DEBUG] Testing %q", v.Name)
+
+		actual, err := $1ID(v.Input)
+		if err != nil {
+			if v.Error {
+				continue
+			}
+
+			t.Fatalf("Expected a value but got an error: %s", err)
+		}
+
+		if actual.ResourceGroup != v.Expect.ResourceGroup {
+			t.Fatalf("Expected %q but got %q for Resource Group", v.Expect.ResourceGroup, actual.ResourceGroup)
+		}
+
+		if actual.Name != v.Expect.Name {
+			t.Fatalf("Expected %q but got %q for Name", v.Expect.Name, actual.Name)
+		}
+	}
+}
+endsnippet
+
+snippet tfacctest_res "acc test scaffolding for resource" b
+func TestAccAzureRM$1_basic(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:     func() { acceptance.PreCheck(t) },
+		Providers:    acceptance.SupportedProviders,
+		CheckDestroy: testCheckAzureRM$1Destroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccAzureRM$1_basic(data),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckAzureRM$1Exists(data.ResourceName),
+				),
+			},
+			data.ImportStep(),
+		},
+	})
+}
+
+func TestAccAzureRM$1_complete(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:     func() { acceptance.PreCheck(t) },
+		Providers:    acceptance.SupportedProviders,
+		CheckDestroy: testCheckAzureRM$1Destroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccAzureRM$1_complete(data),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckAzureRM$1Exists(data.ResourceName),
+				),
+			},
+			data.ImportStep(),
+		},
+	})
+}
+
+func TestAccAzureRM$1_update(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:     func() { acceptance.PreCheck(t) },
+		Providers:    acceptance.SupportedProviders,
+		CheckDestroy: testCheckAzureRM$1Destroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccAzureRM$1_basic(data),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckAzureRM$1Exists(data.ResourceName),
+				),
+			},
+			data.ImportStep(),
+			{
+				Config: testAccAzureRM$1_complete(data),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckAzureRM$1Exists(data.ResourceName),
+				),
+			},
+			data.ImportStep(),
+			{
+				Config: testAccAzureRM$1_basic(data),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckAzureRM$1Exists(data.ResourceName),
+				),
+			},
+			data.ImportStep(),
+		},
+	})
+}
+
+func TestAccAzureRM$1_requiresImport(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:     func() { acceptance.PreCheck(t) },
+		Providers:    acceptance.SupportedProviders,
+		CheckDestroy: testCheckAzureRM$1Destroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccAzureRM$1_basic(data),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckAzureRM$1Exists(data.ResourceName),
+				),
+			},
+			data.RequiresImportErrorStep(testAccAzureRM$1_requiresImport),
+		},
+	})
+}
+
+func testCheckAzureRM$1Exists(resourceName string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		client := acceptance.AzureProvider.Meta().(*clients.Client).$2.$3Client
+		ctx := acceptance.AzureProvider.Meta().(*clients.Client).StopContext
+
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return fmt.Errorf("${1/([A-Z][a-z]+)/$1 /g}not found: %s", resourceName)
+		}
+
+		id, err := parse.$1ID(rs.Primary.ID)
+		if err != nil {
+			return err
+		}
+
+		if resp, err := client.Get(ctx, id.ResourceGroup, id.Name); err != nil {
+			if utils.ResponseWasNotFound(resp.Response) {
+				return fmt.Errorf("${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q) does not exist", id.Name, id.ResourceGroup)
+			}
+			return fmt.Errorf("Getting on $2.$3: %+v", err)
+		}
+
+		return nil
+	}
+}
+
+func testCheckAzureRM$1Destroy(s *terraform.State) error {
+	client := acceptance.AzureProvider.Meta().(*clients.Client).$2.$3Client
+	ctx := acceptance.AzureProvider.Meta().(*clients.Client).StopContext
+
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}" {
+			continue
+		}
+
+		id, err := parse.$1ID(rs.Primary.ID)
+		if err != nil {
+			return err
+		}
+
+		if resp, err := client.Get(ctx, id.ResourceGroup, id.Name); err != nil {
+			if !utils.ResponseWasNotFound(resp.Response) {
+				return fmt.Errorf("Getting on $2.$3: %+v", err)
+			}
+		}
+
+		return nil
+	}
+
+	return nil
+}
+
+func testAccAzureRM$1_basic(data acceptance.TestData) string {
+	template := testAccAzureRM$1_template(data)
+	return fmt.Sprintf(\`
+%s
+
+resource "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}" "test" {
+}
+\`, template)
+}
+
+func testAccAzureRM$1_complete(data acceptance.TestData) string {
+	template := testAccAzureRM$1_template(data)
+	return fmt.Sprintf(\`
+%s
+
+resource "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}" "test" {
+}
+\`, template)
+}
+
+func testAccAzureRM$1_requiresImport(data acceptance.TestData) string {
+	template := testAccAzureRM$1_basic(data)
+	return fmt.Sprintf(\`
+%s
+
+resource "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}" "import" {
+}
+\`, template)
+}
+
+func testAccAzureRM$1_template(data acceptance.TestData) string {
+	return fmt.Sprintf(\`
+\`)
+}
+endsnippet
+
+snippet tfacctest_ds "acc test scaffolding for datasource" b
+func TestAccDataSource$1_basic(t *testing.T) {
+	data := acceptance.BuildTestData(t, "data.azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:  func() { acceptance.PreCheck(t) },
+		Providers: acceptance.SupportedProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSource$1_basic(data),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet(data.ResourceName, $2),
+				),
+			},
+		},
+	})
+}
+
+func testAccDataSource$1_basic(data acceptance.TestData) string {
+	config := testAccAzureRM$1_basic(data)
+	return fmt.Sprintf(\`
+%s
+
+data "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}" "test" {
+  name = azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}.test.name
+}
+\`, config)
+}
+endsnippet
+
+
+snippet tfvalidate_id_def "define validation function for id" b
+func $1ID(i interface{}, k string) (warnings []string, errors []error) {
+	v, ok := i.(string)
+	if !ok {
+		errors = append(errors, fmt.Errorf("expected type of %q to be string", k))
+		return
+	}
+
+	if _, err := parse.$1ID(v); err != nil {
+		errors = append(errors, fmt.Errorf("parsing %q as a resource id: %v", k, err))
+		return
+	}
+
+	return warnings, errors
+}
+endsnippet
+
+snippet tfvalidate_string_def "define validation function for string" b
+func $1() func(i interface{}, k string) (warnings []string, errors []error) {
+	return validation.StringMatch(regexp.MustCompile(\`$2\`), "")
+}
+endsnippet
+
+snippet tfimportor_def "define importer to for fake descriminator resources" b
+func import$1(expectKind $2.$3) func(d *schema.ResourceData, meta interface{}) (data []*schema.ResourceData, err error) {
+	return func(d *schema.ResourceData, meta interface{}) (data []*schema.ResourceData, err error) {
+		id, err := parse.$1ID(d.Id())
+		if err != nil {
+			return nil, err
+		}
+
+		client := meta.(*clients.Client).$4.$5Client
+		ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
+		defer cancel()
+
+		resp, err := client.Get(ctx, id.ResourceGroup, id.Name)
+		if err != nil {
+			return nil, fmt.Errorf("retrieving ${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+		}
+
+		if resp.Kind != expectKind {
+			return nil, fmt.Errorf(\`${1/([A-Z][a-z]+)/$1 /g}"kind" mismatch, expected "%s", got "%s"\`, expectKind, resp.Kind)
+		}
+		return []*schema.ResourceData{d}, nil
+	}
+}
+endsnippet
+
+snippet tfimportor_discriminator_def "define importer to for descriminator resources" b
+func import$1(expectKind $2.$3) func(d *schema.ResourceData, meta interface{}) (data []*schema.ResourceData, err error) {
+	return func(d *schema.ResourceData, meta interface{}) (data []*schema.ResourceData, err error) {
+		id, err := parse.$1ID(d.Id())
+		if err != nil {
+			return nil, err
+		}
+
+		client := meta.(*clients.Client).$4.$5sClient
+		ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
+		defer cancel()
+
+		resp, err := client.Get(ctx, id.ResourceGroup, id.Name)
+		if err != nil {
+			return nil, fmt.Errorf("retrieving ${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+		}
+
+		var kind $2.$5Kind
+
+		switch resp.Value.(type) {
+		case *$2.$6
+			kind = $2.$7
+		}
+
+		if expectKind != kind {
+			return nil, fmt.Errorf("${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q) has mismatched kind, expected: %q, got %q", id.Name, id.ResourceGroup, expectKind, kind)
+		}
+
+		return []*schema.ResourceData{d}, nil
+	}
+}
+endsnippet

@@ -283,3 +283,6 @@ set -sg repeat-time 300
 
 # toggle synchronize panes
 bind-key S set-window-option synchronize-panes\;
+
+# history limit
+set-option -g history-limit 50000

@@ -135,9 +135,9 @@ alias l="ls"
 alias ll="ls -l"
 
 # input method
-# export GTK_IM_MODULE=ibus
-# export XMODIFIERS=@im=ibus
-# export QT_IM_MODULE=ibus
+export GTK_IM_MODULE=ibus
+export XMODIFIERS=@im=ibus
+export QT_IM_MODULE=ibus
 
 # dictionary
 def() {
@@ -400,12 +400,11 @@ alias tf=terraform
 ####################################################################################
 export PATH=$PATH:~/MS/projects/utils
 
-export PATH=$PATH:/home/magodo/.local/azure-cli/bin
-source '/home/magodo/.local/azure/lib/az.completion'
+if [[ -x az ]]; then
+source /home/magodo/.local/azure-cli/az.completion
+fi
 
-####################################################################################
-# terraform team city test
-####################################################################################
+export ZSH_THEME_CLOUD_PREFIX=💤
 
 setup_tctest() {
     export TCTEST_USER="magodo"
@@ -469,16 +468,3 @@ SPACESHIP_PROMPT_ORDER=(dir git exec_time line_sep jobs char exit_code golang ru
 # NPM
 ####################################################################################
 #export PATH=$PATH:$HOME/node_modules/azure-functions-core-tools/bin
-
-
-####################################################################################
-# urlencode
-####################################################################################
-urlencode() {
-    input=$1
-    if [[ -z $input ]]; then
-        echo -n "String to encode: "
-        read input
-    fi
-    python3 -c "import urllib.parse; print(urllib.parse.quote('$input', ''))"
-}

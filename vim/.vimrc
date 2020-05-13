@@ -60,6 +60,17 @@ set ruler
 " Height of the command bar
 set cmdheight=2
 
+func! ToggleCmdHeight()
+    let oh = &cmdheight
+    if &cmdheight == 5
+        set cmdheight=2
+    else
+        set cmdheight=5
+    endif
+endfunction
+
+map <F1> :call ToggleCmdHeight()<cr>
+
 " Configure backspace so it acts as it should act
 set backspace=eol,start,indent
 "set whichwrap+=<,>,h,l
@@ -432,19 +443,15 @@ call plug#begin('~/.vim/plugged')
 "Plug 'zchee/deoplete-go', { 'do': 'make'}
 
 Plug 'Valloric/YouCompleteMe'
-Plug 'rdnetto/YCM-Generator'
-"Plug 'bling/vim-airline'
 Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
 "Plug 'vim-scripts/taglist.vim'
 Plug 'majutsushi/tagbar'
 Plug 'vim-scripts/winmanager--Fox'
 Plug 'vim-scripts/TaskList.vim'
-Plug 'sjl/gundo.vim'
 "Plug 'nvie/vim-flake8'
 Plug 'tpope/vim-surround'
 Plug 'flazz/vim-colorschemes'
-"Plug 'rafi/awesome-vim-colorschemes'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'https://github.com/tpope/vim-fugitive.git'
@@ -455,10 +462,7 @@ Plug 'mattn/emmet-vim'
 Plug 'iamcco/markdown-preview.vim'
 "Plug 'ctrlpvim/ctrlp.vim'
 Plug 'jeetsukumaran/vim-buffergator'
-"Plug 'vim-ctrlspace/vim-ctrlspace'
-"Plug 'vim-syntastic/syntastic'
-Plug 'w0rp/ale'
-Plug 'ludovicchabant/vim-gutentags'
+"Plug 'w0rp/ale'
 Plug 'skywind3000/vim-preview'
 Plug 'aklt/plantuml-syntax'
 Plug 'maksimr/vim-jsbeautify'
@@ -470,6 +474,7 @@ Plug 'sheerun/vim-polyglot'
 "Plug 'godoctor/godoctor.vim'
 Plug 'vim-ruby/vim-ruby'
 Plug 'tpope/vim-commentary'
+Plug 'rust-lang/rust.vim'
 call plug#end()
 
 "-------------------- Color Scheme -------------------
@@ -514,7 +519,6 @@ hi Visual term=reverse cterm=reverse  guibg=Grey
 map <F6> :so $MYVIMRC<cr>
 
 "---------------------- YouCompleteMe -----------------------------
-"let g:ycm_server_use_vim_stdout = 0
 let g:ycm_server_keep_logfiles = 1
 let g:ycm_server_log_level = 'debug'
 let g:ycm_server_python_interpreter = "/usr/bin/python"
@@ -534,15 +538,20 @@ autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 "    \ 'c': 1,
 "    \ 'cpp': 1,
 "    \}
+"
+noremap <leader>i :YcmCompleter GetType<CR>
+nnoremap <leader>gd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+nnoremap <leader>gr :YcmCompleter GoToReferences<CR>
 
-nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+"let g:ycm_auto_hover = ???
 
 " Avoid YCM process other file types
 let g:ycm_filetype_whitelist = { 
-            \"go": 0,
+            \"go": 1,
+            \"terraform": 1,
+            \"rust": 1,
             \ "c": 1,
             \ "python": 1,
-            \ "ruby": 1,
             \ "sh": 1,
             \ "javascript": 1,
             \ "javascript.jsx": 1,
@@ -562,35 +571,6 @@ let g:ycm_semantic_triggers =  {
 "let Tlist_Show_One_File=1
 
 "---------------------- Tagbar  -----------------------------
-
-let g:tagbar_type_go = {
-	\ 'ctagstype' : 'go',
-	\ 'kinds'     : [
-		\ 'p:package',
-		\ 'i:imports:1',
-		\ 'c:constants',
-		\ 'v:variables',
-		\ 't:types',
-		\ 'n:interfaces',
-		\ 'w:fields',
-		\ 'e:embedded',
-		\ 'm:methods',
-		\ 'r:constructor',
-		\ 'f:functions'
-	\ ],
-	\ 'sro' : '.',
-	\ 'kind2scope' : {
-		\ 't' : 'ctype',
-		\ 'n' : 'ntype'
-	\ },
-	\ 'scope2kind' : {
-		\ 'ctype' : 't',
-		\ 'ntype' : 'n'
-	\ },
-	\ 'ctagsbin'  : 'gotags',
-	\ 'ctagsargs' : '-sort -silent'
-\ }
-
 nmap tl :TagbarToggle<CR>
 
 "---------------------- WinManager -----------------------------
@@ -607,12 +587,13 @@ let g:powerline_pycmd='py3'
 
 "---------------------- Airline -------------------------------
 set laststatus=2
-let g:airline_powerline_fonts = 1
 "set t_Co=256" Make terminal has 256 colors
 "" default theme not work with tmux
+let g:airline_powerline_fonts = 1
 let g:airline_theme='molokai'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
+let g:airline_section_z = "%3p%%%#__accent_bold#%{g:airline_symbols.linenr}%4l%#__restore__#%#__accent_bold#/%L%{g:airline_symbols.maxlinenr}%#__restore__#:%3v% :%o"
 "---------------------- Ctags ---------------------------------
 " update taglist
 "map <F4> :!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
@@ -664,10 +645,6 @@ autocmd FileType python nmap <F7> :!python %<CR>
 " show every 'FIXME'
 map <leader>tl <Plug>TaskList
 
-"------------------------- GundoToggle ----------------------
-" review history
-map <leader>gd :GundoToggle<CR>
-
 "------------------------ GIT -------------
 " automatically wrap at 72 text width when git commit
 func! AutoWrap()
@@ -698,21 +675,6 @@ if &diff
 endif
 
 "------------------------ golang ----------------
-" run :GoBuild or :GoTestCompile based on the go file
-function! s:build_go_files()
-  let l:file = expand('%')
-  if l:file =~# '^\f\+_test\.go$'
-    call go#test#Test(0, 1)
-  elseif l:file =~# '^\f\+\.go$'
-    call go#cmd#Build(0)
-  endif
-endfunction
-autocmd FileType go nmap <F7> :<C-u>call <SID>build_go_files()<CR>
-
-" Whenever you save file goimports updates your Go import lines, adding missing ones and
-" removing unreferenced ones. Also arrange import path group by package. 
-" Furthermore, it does what gofmt does.
-let g:go_fmt_command = "goimports"
 
 "------------------------ ultisnips ----------------
 let g:UltiSnipsExpandTrigger="<c-j>"
@@ -737,60 +699,23 @@ let g:syntastic_mode_map = {
 "autocmd FileType python nnoremap <leader>f :0,$!yapf<Cr><C-o>
 "autocmd BufWritePre *.py 0,$!yapf
 
-"------------------------- gtags --------------
-"let $GTAGSLABEL = 'native-pygments'
-"let $GTAGSCONF = '/home/magodo/.config/gtags.conf'
-
-"------------------------- gutentags --------------
-" gutentags 搜索工程目录的标志，当前文件路径向上递归直到碰到这些文件/目录名
-let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
-
-" 所生成的数据文件的名称
-let g:gutentags_ctags_tagfile = '.tags'
-
-" 同时开启 ctags 和 gtags 支持：
-let g:gutentags_modules = []
-if executable('ctags')
-	let g:gutentags_modules += ['ctags']
-endif
-"if executable('gtags-cscope') && executable('gtags')
-"	let g:gutentags_modules += ['gtags_cscope']
-"endif
-
-" 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
-let g:gutentags_cache_dir = expand('~/.cache/tags')
-
-" 配置 ctags 的参数
-let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
-let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
-let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
-
-" 如果使用 universal ctags 需要增加下面一行
-"let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
-
-" 禁用 gutentags 自动加载 gtags 数据库的行为
-"let g:gutentags_auto_add_gtags_cscope = 0
-
-let g:gutentags_ctags_exclude = ['*.yaml', '*.markdown', '*.md', '*.html', '*.js']
-let g:gutentags_ctags_exclude_wildignore = 1
-
 "------------------------- ale --------------
 "let g:ale_linters_explicit = 1
-let g:ale_completion_delay = 500
-let g:ale_echo_delay = 20
-let g:ale_lint_delay = 500
-let g:ale_echo_msg_format = '[%linter%] %code: %%s'
-let g:ale_lint_on_text_changed = 'normal'
-let g:ale_lint_on_insert_leave = 1
-let g:airline#extensions#ale#enabled = 1
-
-let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
-let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
-let g:ale_c_cppcheck_options = ''
-let g:ale_cpp_cppcheck_options = ''
-
-let g:ale_sign_error = "✖"
-let g:ale_sign_warning = "!"
+"let g:ale_completion_delay = 500
+"let g:ale_echo_delay = 20
+"let g:ale_lint_delay = 500
+"let g:ale_echo_msg_format = '[%linter%] %code: %%s'
+"let g:ale_lint_on_text_changed = 'normal'
+"let g:ale_lint_on_insert_leave = 1
+"let g:airline#extensions#ale#enabled = 1
+"
+"let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
+"let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
+"let g:ale_c_cppcheck_options = ''
+"let g:ale_cpp_cppcheck_options = ''
+"
+"let g:ale_sign_error = "✖"
+"let g:ale_sign_warning = "!"
 
 " Limit linters used for JavaScript.
 "let g:ale_linters = {
@@ -850,9 +775,30 @@ let g:autoformat_remove_trailing_spaces = 0
 let g:deoplete#enable_at_startup = 1
 
 "------------------- vim-go ------------------------------
-"let g:go_def_mode = 'gopls'
-"let g:go_info_mode = 'gopls'
-noremap <leader>i :GoInfo<CR>
+let g:go_def_mode = 'gopls'
+let g:go_info_mode = 'gopls'
+
+"noremap <leader>i :GoInfo<CR>
+
+" run :GoBuild or :GoTestCompile based on the go file
+function! s:build_go_files()
+  let l:file = expand('%')
+  if l:file =~# '^\f\+_test\.go$'
+    call go#test#Test(0, 1)
+  elseif l:file =~# '^\f\+\.go$'
+    call go#cmd#Build(0)
+  endif
+endfunction
+autocmd FileType go nmap <F7> :<C-u>call <SID>build_go_files()<CR>
+
+" Whenever you save file goimports updates your Go import lines, adding missing ones and
+" removing unreferenced ones. Also arrange import path group by package. 
+" Furthermore, it does what gofmt does.
+let g:go_fmt_command = "goimports"
+
+let g:go_rename_command = 'gopls'
+
+"let g:go_metalinter_autosave = 1
 
 "------------------- vim-lsc ------------------------------
 let g:lsc_server_commands = {'dart': 'dart_language_server'}
@@ -860,3 +806,9 @@ let g:lsc_auto_map = v:true
 
 "------------------- polyglot -----------------------------
 "let g:polyglot_dsabled = ['liquid']
+
+"------------------- rust -----------------------------
+let g:rustfmt_autosave=1
+
+"------------------- spell check -----------------------------
+"set spell spelllang=en_us
