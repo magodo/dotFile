@@ -462,8 +462,7 @@ SPACESHIP_GIT_STATUS_BEHIND=""
 SPACESHIP_GIT_STATUS_DIVERGED=" 💥 "
 # SPACESHIP_GIT_STATUS_SUFFIX=""
 # SPACESHIP_GIT_STATUS_PREFIX=""
-
-SPACESHIP_PROMPT_ORDER=(dir git exec_time line_sep jobs char exit_code golang rust ruby pyenv terraform)
+SPACESHIP_PROMPT_ORDER=(dir git exec_time line_sep jobs char exit_code golang rust ruby pyenv terraform venv)
 
 ####################################################################################
 # NPM
@@ -482,3 +481,14 @@ urlencode() {
     fi
     python3 -c "import urllib.parse; print(urllib.parse.quote('$input', ''))"
 }
+
+####################################################################################
+# .NET core
+####################################################################################
+export PATH=$HOME/.dotnet/tools:$PATH
+
+####################################################################################
+# mitmproxy
+####################################################################################
+alias mitmproxy="docker run --rm -it -v ~/.mitmproxy:/home/mitmproxy/.mitmproxy -p 8080:8080 mitmproxy/mitmproxy mitmproxy --set block_global=false"
+alias mitmweb="docker run --rm -it -v ~/.mitmproxy:/home/mitmproxy/.mitmproxy -p 8080:8080 -p 8081:8081 mitmproxy/mitmproxy mitmweb --web-host 0.0.0.0 --set block_global=false"
