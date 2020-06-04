@@ -492,3 +492,55 @@ export PATH=$HOME/.dotnet/tools:$PATH
 ####################################################################################
 alias mitmproxy="docker run --rm -it -v ~/.mitmproxy:/home/mitmproxy/.mitmproxy -p 8080:8080 mitmproxy/mitmproxy mitmproxy --set block_global=false"
 alias mitmweb="docker run --rm -it -v ~/.mitmproxy:/home/mitmproxy/.mitmproxy -p 8080:8080 -p 8081:8081 mitmproxy/mitmproxy mitmweb --web-host 0.0.0.0 --set block_global=false"
+
+####################################################################################
+# Autorest
+####################################################################################
+die() {
+    echo "$@" >&2
+    return 1
+}
+
+function run_autorest() {
+    while :; do
+        case $1 in
+            -h|--help)
+            cat << EOF
+Usage: run_autorest [options] spec_dir readme out_dir
+
+Options:
+    -h|--help           show this message
+
+Arguments:
+    spec_dir            Path to auzre-rest-api/specification
+    readme              Path to the readme.md file of the target RP
+    out_dir             Path to the output directory
+EOF
+                return
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                break
+                ;;
+        esac
+        shift
+    done
+
+    local expect_n_arg
+    expect_n_arg=3
+    [[ $# = "$expect_n_arg" ]] || die "wrong arguments (expected: $expect_n_arg, got: $#)"
+
+    spec_dir="$(realpath $1)"
+    [[ -d "$spec_dir" ]] || die "$spec_dir is not a directory"
+    readme="$(realpath $2)"
+    [[ -f "$readme" ]] || die "$readme is not a file"
+    out_dir="$(realpath $3)"
+    [[ -d "$out_dir" ]] || die "$out_dir is not a directory"
+
+    tool_dir=$HOME/projects/autorest.trenton
+    docker run --rm -v "$spec_dir":"$spec_dir" -v "$out_dir":"$out_dir" -v "$tool_dir":/tool autorest bash -c "metadata-tool \"$readme\" && autorest --trenton --use=/tool --intermediate --trenton-output-folder=\"$out_dir\" \"$readme\""
+}
+

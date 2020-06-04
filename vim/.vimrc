@@ -543,7 +543,7 @@ noremap <leader>i :YcmCompleter GetType<CR>
 nnoremap <leader>gd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 nnoremap <leader>gr :YcmCompleter GoToReferences<CR>
 
-"let g:ycm_auto_hover = ???
+let g:ycm_auto_hover = ""
 
 " Avoid YCM process other file types
 let g:ycm_filetype_whitelist = { 
