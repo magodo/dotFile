@@ -567,6 +567,8 @@ let g:ycm_filetype_whitelist = {
 let g:ycm_semantic_triggers =  {
             \ 'c,cpp' : ['re!\w{3}']}
 
+let g:ycm_auto_hover=""
+
 "---------------------- Taglists -----------------------------
 "nmap tl :TlistToggle<cr>
 "let Tlist_Exit_OnlyWindow=1

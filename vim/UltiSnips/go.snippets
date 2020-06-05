@@ -392,7 +392,7 @@ endsnippet
 
 snippet tfexpand_map "define expand function which converts nested block to sdk type" b
 func expand$1(input []interface{}) *$2 {
-	if len(input) == 0 {
+	if len(input) == 0 || input[0] == nil {
 		return nil
 	}
 
