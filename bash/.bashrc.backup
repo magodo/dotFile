@@ -149,7 +149,3 @@ export PS1="\u@\H \W 💤 "
 export PATH="$PATH:$HOME/.rvm/bin"
 
 complete -C /usr/bin/terraform terraform
-
-export PATH=$PATH:/home/magodo/.local/azure-cli/bin
-
-source '/home/magodo/.local/azure-cli/az.completion'

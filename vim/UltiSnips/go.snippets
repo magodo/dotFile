@@ -69,7 +69,7 @@ func resourceArm$1() *schema.Resource {
 
 			"resource_group_name": azure.SchemaResourceGroupName(),
 
-			"location": azure.SchemaLocation(),
+			"location": location.Schema(),
 
 			$0
 
@@ -636,12 +636,13 @@ func testCheckAzureRM$1Destroy(s *terraform.State) error {
 			return err
 		}
 
-		if resp, err := client.Get(ctx, id.ResourceGroup, id.Name); err != nil {
-			if !utils.ResponseWasNotFound(resp.Response) {
-				return fmt.Errorf("Getting on $2.$3: %+v", err)
-			}
+		resp, err := client.Get(ctx, id.ResourceGroup, id.Name)
+		if err == nil {
+			return fmt.Errorf("$2.$3 still exists")
 		}
-
+		if !utils.ResponseWasNotFound(resp.Response) {
+			return fmt.Errorf("Getting on $2.$3: %+v", err)
+		}
 		return nil
 	}
 

@@ -401,7 +401,7 @@ alias tf=terraform
 export PATH=$PATH:~/MS/projects/utils
 
 export PATH=$PATH:/home/magodo/.local/azure-cli/bin
-source '/home/magodo/.local/azure/lib/az.completion'
+source '/home/magodo/.local/azure-cli/az.completion'
 
 ####################################################################################
 # terraform team city test
@@ -496,12 +496,8 @@ alias mitmweb="docker run --rm -it -v ~/.mitmproxy:/home/mitmproxy/.mitmproxy -p
 ####################################################################################
 # Autorest
 ####################################################################################
-die() {
-    echo "$@" >&2
-    return 1
-}
-
 function run_autorest() {
+    extra_option=()
     while :; do
         case $1 in
             -h|--help)
@@ -510,6 +506,7 @@ Usage: run_autorest [options] spec_dir readme out_dir
 
 Options:
     -h|--help           show this message
+    --debug
 
 Arguments:
     spec_dir            Path to auzre-rest-api/specification
@@ -517,6 +514,11 @@ Arguments:
     out_dir             Path to the output directory
 EOF
                 return
+                ;;
+            --debug)
+                extra_option=(--debug)
+                shift
+                break
                 ;;
             --)
                 shift
@@ -531,16 +533,16 @@ EOF
 
     local expect_n_arg
     expect_n_arg=3
-    [[ $# = "$expect_n_arg" ]] || die "wrong arguments (expected: $expect_n_arg, got: $#)"
+    [[ $# = "$expect_n_arg" ]] || { "wrong arguments (expected: $expect_n_arg, got: $#)"; return 1; }
 
     spec_dir="$(realpath $1)"
-    [[ -d "$spec_dir" ]] || die "$spec_dir is not a directory"
+    [[ -d "$spec_dir" ]] ||  { "$spec_dir is not a directory"; return 1; }
     readme="$(realpath $2)"
-    [[ -f "$readme" ]] || die "$readme is not a file"
+    [[ -f "$readme" ]] || { "$readme is not a file"; return 1; }
     out_dir="$(realpath $3)"
-    [[ -d "$out_dir" ]] || die "$out_dir is not a directory"
+    [[ -d "$out_dir" ]] || { "$out_dir is not a directory"; return 1; }
 
     tool_dir=$HOME/projects/autorest.trenton
-    docker run --rm -v "$spec_dir":"$spec_dir" -v "$out_dir":"$out_dir" -v "$tool_dir":/tool autorest bash -c "metadata-tool \"$readme\" && autorest --trenton --use=/tool --intermediate --trenton-output-folder=\"$out_dir\" \"$readme\""
+    docker run --rm -v "$spec_dir":"$spec_dir" -v "$out_dir":"$out_dir" -v "$tool_dir":/tool autorest bash -c "metadata-tool \"$readme\" && autorest \"${extra_option[@]}\" --trenton --use=/tool --intermediate --trenton-output-folder=\"$out_dir\" \"$readme\""
 }
 
