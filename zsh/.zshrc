@@ -399,9 +399,7 @@ alias tf=terraform
 # azure related
 ####################################################################################
 export PATH=$PATH:~/MS/projects/utils
-
 export PATH=$PATH:/home/magodo/.local/azure-cli/bin
-source '/home/magodo/.local/azure-cli/az.completion'
 
 ####################################################################################
 # terraform team city test
