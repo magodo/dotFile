@@ -456,12 +456,7 @@ SPACESHIP_GIT_STATUS_DIVERGED=" 💥 "
 # SPACESHIP_GIT_STATUS_SUFFIX=""
 # SPACESHIP_GIT_STATUS_PREFIX=""
 
-SPACESHIP_PROMPT_ORDER=(dir git exec_time line_sep jobs char exit_code golang rust ruby pyenv terraform)
-
-####################################################################################
-# xmodmap disable CapsLock (bt keyboard might break if entering that key)
-####################################################################################
-xmodmap ~/.xmodmap
+SPACESHIP_PROMPT_ORDER=(dir git exec_time line_sep jobs char exit_code golang rust ruby pyenv terraform venv)
 
 ####################################################################################
 # NPM
