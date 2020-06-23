@@ -449,6 +449,7 @@ Plug 'plasticboy/vim-markdown'
 Plug 'majutsushi/tagbar'
 Plug 'vim-scripts/winmanager--Fox'
 Plug 'vim-scripts/TaskList.vim'
+Plug 'sjl/gundo.vim'
 "Plug 'nvie/vim-flake8'
 Plug 'tpope/vim-surround'
 Plug 'flazz/vim-colorschemes'
@@ -644,6 +645,10 @@ autocmd FileType python nmap <F7> :!python %<CR>
 "------------------------- Task List ------------------------
 " show every 'FIXME'
 map <leader>tl <Plug>TaskList
+
+"------------------------- GundoToggle ----------------------
+" review history
+"map <leader>gd :GundoToggle<CR>
 
 "------------------------ GIT -------------
 " automatically wrap at 72 text width when git commit
