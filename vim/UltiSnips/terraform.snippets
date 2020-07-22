@@ -13,3 +13,14 @@ variable "location" {
   default = "West Europe"
 }
 endsnippet
+
+snippet terraform "terraform provider" b
+terraform {
+  required_providers {
+    $1 = {
+	  source = ""
+	  version = ""
+	}
+  }
+}
+endsnippet

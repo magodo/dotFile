@@ -125,9 +125,6 @@ eval "$(dircolors)"
 export GREP_COLORS="ms=01;31:mc=01;31:sl=:cx=:fn=35:ln=32:bn=32:se=36"
 alias grep='grep --color'
 
-# colorize cat
-alias cat=ccat
-
 export EDITOR=/usr/bin/vim
 
 # colorize ls
@@ -153,7 +150,7 @@ GEM_PATH=$GEM_HOME
 export PATH=$PATH:$GEM_HOME/bin
 
 # path
-export PATH=$HOME/github/tool/MyUtilities:$HOME/.local/bin/:$HOME/node_modules/.bin:$PATH
+export PATH=$HOME/github/tool/MyUtilities:$HOME/.local/bin/:$HOME/.local/npm-bin/node_modules/.bin:$PATH
 
 # reset psmouse
 reset_psmouse()
@@ -186,6 +183,7 @@ hide()
 }
 
 # golang
+[[ -s "/home/magodo/.gvm/scripts/gvm" ]] && source "/home/magodo/.gvm/scripts/gvm"
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 gofoo() {
@@ -376,8 +374,6 @@ predb() {
     mysql -uucloud -pucloud.cn0 -h192.168.152.10 -P3206 udb
 }
 
-[[ -s "/home/magodo/.gvm/scripts/gvm" ]] && source "/home/magodo/.gvm/scripts/gvm"
-
 ####################################################################################
 # setup GVM
 ####################################################################################
@@ -545,3 +541,6 @@ EOF
     docker run --rm -v "$spec_dir":"$spec_dir" -v "$out_dir":"$out_dir" -v "$tool_dir":/tool autorest bash -c "metadata-tool \"$readme\" && autorest \"${extra_option[@]}\" --trenton --use=/tool --intermediate --trenton-output-folder=\"$out_dir\" \"$readme\""
 }
 
+# Terraform Vault
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /usr/bin/vault vault
