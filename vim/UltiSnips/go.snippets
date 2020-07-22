@@ -20,10 +20,10 @@ func TestFoo(t *testing.T) {
 		},
 	}
 
-	for _, c := range cases {
-		out := 
-		if out != {
-			t.Fatalf()
+	for idx, c := range cases {
+		out := $1
+		if !reflect.DeepEqual(out, c.$2) {
+			t.Fatalf("%d failed\nexpected:\n%s\nactual:\n%s\n", idx, spew.Sdump(out), spew.Sdump(c.$2))
 		}
 	}
 }
@@ -475,6 +475,16 @@ func Test$1ID(t *testing.T) {
 		{
 			Name:  "No Resource Groups Value",
 			Input: "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/",
+			Error: true,
+		},
+		{
+			Name:  "Missing leading slash",
+			Input: "subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/group1",
+			Error: true,
+		},
+		{
+			Name:  "Malformed segments",
+			Input: "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/group1/foo/bar",
 			Error: true,
 		},
 	}
