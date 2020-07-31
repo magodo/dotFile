@@ -150,7 +150,7 @@ GEM_PATH=$GEM_HOME
 export PATH=$PATH:$GEM_HOME/bin
 
 # path
-export PATH=$HOME/github/tool/MyUtilities:$HOME/.local/bin/:$HOME/.local/npm-bin/node_modules/.bin:$PATH
+export PATH=$HOME/github/tool/MyUtilities:$HOME/.local/bin:$HOME/.local/pulumi:$HOME/.local/npm-bin/node_modules/.bin:$PATH
 
 # reset psmouse
 reset_psmouse()
@@ -485,8 +485,8 @@ export PATH=$HOME/.dotnet/tools:$PATH
 ####################################################################################
 # mitmproxy
 ####################################################################################
-alias mitmproxy="docker run --rm -it -v ~/.mitmproxy:/home/mitmproxy/.mitmproxy -p 8080:8080 mitmproxy/mitmproxy mitmproxy --set block_global=false"
-alias mitmweb="docker run --rm -it -v ~/.mitmproxy:/home/mitmproxy/.mitmproxy -p 8080:8080 -p 8081:8081 mitmproxy/mitmproxy mitmweb --web-host 0.0.0.0 --set block_global=false"
+#alias mitmproxy="docker run --rm -it -v ~/.mitmproxy:/home/mitmproxy/.mitmproxy -p 8080:8080 mitmproxy/mitmproxy mitmproxy --set block_global=false"
+#alias mitmweb="docker run --rm -it -v ~/.mitmproxy:/home/mitmproxy/.mitmproxy -p 8080:8080 -p 8081:8081 mitmproxy/mitmproxy mitmweb --web-host 0.0.0.0 --set block_global=false"
 
 ####################################################################################
 # Autorest
@@ -544,3 +544,38 @@ EOF
 # Terraform Vault
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/bin/vault vault
+
+# Terraform 0.13 switcher
+tf_state() {
+    cat << EOF
+The terraform underused is:
+
+    $(which terraform)
+
+The version:
+
+$(terraform version)
+
+The terraform plugin folder underused is:
+
+    $(ll ~/.terraform.d)
+EOF
+}
+
+tf_switch() {
+    target=$1
+    case $1 in
+        stable)
+            ln -nsf ~/.terraform.d.stable ~/.terraform.d 
+            ln -sf /usr/bin/terraform ~/.local/bin/terraform
+            ;;
+        beta)
+            ln -nsf ~/.terraform.d.beta ~/.terraform.d
+            ln -sf ~/.local/bin/terraform-beta ~/.local/bin/terraform
+            ;;
+        *)
+            echo "Unknown target: $1" 2>&1 
+            return 1
+    esac
+}
+
