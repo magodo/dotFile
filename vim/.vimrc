@@ -463,7 +463,7 @@ Plug 'mattn/emmet-vim'
 Plug 'iamcco/markdown-preview.vim'
 "Plug 'ctrlpvim/ctrlp.vim'
 Plug 'jeetsukumaran/vim-buffergator'
-"Plug 'w0rp/ale'
+Plug 'w0rp/ale'
 Plug 'skywind3000/vim-preview'
 Plug 'aklt/plantuml-syntax'
 Plug 'maksimr/vim-jsbeautify'
@@ -705,27 +705,27 @@ let g:syntastic_mode_map = {
 "autocmd BufWritePre *.py 0,$!yapf
 
 "------------------------- ale --------------
-"let g:ale_linters_explicit = 1
-"let g:ale_completion_delay = 500
-"let g:ale_echo_delay = 20
-"let g:ale_lint_delay = 500
-"let g:ale_echo_msg_format = '[%linter%] %code: %%s'
-"let g:ale_lint_on_text_changed = 'normal'
-"let g:ale_lint_on_insert_leave = 1
-"let g:airline#extensions#ale#enabled = 1
-"
-"let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
-"let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
-"let g:ale_c_cppcheck_options = ''
-"let g:ale_cpp_cppcheck_options = ''
-"
-"let g:ale_sign_error = "✖"
-"let g:ale_sign_warning = "!"
+let g:ale_linters_explicit = 1
+let g:ale_completion_delay = 500
+let g:ale_echo_delay = 20
+let g:ale_lint_delay = 500
+let g:ale_echo_msg_format = '[%linter%] %code: %%s'
+let g:ale_lint_on_text_changed = 'normal'
+let g:ale_lint_on_insert_leave = 1
+let g:airline#extensions#ale#enabled = 1
 
-" Limit linters used for JavaScript.
-"let g:ale_linters = {
-"\  'javascript': ['flow']
-"\}
+let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
+let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
+let g:ale_c_cppcheck_options = ''
+let g:ale_cpp_cppcheck_options = ''
+
+let g:ale_sign_error = "✖"
+let g:ale_sign_warning = "!"
+
+let g:ale_linters = {
+\  'javascript': ['eslint'],
+\  'sh': ['shellcheck', 'shell'],
+\}
 
 " Map keys to navigate between lines with errors and warnings.
 nnoremap <C-n> :ALENextWrap<cr>
