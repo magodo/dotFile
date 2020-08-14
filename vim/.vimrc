@@ -566,6 +566,16 @@ let g:ycm_filetype_whitelist = {
 let g:ycm_semantic_triggers =  {
             \ 'c,cpp' : ['re!\w{3}']}
 
+let g:ycm_language_server =
+\ [
+\   {
+\     'name': 'rust',
+\     'cmdline': ['rust-analyzer'],
+\     'filetypes': ['rust'],
+\     'project_root_files': ['Cargo.toml']
+\   }
+\ ]
+
 "---------------------- Taglists -----------------------------
 "nmap tl :TlistToggle<cr>
 "let Tlist_Exit_OnlyWindow=1

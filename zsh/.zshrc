@@ -403,9 +403,9 @@ export PATH=$PATH:/home/magodo/.local/azure-cli/bin
 ####################################################################################
 
 setup_tctest() {
+    export TCTEST_BUILDTYPEID="TerraformOpenSource_TerraformProviders_AzureRMPublic_AZURERM_PR_PUBLIC"
     export TCTEST_USER="magodo"
     export TCTEST_SERVER="ci-oss.hashicorp.engineering"
-    export TCTEST_BUILDTYPEID="Azure_AzurePublic"
     export TCTEST_REPO="terraform-providers/terraform-provider-azurerm"
 }
 
