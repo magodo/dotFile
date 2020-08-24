@@ -183,9 +183,12 @@ hide()
 }
 
 # golang
-[[ -s "/home/magodo/.gvm/scripts/gvm" ]] && source "/home/magodo/.gvm/scripts/gvm"
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
+setup_gvm() {
+    [[ -s "/home/magodo/.gvm/scripts/gvm" ]] && source "/home/magodo/.gvm/scripts/gvm"
+}
+
 gofoo() {
     if [[ -d /tmp/gofoo ]]; then
         cd /tmp/gofoo
@@ -283,17 +286,19 @@ alias git_bigfile="git rev-list --objects --all \
 export PATH=$PATH:$HOME/fabric-samples/bin
 
 # node version manager
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+setup_nvm() {
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+    [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+}
 
 # python version manager
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
-command -v pyenv 1>/dev/null 2>&1 && eval "$(pyenv init -)"
 
-# golang version manager
-#[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
+setup_pyenv() {
+    command -v pyenv 1>/dev/null 2>&1 && eval "$(pyenv init -)"
+}
 
 # android
 export ANDROID_SDK_ROOT=$HOME/Android/Sdk
@@ -323,11 +328,11 @@ EOF
 ####################################################################################
 # minikube
 ####################################################################################
-if [[ -x /usr/bin/kubectl ]]; then source <(kubectl completion zsh); fi
-if [ -f /usr/bin/minikube ]; then 
-    source <(minikube completion zsh)
-    #eval $(minikube docker-env)
-fi
+# if [[ -x /usr/bin/kubectl ]]; then source <(kubectl completion zsh); fi
+# if [ -f /usr/bin/minikube ]; then
+#     source <(minikube completion zsh)
+#     #eval $(minikube docker-env)
+# fi
 
 ####################################################################################
 # cow
@@ -375,13 +380,6 @@ predb() {
 }
 
 ####################################################################################
-# setup GVM
-####################################################################################
-gvm_setup() {
-    source ~/.gvm/scripts/gvm
-}
-
-####################################################################################
 # setup terraform
 ####################################################################################
 alias tf=terraform
@@ -390,7 +388,9 @@ alias tf=terraform
 # THIS SHOULD BE AT LAST LINE, OTHERWISE RVM WILL COMPLAIN
 # ruby: rvm
 ####################################################################################
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+setup_rvm() {
+    [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+}
 
 ####################################################################################
 # azure related
@@ -545,37 +545,11 @@ EOF
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/bin/vault vault
 
-# Terraform 0.13 switcher
-tf_state() {
-    cat << EOF
-The terraform underused is:
-
-    $(which terraform)
-
-The version:
-
-$(terraform version)
-
-The terraform plugin folder underused is:
-
-    $(ll ~/.terraform.d)
-EOF
+##########################################
+# git
+##########################################
+gfm() {
+    upstream=${1:-upstream}
+    git fetch $upstream
+    git merge $upstream/master
 }
-
-tf_switch() {
-    target=$1
-    case $1 in
-        stable)
-            ln -nsf ~/.terraform.d.stable ~/.terraform.d 
-            ln -sf /usr/bin/terraform ~/.local/bin/terraform
-            ;;
-        beta)
-            ln -nsf ~/.terraform.d.beta ~/.terraform.d
-            ln -sf ~/.local/bin/terraform-beta ~/.local/bin/terraform
-            ;;
-        *)
-            echo "Unknown target: $1" 2>&1 
-            return 1
-    esac
-}
-
