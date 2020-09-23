@@ -398,6 +398,9 @@ setup_rvm() {
 export PATH=$PATH:~/MS/projects/utils
 export PATH=$PATH:/home/magodo/.local/azure-cli/bin
 
+# allow cli to work behind a proxy 
+#export AZURE_CLI_DISABLE_CONNECTION_VERIFICATION=1
+
 ####################################################################################
 # terraform team city test
 ####################################################################################
@@ -553,3 +556,9 @@ gfm() {
     git fetch $upstream
     git merge $upstream/master
 }
+
+
+##########################################
+# xclip
+##########################################
+alias xclip="xclip -selection c"

@@ -428,6 +428,18 @@ type $1Id struct {
 	Name string
 }
 
+func (id $1Id) ID(subscriptionId string) string {
+	return fmt.Sprintf("/subscriptions/%s/resourceGroups/%s/providers/$4/$2/%s",
+		subscriptionId, id.ResourceGroup, id.Name)
+}
+
+func New$1ID(resourceGroup, name string) $1Id {
+	return $1Id{
+		ResourceGroup: resourceGroup,
+		Name:          name,
+	}
+}
+
 func $1ID(input string) (*$1Id, error) {
 	id, err := azure.ParseAzureResourceID(input)
 	if err != nil {
@@ -455,6 +467,18 @@ import (
 	"testing"
 )
 
+var _ resourceid.Formatter = $1Id{}
+
+
+func Test$1IDFormatter(t *testing.T) {
+	subscriptionId := "12345678-1234-5678-1234-123456789012"
+	actual := New$1ID().ID(subscriptionId)
+	expected := "/subscriptions/12345678-1234-5678-1234-123456789012/resourceGroups/group1/providers/"
+	if actual != expected {
+		t.Fatalf("Expected %q but got %q", expected, actual)
+	}
+}
+
 func Test$1ID(t *testing.T) {
 	testData := []struct {
 		Name   string
@@ -469,22 +493,22 @@ func Test$1ID(t *testing.T) {
 		},
 		{
 			Name:  "No Resource Groups Segment",
-			Input: "/subscriptions/00000000-0000-0000-0000-000000000000",
+			Input: "/subscriptions/11111111-1111-1111-1111-111111111111",
 			Error: true,
 		},
 		{
 			Name:  "No Resource Groups Value",
-			Input: "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/",
+			Input: "/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/",
 			Error: true,
 		},
 		{
 			Name:  "Missing leading slash",
-			Input: "subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/group1",
+			Input: "subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/group1",
 			Error: true,
 		},
 		{
 			Name:  "Malformed segments",
-			Input: "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/group1/foo/bar",
+			Input: "/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/group1/foo/bar",
 			Error: true,
 		},
 	}
