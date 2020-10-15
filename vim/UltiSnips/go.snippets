@@ -86,6 +86,7 @@ func resourceArm$1CreateUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	name := d.Get("name").(string)
 	resourceGroup := d.Get("resource_group_name").(string)
+	location := azure.NormalizeLocation(d.Get("location").(string))
 
 	if d.IsNewResource() {
 		resp, err := client.Get(ctx, resourceGroup, name)
@@ -141,6 +142,9 @@ func resourceArm$1Read(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	// TODO: d.Set()
+	if location := resp.Location; location != nil {
+		d.Set("location", azure.NormalizeLocation(*location))
+	}
 
 	return tags.FlattenAndSet(d, resp.Tags)
 }
