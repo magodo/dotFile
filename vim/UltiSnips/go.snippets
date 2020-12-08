@@ -13,7 +13,7 @@ if $1 err := $2; err != nil {
 endsnippet
 
 snippet testcase "simple test case" b
-func TestFoo(t *testing.T) {
+func Test$1(t *testing.T) {
 	cases := []struct {
 	}{
 		{
@@ -21,10 +21,8 @@ func TestFoo(t *testing.T) {
 	}
 
 	for idx, c := range cases {
-		out := $1
-		if !reflect.DeepEqual(out, c.$2) {
-			t.Fatalf("%d failed\nexpected:\n%s\nactual:\n%s\n", idx, spew.Sdump(out), spew.Sdump(c.$2))
-		}
+		out := $2
+		require.Equal(t, c.expect, out, idx)
 	}
 }
 endsnippet
@@ -130,7 +128,7 @@ func resourceArm$1Read(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	resp, err := client.Get(ctx, id.ResourceGroup, id.Name)
+	resp, err := client.Get(ctx, id.ResourceGroup, id.$1Name)
 	if err != nil {
 		if utils.ResponseWasNotFound(resp.Response) {
 			log.Printf("[DEBUG] ${1/([A-Z][a-z]+)/$1 /g}%q was not found in Resource Group %q - removing from state!", id.Name, id.ResourceGroup)
@@ -159,8 +157,20 @@ func resourceArm$1Delete(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	if _, err := client.Delete(ctx, id.ResourceGroup, id.Name); err != nil {
-		return fmt.Errorf("deleting ${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+	future, err := client.Delete(ctx, id.ResourceGroup, id.$1Name)
+	if err != nil {
+		if response.WasNotFound(deleteFuture.Response()) {
+			return nil
+		}
+		return fmt.Errorf("Error deleting ${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+	}
+
+	err = future.WaitForCompletionRef(ctx, client.Client)
+	if err != nil {
+		if response.WasNotFound(future.Response()) {
+			return nil
+		}
+		return fmt.Errorf("Error waiting for deletion of ${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 	}
 
 	return nil
@@ -285,19 +295,6 @@ if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
 }
 endsnippet
 
-snippet tfsetid "set id into resource data" b
-resp, err := client.Get(ctx, resourceGroup, name)
-if err != nil {
-	return fmt.Errorf("retrieving $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
-}
-
-if resp.ID == nil || *resp.ID == "" {
-	return fmt.Errorf("empty or nil ID returned for $1 %q (Resource Group %q)", name, resourceGroup)
-}
-
-d.SetId(*resp.ID)
-endsnippet
-
 snippet tfretcreate "return statement of create callback" b
 return resource$1Read(d, meta)
 endsnippet
@@ -416,6 +413,10 @@ endsnippet
 
 snippet tfexpand_slice "define expand function which converts slice to pointer of slice of sdk type" b
 func expand$1(input []interface{}) *[]$2 {
+	if len(input) == 0 {
+		return nil
+	}
+
 	result := make([]$2, 0)
 
 	for _, e := range input {
@@ -426,275 +427,108 @@ func expand$1(input []interface{}) *[]$2 {
 }
 endsnippet
 
-snippet tfparseiddef "define parseid function" b
-import (
-	"fmt"
-
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/azure"
-)
-
-type $1Id struct {
-	ResourceGroup string
-	Name string
-}
-
-func (id $1Id) ID(subscriptionId string) string {
-	return fmt.Sprintf("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.$2/$3/%s",
-		subscriptionId, id.ResourceGroup, id.Name)
-}
-
-func New$1ID(resourceGroup, name string) $1Id {
-	return $1Id{
-		ResourceGroup: resourceGroup,
-		Name:          name,
-	}
-}
-
-func $1ID(input string) (*$1Id, error) {
-	id, err := azure.ParseAzureResourceID(input)
-	if err != nil {
-		return nil, fmt.Errorf("parsing ${1/([A-Z][a-z]+)/$1 /g}ID %q: %+v", input, err)
-	}
-
-	$4 := $1Id {
-		ResourceGroup: id.ResourceGroup,	
-	}
-
-	if $4.Name, err = id.PopSegment("$3"); err != nil {
-		return nil, err
-	}
-
-	if err := id.ValidateNoEmptySegments(input); err != nil {
-		return nil, err
-	}
-
-	return &$4, nil
-}
-endsnippet
-
-snippet tfparseidtest "define ut for parseid function" b
-import (
-	"testing"
-)
-
-var _ resourceid.Formatter = $1Id{}
-
-
-func Test$1IDFormatter(t *testing.T) {
-	subscriptionId := "12345678-1234-5678-1234-123456789012"
-	actual := New$1ID().ID(subscriptionId)
-	expected := "/subscriptions/12345678-1234-5678-1234-123456789012/resourceGroups/group1/providers/"
-	if actual != expected {
-		t.Fatalf("Expected %q but got %q", expected, actual)
-	}
-}
-
-func Test$1ID(t *testing.T) {
-	testData := []struct {
-		Name   string
-		Input  string
-		Error  bool
-		Expect *$1Id
-	}{
-		{
-			Name:  "Empty",
-			Input: "",
-			Error: true,
-		},
-		{
-			Name:  "No Resource Groups Segment",
-			Input: "/subscriptions/11111111-1111-1111-1111-111111111111",
-			Error: true,
-		},
-		{
-			Name:  "No Resource Groups Value",
-			Input: "/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/",
-			Error: true,
-		},
-		{
-			Name:  "Missing leading slash",
-			Input: "subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/group1",
-			Error: true,
-		},
-		{
-			Name:  "Malformed segments",
-			Input: "/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/group1/foo/bar",
-			Error: true,
-		},
-	}
-
-	for _, v := range testData {
-		t.Logf("[DEBUG] Testing %q", v.Name)
-
-		actual, err := $1ID(v.Input)
-		if err != nil {
-			if v.Error {
-				continue
-			}
-
-			t.Fatalf("Expect a value but got an error: %s", err)
-		}
-		if v.Error {
-			t.Fatal("Expect an error but didn't get")
-		}
-
-		if actual.ResourceGroup != v.Expect.ResourceGroup {
-			t.Fatalf("Expected %q but got %q for Resource Group", v.Expect.ResourceGroup, actual.ResourceGroup)
-		}
-
-		if actual.Name != v.Expect.Name {
-			t.Fatalf("Expected %q but got %q for Name", v.Expect.Name, actual.Name)
-		}
-	}
-}
-endsnippet
-
 snippet tfacctest_res "acc test scaffolding for resource" b
+type $1Resource struct{}
+
 func TestAccAzureRM$1_basic(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
+	r := $1Resource{}
 
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { acceptance.PreCheck(t) },
-		Providers:    acceptance.SupportedProviders,
-		CheckDestroy: testCheckAzureRM$1Destroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAzureRM$1_basic(data),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRM$1Exists(data.ResourceName),
-				),
-			},
-			data.ImportStep(),
+	data.ResourceTest(t, r, []resource.TestStep{
+		{
+			Config: r.basic(data),
+			Check: resource.ComposeTestCheckFunc(
+				check.That(data.ResourceName).ExistsInAzure(r),
+			),
 		},
+		data.ImportStep(),
 	})
 }
 
 func TestAccAzureRM$1_complete(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
+	r := $1Resource{}
 
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { acceptance.PreCheck(t) },
-		Providers:    acceptance.SupportedProviders,
-		CheckDestroy: testCheckAzureRM$1Destroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAzureRM$1_complete(data),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRM$1Exists(data.ResourceName),
-				),
-			},
-			data.ImportStep(),
+	data.ResourceTest(t, r, []resource.TestStep{
+		{
+			Config: r.complete(data),
+			Check: resource.ComposeTestCheckFunc(
+				check.That(data.ResourceName).ExistsInAzure(r),
+			),
 		},
+		data.ImportStep(),
 	})
 }
 
 func TestAccAzureRM$1_update(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
+	r := $1Resource{}
 
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { acceptance.PreCheck(t) },
-		Providers:    acceptance.SupportedProviders,
-		CheckDestroy: testCheckAzureRM$1Destroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAzureRM$1_basic(data),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRM$1Exists(data.ResourceName),
-				),
-			},
-			data.ImportStep(),
-			{
-				Config: testAccAzureRM$1_complete(data),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRM$1Exists(data.ResourceName),
-				),
-			},
-			data.ImportStep(),
-			{
-				Config: testAccAzureRM$1_basic(data),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRM$1Exists(data.ResourceName),
-				),
-			},
-			data.ImportStep(),
+	data.ResourceTest(t, r, []resource.TestStep{
+		{
+			Config: r.basic(data),
+			Check: resource.ComposeTestCheckFunc(
+				check.That(data.ResourceName).ExistsInAzure(r),
+			),
 		},
+		data.ImportStep(),
+		{
+			Config: r.complete(data),
+			Check: resource.ComposeTestCheckFunc(
+				check.That(data.ResourceName).ExistsInAzure(r),
+			),
+		},
+		data.ImportStep(),
+		{
+			Config: r.basic(data),
+			Check: resource.ComposeTestCheckFunc(
+				check.That(data.ResourceName).ExistsInAzure(r),
+			),
+		},
+		data.ImportStep(),
 	})
 }
 
 func TestAccAzureRM$1_requiresImport(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
+	r := $1Resource{}
 
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { acceptance.PreCheck(t) },
-		Providers:    acceptance.SupportedProviders,
-		CheckDestroy: testCheckAzureRM$1Destroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAzureRM$1_basic(data),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRM$1Exists(data.ResourceName),
-				),
-			},
-			data.RequiresImportErrorStep(testAccAzureRM$1_requiresImport),
+	data.ResourceTest(t, r, []resource.TestStep{
+		{
+			Config: r.basic(data),
+			Check: resource.ComposeTestCheckFunc(
+				check.That(data.ResourceName).ExistsInAzure(r),
+			),
 		},
+		data.RequiresImportErrorStep(r.requiresImport),
 	})
 }
 
-func testCheckAzureRM$1Exists(resourceName string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		client := acceptance.AzureProvider.Meta().(*clients.Client).$2.$3Client
-		ctx := acceptance.AzureProvider.Meta().(*clients.Client).StopContext
+func (r $1Resource) Exists(ctx context.Context, clients *clients.Client, state *terraform.InstanceState) (*bool, error) {
+	client := clients.$2.$3Client
 
-		rs, ok := s.RootModule().Resources[resourceName]
-		if !ok {
-			return fmt.Errorf("${1/([A-Z][a-z]+)/$1 /g}not found: %s", resourceName)
-		}
-
-		id, err := parse.$1ID(rs.Primary.ID)
-		if err != nil {
-			return err
-		}
-
-		if resp, err := client.Get(ctx, id.ResourceGroup, id.Name); err != nil {
-			if utils.ResponseWasNotFound(resp.Response) {
-				return fmt.Errorf("${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q) does not exist", id.Name, id.ResourceGroup)
-			}
-			return fmt.Errorf("Getting on $2.$3: %+v", err)
-		}
-
-		return nil
-	}
-}
-
-func testCheckAzureRM$1Destroy(s *terraform.State) error {
-	client := acceptance.AzureProvider.Meta().(*clients.Client).$2.$3Client
-	ctx := acceptance.AzureProvider.Meta().(*clients.Client).StopContext
-
-	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}" {
-			continue
-		}
-
-		id, err := parse.$1ID(rs.Primary.ID)
-		if err != nil {
-			return err
-		}
-
-		resp, err := client.Get(ctx, id.ResourceGroup, id.Name)
-		if err == nil {
-			return fmt.Errorf("$2.$3 still exists")
-		}
-		if !utils.ResponseWasNotFound(resp.Response) {
-			return fmt.Errorf("Getting on $2.$3: %+v", err)
-		}
-		return nil
+	rs, ok := s.RootModule().Resources[resourceName]
+	if !ok {
+		return fmt.Errorf("${1/([A-Z][a-z]+)/$1 /g}not found: %s", resourceName)
 	}
 
-	return nil
+	id, err := parse.$1ID(rs.Primary.ID)
+	if err != nil {
+		return err
+	}
+
+	if resp, err := client.Get(ctx, id.ResourceGroup, id.$1Name); err != nil {
+		if utils.ResponseWasNotFound(resp.Response) {
+			return utils.Bool(false), nil
+		}
+		return nil, fmt.Errorf("retrieving ${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q): %+v", id.$1Name, id.ResourceGroup, err)
+	}
+
+	return utils.Bool(true), nil
 }
 
-func testAccAzureRM$1_basic(data acceptance.TestData) string {
-	template := testAccAzureRM$1_template(data)
+func (r $1Resource) basic(data acceptance.TestData) string {
+	template := r.template(data)
 	return fmt.Sprintf(\`
 %s
 
@@ -703,8 +537,8 @@ resource "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}" "test" {
 \`, template)
 }
 
-func testAccAzureRM$1_complete(data acceptance.TestData) string {
-	template := testAccAzureRM$1_template(data)
+func (r $1Resource) complete(data acceptance.TestData) string {
+	template := r.template(data)
 	return fmt.Sprintf(\`
 %s
 
@@ -713,8 +547,8 @@ resource "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}" "test" {
 \`, template)
 }
 
-func testAccAzureRM$1_requiresImport(data acceptance.TestData) string {
-	template := testAccAzureRM$1_basic(data)
+func (r $1Resource) requiresImport(data acceptance.TestData) string {
+	template := r.basic(data)
 	return fmt.Sprintf(\`
 %s
 
@@ -723,7 +557,7 @@ resource "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}" "import" {
 \`, template)
 }
 
-func testAccAzureRM$1_template(data acceptance.TestData) string {
+func (r $1Resource) template(data acceptance.TestData) string {
 	return fmt.Sprintf(\`
 \`)
 }
@@ -732,23 +566,20 @@ endsnippet
 snippet tfacctest_ds "acc test scaffolding for datasource" b
 func TestAccDataSource$1_basic(t *testing.T) {
 	data := acceptance.BuildTestData(t, "data.azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
+	d := $1DataSource{}
 
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:  func() { acceptance.PreCheck(t) },
-		Providers: acceptance.SupportedProviders,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccDataSource$1_basic(data),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet(data.ResourceName, $2),
-				),
-			},
+	data.DataSourceTest(t, []resource.TestStep{
+		{
+			Config: d.basic(data),
+			Check: resource.ComposeTestCheckFunc(
+				check.That(data.ResourceName).Key("$2").Exists(),
+			),
 		},
 	})
 }
 
-func testAccDataSource$1_basic(data acceptance.TestData) string {
-	config := testAccAzureRM$1_basic(data)
+func (d $1DataSource) basic(data acceptance.TestData, r $1Resource) string {
+	config := r.basic(data)
 	return fmt.Sprintf(\`
 %s
 
@@ -760,26 +591,9 @@ data "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}" "test" {
 endsnippet
 
 
-snippet tfvalidate_id_def "define validation function for id" b
-func $1ID(i interface{}, k string) (warnings []string, errors []error) {
-	v, ok := i.(string)
-	if !ok {
-		errors = append(errors, fmt.Errorf("expected type of %q to be string", k))
-		return
-	}
-
-	if _, err := parse.$1ID(v); err != nil {
-		errors = append(errors, fmt.Errorf("parsing %q as a resource id: %v", k, err))
-		return
-	}
-
-	return warnings, errors
-}
-endsnippet
-
 snippet tfvalidate_string_def "define validation function for string" b
-func $1() func(i interface{}, k string) (warnings []string, errors []error) {
-	return validation.StringMatch(regexp.MustCompile(\`$2\`), "")
+func $1(i interface{}, k string) (warnings []string, errors []error) {
+	return validation.StringMatch(regexp.MustCompile(\`$2\`), "")(i, k)
 }
 endsnippet
 
@@ -839,4 +653,76 @@ func import$1(expectKind $2.$3) func(d *schema.ResourceData, meta interface{}) (
 		return []*schema.ResourceData{d}, nil
 	}
 }
+endsnippet
+
+
+snippet ssa_value_cases "all value cases in switch-case" b
+case *ssa.Alloc:
+case *ssa.BinOp:
+case *ssa.Builtin:
+case *ssa.Call:
+case *ssa.ChangeInterface:
+case *ssa.ChangeType:
+case *ssa.Const:
+case *ssa.Convert:
+case *ssa.Extract:
+case *ssa.Field:
+case *ssa.FieldAddr:
+case *ssa.FreeVar:
+case *ssa.Function:
+case *ssa.Global:
+case *ssa.Index:
+case *ssa.IndexAddr:
+case *ssa.Lookup:
+case *ssa.MakeChan:
+case *ssa.MakeClosure:
+case *ssa.MakeInterface:
+case *ssa.MakeMap:
+case *ssa.MakeSlice:
+case *ssa.Next:
+case *ssa.Parameter:
+case *ssa.Phi:
+case *ssa.Range:
+case *ssa.Select:
+case *ssa.Slice:
+case *ssa.TypeAssert:
+case *ssa.UnOp:
+endsnippet
+
+snippet ssa_instr_cases "all instruction cases in switch-case" b
+case *ssa.Alloc:
+case *ssa.BinOp:
+case *ssa.Call:
+case *ssa.ChangeInterface:
+case *ssa.ChangeType:
+case *ssa.Convert:
+case *ssa.DebugRef:
+case *ssa.Defer:
+case *ssa.Extract:
+case *ssa.Field:
+case *ssa.FieldAddr:
+case *ssa.Go:
+case *ssa.If:
+case *ssa.Index:
+case *ssa.IndexAddr:
+case *ssa.Jump:
+case *ssa.Lookup:
+case *ssa.MakeChan:
+case *ssa.MakeClosure:
+case *ssa.MakeInterface:
+case *ssa.MakeMap:
+case *ssa.MakeSlice:
+case *ssa.MapUpdate:
+case *ssa.Next:
+case *ssa.Panic:
+case *ssa.Phi:
+case *ssa.Range:
+case *ssa.Return:
+case *ssa.RunDefers:
+case *ssa.Select:
+case *ssa.Send:
+case *ssa.Slice:
+case *ssa.Store:
+case *ssa.TypeAssert:
+case *ssa.UnOp:
 endsnippet
