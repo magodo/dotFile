@@ -1,5 +1,5 @@
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
@@ -64,7 +64,6 @@ eval "$(starship init zsh)"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
-  docker
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -125,7 +124,7 @@ eval "$(dircolors)"
 export GREP_COLORS="ms=01;31:mc=01;31:sl=:cx=:fn=35:ln=32:bn=32:se=36"
 alias grep='grep --color'
 
-export EDITOR=/usr/bin/vim
+export EDITOR=$(which vim)
 
 # colorize ls
 alias ls="ls --color"
@@ -145,9 +144,11 @@ def() {
 }
 
 # ruby gems
-GEM_HOME=$(ls -t -U | ruby -e 'puts Gem.user_dir')
-GEM_PATH=$GEM_HOME
-export PATH=$PATH:$GEM_HOME/bin
+if command -v ruby; then
+    GEM_HOME=$(ls -t -U | ruby -e 'puts Gem.user_dir')
+    GEM_PATH=$GEM_HOME
+    export PATH=$PATH:$GEM_HOME/bin
+fi
 
 # path
 export PATH=$HOME/github/tool/MyUtilities:$HOME/.local/bin:$HOME/.local/pulumi:$HOME/.local/npm-bin/node_modules/.bin:$PATH
@@ -184,7 +185,7 @@ hide()
 
 # golang
 export GOPATH=$HOME/go
-export PATH=$PATH:$GOPATH/bin
+export PATH=/usr/local/go/bin:$PATH:$GOPATH/bin
 setup_gvm() {
     [[ -s "/home/magodo/.gvm/scripts/gvm" ]] && source "/home/magodo/.gvm/scripts/gvm"
 }
@@ -197,6 +198,11 @@ gofoo() {
     mkdir /tmp/gofoo
     cd /tmp/gofoo
     go mod init foo
+}
+
+goformat() {
+  find . -name "*.go" | grep -v vendor | xargs gofmt -w -s || exit 1
+  goimports -w .
 }
 
 # todo
@@ -380,9 +386,13 @@ predb() {
 }
 
 ####################################################################################
-# setup terraform
+# terraform
 ####################################################################################
 alias tf=terraform
+
+azurerm_schema() {
+  tf providers schema -json | jq ".provider_schemas.\"registry.terraform.io/hashicorp/azurerm\".resource_schemas.$1.block"
+}
 
 ####################################################################################
 # THIS SHOULD BE AT LAST LINE, OTHERWISE RVM WILL COMPLAIN
@@ -406,10 +416,12 @@ export PATH=$PATH:/home/magodo/.local/azure-cli/bin
 ####################################################################################
 
 setup_tctest() {
-    export TCTEST_BUILDTYPEID="TerraformOpenSource_TerraformProviders_AzureRMPublic_AZURERM_PR_PUBLIC"
+    export TCTEST_BUILDTYPEID="TerraformOpenSource_TerraformProviders_AzureRMPublic_AZURERM_SERVICE_PUBLIC"
     export TCTEST_USER="magodo"
     export TCTEST_SERVER="ci-oss.hashicorp.engineering"
     export TCTEST_REPO="terraform-providers/terraform-provider-azurerm"
+    export TCTEST_FILEREGEX="^[a-z]*/internal/services/[a-z]*/[_a-zA-Z]*(resource|data_source)"
+    export TCTEST_SERVICEPACKAGESMODE="true"
 }
 
 # autoload -U +X bashcompinit && bashcompinit
@@ -441,26 +453,40 @@ export PATH=$PATH:$HOME/.cargo/bin
 ####################################################################################
 # SPACESHIP ZSH THEME
 ####################################################################################
-SPACESHIP_CHAR_SYMBOL="💤 "
-
-SPACESHIP_GOLANG_SYMBOL="🦉 "
-
-SPACESHIP_EXIT_CODE_SYMBOL="😡 "
-SPACESHIP_EXIT_CODE_SHOW=true
-
-# SPACESHIP_GIT_STATUS_UNTRACKED=" ⚡ "
-# SPACESHIP_GIT_STATUS_ADDED=" ➕ "
-# SPACESHIP_GIT_STATUS_DELETED=" ➖ "
-# SPACESHIP_GIT_STATUS_MODIFIED=" ⚡ "
-# SPACESHIP_GIT_STATUS_RENAMED=" ⚡ "
-# SPACESHIP_GIT_STATUS_STASHED=" 🗂 "
-# SPACESHIP_GIT_STATUS_UNMERGED=" 💬 "
-SPACESHIP_GIT_STATUS_AHEAD=""
-SPACESHIP_GIT_STATUS_BEHIND=""
-SPACESHIP_GIT_STATUS_DIVERGED=" 💥 "
-# SPACESHIP_GIT_STATUS_SUFFIX=""
-# SPACESHIP_GIT_STATUS_PREFIX=""
-SPACESHIP_PROMPT_ORDER=(dir git exec_time line_sep jobs char exit_code golang rust ruby pyenv terraform venv)
+# SPACESHIP_CHAR_SYMBOL="💤 "
+#
+# SPACESHIP_GOLANG_SYMBOL="🦉 "
+#
+# SPACESHIP_EXIT_CODE_SYMBOL="😡 "
+# SPACESHIP_EXIT_CODE_SHOW=true
+#
+# # SPACESHIP_GIT_STATUS_UNTRACKED=" ⚡ "
+# # SPACESHIP_GIT_STATUS_ADDED=" ➕ "
+# # SPACESHIP_GIT_STATUS_DELETED=" ➖ "
+# # SPACESHIP_GIT_STATUS_MODIFIED=" ⚡ "
+# # SPACESHIP_GIT_STATUS_RENAMED=" ⚡ "
+# # SPACESHIP_GIT_STATUS_STASHED=" 🗂 "
+# # SPACESHIP_GIT_STATUS_UNMERGED=" 💬 "
+# SPACESHIP_GIT_STATUS_AHEAD=""
+# SPACESHIP_GIT_STATUS_BEHIND=""
+# SPACESHIP_GIT_STATUS_DIVERGED=" 💥 "
+# # SPACESHIP_GIT_STATUS_SUFFIX=""
+# # SPACESHIP_GIT_STATUS_PREFIX=""
+# SPACESHIP_PROMPT_ORDER=(
+#   dir
+#   git
+#   exec_time
+#   line_sep
+#   jobs
+#   char
+#   exit_code
+#   golang
+#   rust
+#   ruby
+#   pyenv
+#   terraform
+#   venv
+# )
 
 ####################################################################################
 # NPM
@@ -562,3 +588,16 @@ gfm() {
 # xclip
 ##########################################
 alias xclip="xclip -selection c"
+
+
+##########################################
+# kitty stuff
+##########################################
+alias icat="kitty icat --align=left"
+alias isvg="rsvg-convert"
+alias idot="dot -Tsvg"
+
+##########################################
+# GPG
+##########################################
+export GPG_TTY=$(tty) # see: https://stackoverflow.com/questions/51504367/gpg-agent-forwarding-inappropriate-ioctl-for-device

@@ -62,7 +62,7 @@ func resourceArm$1() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: validate$1Name(),
+				ValidateFunc: validate.$1Name(),
 			},
 
 			"resource_group_name": azure.SchemaResourceGroupName(),
@@ -78,7 +78,6 @@ func resourceArm$1() *schema.Resource {
 
 func resourceArm$1CreateUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).$2.$3Client
-	subscriptionId := meta.(*clients.Client).Account.SubscriptionId
 	ctx, cancel := timeouts.ForCreateUpdate(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
@@ -95,7 +94,11 @@ func resourceArm$1CreateUpdate(d *schema.ResourceData, meta interface{}) error {
 		}
 
 		if resp.ID != nil && *resp.ID != "" {
-			return tf.ImportAsExistsError("azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", *resp.ID)
+			id, err := parse.$1ID(*resp.ID)
+			if err != nil {
+				return err
+			}
+			return tf.ImportAsExistsError("azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", id.ID())
 		}
 	}
 
@@ -113,7 +116,7 @@ func resourceArm$1CreateUpdate(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return err
 	}
-	d.SetId(id.ID(subscriptionId))
+	d.SetId(id.ID())
 
 	return resourceArm$1Read(d, meta)
 }
@@ -139,10 +142,12 @@ func resourceArm$1Read(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("retrieving ${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 	}
 
-	// TODO: d.Set()
+	d.Set("name", id.Name)
+	d.Set("resource_group_name", id.ResourceGroup)
 	if location := resp.Location; location != nil {
 		d.Set("location", azure.NormalizeLocation(*location))
 	}
+	// TODO: d.Set()
 
 	return tags.FlattenAndSet(d, resp.Tags)
 }
@@ -159,10 +164,7 @@ func resourceArm$1Delete(d *schema.ResourceData, meta interface{}) error {
 
 	future, err := client.Delete(ctx, id.ResourceGroup, id.$1Name)
 	if err != nil {
-		if response.WasNotFound(deleteFuture.Response()) {
-			return nil
-		}
-		return fmt.Errorf("Error deleting ${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+		return fmt.Errorf("deleting ${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
@@ -170,7 +172,7 @@ func resourceArm$1Delete(d *schema.ResourceData, meta interface{}) error {
 		if response.WasNotFound(future.Response()) {
 			return nil
 		}
-		return fmt.Errorf("Error waiting for deletion of ${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+		return fmt.Errorf("waiting for deletion of ${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 	}
 
 	return nil
@@ -653,6 +655,10 @@ func import$1(expectKind $2.$3) func(d *schema.ResourceData, meta interface{}) (
 		return []*schema.ResourceData{d}, nil
 	}
 }
+endsnippet
+
+snippet tfresourceid "define the go generate command for resourceid"
+//go:generate go run ../../tools/generator-resource-id/main.go -path=./ -name=$1 -id=/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/resGroup1/providers/Microsoft.$2/$3
 endsnippet
 
 
