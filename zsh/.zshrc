@@ -9,6 +9,7 @@ export ZSH=$HOME/.oh-my-zsh
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 #ZSH_THEME="spaceship"
 eval "$(starship init zsh)"
+export STARSHIP_CACHE=~/.cache/starship
 
 # Set list of themes to load
 # Setting this variable when ZSH_THEME=random
@@ -199,6 +200,11 @@ gofoo() {
     go mod init foo
 }
 
+goformat() {
+  find . -name "*.go" | grep -v vendor | xargs gofmt -w -s || exit 1
+  goimports -w .
+}
+
 # todo
 export TODO_DIR=~/.todo/data
 alias todo="todo.sh"
@@ -380,9 +386,13 @@ predb() {
 }
 
 ####################################################################################
-# setup terraform
+# terraform
 ####################################################################################
 alias tf=terraform
+
+azurerm_schema() {
+  tf providers schema -json | jq ".provider_schemas.\"registry.terraform.io/hashicorp/azurerm\".resource_schemas.$1.block"
+}
 
 ####################################################################################
 # THIS SHOULD BE AT LAST LINE, OTHERWISE RVM WILL COMPLAIN
@@ -562,3 +572,13 @@ gfm() {
 # xclip
 ##########################################
 alias xclip="xclip -selection c"
+
+
+##########################################
+# kitty stuff
+##########################################
+alias icat="kitty icat --align=left"
+alias isvg="rsvg-convert"
+alias idot="dot -Tsvg"
+
+
