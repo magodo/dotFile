@@ -64,7 +64,6 @@ eval "$(starship init zsh)"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
-  docker
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -145,9 +144,11 @@ def() {
 }
 
 # ruby gems
-GEM_HOME=$(ls -t -U | ruby -e 'puts Gem.user_dir')
-GEM_PATH=$GEM_HOME
-export PATH=$PATH:$GEM_HOME/bin
+if command -v ruby; then
+    GEM_HOME=$(ls -t -U | ruby -e 'puts Gem.user_dir')
+    GEM_PATH=$GEM_HOME
+    export PATH=$PATH:$GEM_HOME/bin
+fi
 
 # path
 export PATH=$HOME/github/tool/MyUtilities:$HOME/.local/bin:$HOME/.local/pulumi:$HOME/.local/npm-bin/node_modules/.bin:$PATH
