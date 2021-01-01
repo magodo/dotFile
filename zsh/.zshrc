@@ -9,7 +9,6 @@ export ZSH=$HOME/.oh-my-zsh
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 #ZSH_THEME="spaceship"
 eval "$(starship init zsh)"
-export STARSHIP_CACHE=~/.cache/starship
 
 # Set list of themes to load
 # Setting this variable when ZSH_THEME=random
@@ -416,10 +415,12 @@ export PATH=$PATH:/home/magodo/.local/azure-cli/bin
 ####################################################################################
 
 setup_tctest() {
-    export TCTEST_BUILDTYPEID="TerraformOpenSource_TerraformProviders_AzureRMPublic_AZURERM_PR_PUBLIC"
+    export TCTEST_BUILDTYPEID="TerraformOpenSource_TerraformProviders_AzureRMPublic_AZURERM_SERVICE_PUBLIC"
     export TCTEST_USER="magodo"
     export TCTEST_SERVER="ci-oss.hashicorp.engineering"
     export TCTEST_REPO="terraform-providers/terraform-provider-azurerm"
+    export TCTEST_FILEREGEX="^[a-z]*/internal/services/[a-z]*/[_a-zA-Z]*(resource|data_source)"
+    export TCTEST_SERVICEPACKAGESMODE="true"
 }
 
 # autoload -U +X bashcompinit && bashcompinit
@@ -451,26 +452,40 @@ export PATH=$PATH:$HOME/.cargo/bin
 ####################################################################################
 # SPACESHIP ZSH THEME
 ####################################################################################
-SPACESHIP_CHAR_SYMBOL="💤 "
-
-SPACESHIP_GOLANG_SYMBOL="🦉 "
-
-SPACESHIP_EXIT_CODE_SYMBOL="😡 "
-SPACESHIP_EXIT_CODE_SHOW=true
-
-# SPACESHIP_GIT_STATUS_UNTRACKED=" ⚡ "
-# SPACESHIP_GIT_STATUS_ADDED=" ➕ "
-# SPACESHIP_GIT_STATUS_DELETED=" ➖ "
-# SPACESHIP_GIT_STATUS_MODIFIED=" ⚡ "
-# SPACESHIP_GIT_STATUS_RENAMED=" ⚡ "
-# SPACESHIP_GIT_STATUS_STASHED=" 🗂 "
-# SPACESHIP_GIT_STATUS_UNMERGED=" 💬 "
-SPACESHIP_GIT_STATUS_AHEAD=""
-SPACESHIP_GIT_STATUS_BEHIND=""
-SPACESHIP_GIT_STATUS_DIVERGED=" 💥 "
-# SPACESHIP_GIT_STATUS_SUFFIX=""
-# SPACESHIP_GIT_STATUS_PREFIX=""
-SPACESHIP_PROMPT_ORDER=(dir git exec_time line_sep jobs char exit_code golang rust ruby pyenv terraform venv)
+# SPACESHIP_CHAR_SYMBOL="💤 "
+#
+# SPACESHIP_GOLANG_SYMBOL="🦉 "
+#
+# SPACESHIP_EXIT_CODE_SYMBOL="😡 "
+# SPACESHIP_EXIT_CODE_SHOW=true
+#
+# # SPACESHIP_GIT_STATUS_UNTRACKED=" ⚡ "
+# # SPACESHIP_GIT_STATUS_ADDED=" ➕ "
+# # SPACESHIP_GIT_STATUS_DELETED=" ➖ "
+# # SPACESHIP_GIT_STATUS_MODIFIED=" ⚡ "
+# # SPACESHIP_GIT_STATUS_RENAMED=" ⚡ "
+# # SPACESHIP_GIT_STATUS_STASHED=" 🗂 "
+# # SPACESHIP_GIT_STATUS_UNMERGED=" 💬 "
+# SPACESHIP_GIT_STATUS_AHEAD=""
+# SPACESHIP_GIT_STATUS_BEHIND=""
+# SPACESHIP_GIT_STATUS_DIVERGED=" 💥 "
+# # SPACESHIP_GIT_STATUS_SUFFIX=""
+# # SPACESHIP_GIT_STATUS_PREFIX=""
+# SPACESHIP_PROMPT_ORDER=(
+#   dir
+#   git
+#   exec_time
+#   line_sep
+#   jobs
+#   char
+#   exit_code
+#   golang
+#   rust
+#   ruby
+#   pyenv
+#   terraform
+#   venv
+# )
 
 ####################################################################################
 # NPM
