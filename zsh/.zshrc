@@ -601,3 +601,20 @@ alias idot="dot -Tsvg"
 # GPG
 ##########################################
 export GPG_TTY=$(tty) # see: https://stackoverflow.com/questions/51504367/gpg-agent-forwarding-inappropriate-ioctl-for-device
+
+
+##########################################
+# Setup agent for WSL
+# (as agents doesn't work under WSL)
+##########################################
+setup_keychain() {
+  keychain --nogui $HOME/.ssh/id_ed25519
+  # Didn't find a way to add a gpg key in advance
+  eval $(keychain --agents gpg)
+
+  . $HOME/.keychain/$HOST-sh 2>/dev/null
+  . $HOME/.keychain/$HOST-sh-gpg 2>/dev/null
+}
+
+. $HOME/.keychain/$HOST-sh 2>/dev/null
+. $HOME/.keychain/$HOST-sh-gpg 2>/dev/null
