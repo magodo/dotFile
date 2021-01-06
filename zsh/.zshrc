@@ -144,9 +144,9 @@ def() {
 }
 
 # ruby gems
-if command -v ruby; then
-    GEM_HOME=$(ls -t -U | ruby -e 'puts Gem.user_dir')
-    GEM_PATH=$GEM_HOME
+if command -v ruby >/dev/null; then
+    export GEM_HOME=$(ls -t -U | ruby -e 'puts Gem.user_dir')
+    export GEM_PATH=$GEM_HOME
     export PATH=$PATH:$GEM_HOME/bin
 fi
 
@@ -186,6 +186,7 @@ hide()
 # golang
 export GOPATH=$HOME/go
 export PATH=/usr/local/go/bin:$PATH:$GOPATH/bin
+
 setup_gvm() {
     [[ -s "/home/magodo/.gvm/scripts/gvm" ]] && source "/home/magodo/.gvm/scripts/gvm"
 }
@@ -618,3 +619,9 @@ setup_keychain() {
 
 . $HOME/.keychain/$HOST-sh 2>/dev/null
 . $HOME/.keychain/$HOST-sh-gpg 2>/dev/null
+
+
+##########################################
+# X410
+##########################################
+export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2; exit;}'):0.0
