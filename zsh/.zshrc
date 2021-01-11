@@ -581,7 +581,7 @@ complete -o nospace -C /usr/bin/vault vault
 gfm() {
     upstream=${1:-upstream}
     git fetch $upstream
-    git merge $upstream/master
+    git merge $upstream/master || git merge $upstream/main
 }
 
 
