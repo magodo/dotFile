@@ -389,7 +389,13 @@ predb() {
 ####################################################################################
 # terraform
 ####################################################################################
+tfinit() {
+  rm .terraform.lock.hcl 2>/dev/null
+  terraform init "$@"
+}
+
 alias tf=terraform
+
 
 azurerm_schema() {
   tf providers schema -json | jq ".provider_schemas.\"registry.terraform.io/hashicorp/azurerm\".resource_schemas.$1.block"
