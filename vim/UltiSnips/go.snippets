@@ -85,12 +85,13 @@ func resourceArm$1CreateUpdate(d *schema.ResourceData, meta interface{}) error {
 	name := d.Get("name").(string)
 	resourceGroup := d.Get("resource_group_name").(string)
 	location := azure.NormalizeLocation(d.Get("location").(string))
+	id := parse.New$1ID(subscriptionId, resourceGroup, name)
 
 	if d.IsNewResource() {
 		resp, err := client.Get(ctx, resourceGroup, name)
 		if err != nil {
 			if !utils.ResponseWasNotFound(resp.Response) {
-				return fmt.Errorf("checking for existing ${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q): %+v", name, resourceGroup, err)
+				return fmt.Errorf("checking for existing ${1/([A-Z][a-z]+)/$1 /g}%q: %+v", id, err)
 			}
 		}
 
@@ -105,8 +106,6 @@ func resourceArm$1CreateUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	// TODO: d.Get() && Create
 
-
-	id := parse.New$1ID(subscriptionId, resourceGroup, name)
 	d.SetId(id.ID())
 
 	return resourceArm$1Read(d, meta)
@@ -205,18 +204,18 @@ func dataSourceArm$1Read(d *schema.ResourceData, meta interface{}) error {
 
 	name := d.Get("name").(string)
 	resourceGroup := d.Get("resource_group_name").(string)
+	id := parse.New$1ID(subscriptionId, resourceGroup, name)
+	d.SetId(id.ID())
+
 
 	resp, err := client.Get(ctx, resourceGroup, name)
 	if err != nil {
 		if utils.ResponseWasNotFound(resp.Response) {
-			return fmt.Errorf("${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q) was not found", name, resourceGroup)
+			return fmt.Errorf("${1/([A-Z][a-z]+)/$1 /g}%q was not found", id)
 		}
 
-		return fmt.Errorf("retrieving ${1/([A-Z][a-z]+)/$1 /g}%q (Resource Group %q): %+v", name, resourceGroup, err)
+		return fmt.Errorf("retrieving ${1/([A-Z][a-z]+)/$1 /g}%q: %+v", id, err)
 	}
-
-	id := parse.New$1ID(subscriptionId, resourceGroup, name)
-	d.SetId(id.ID())
 
 	// TODO: d.Set()
 
@@ -252,7 +251,7 @@ if d.IsNewResource() {
 	resp, err := client.Get(ctx, resourceGroup, name)
 	if err != nil {
 		if !utils.ResponseWasNotFound(resp.Response) {
-			return fmt.Errorf("checking for existing $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
+			return fmt.Errorf("checking for existing $1 %q: %+v", id, err)
 		}
 	}
 
@@ -271,18 +270,18 @@ endsnippet
 
 snippet tfcallcreate "call sdk CreateOrUpdate() in sync manner" b
 if _, err := client.CreateOrUpdate(ctx, resourceGroup, name, param); err != nil {
-	return fmt.Errorf("creating $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
+	return fmt.Errorf("creating $1 %q: %+v", id, err)
 }
 endsnippet
 
 snippet tfcallcreate_async "call sdk CreateOrUpdate() in async manner" b
 future, err := client.CreateOrUpdate(ctx, resourceGroup, name, param)
 if err != nil {
-	return fmt.Errorf("creating $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
+	return fmt.Errorf("creating $1 %q: %+v", id, err)
 }
 
 if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
-	return fmt.Errorf("waiting for creation of $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
+	return fmt.Errorf("waiting for creation of $1 %q: %+v", id, err)
 }
 endsnippet
 
@@ -316,7 +315,7 @@ endsnippet
 
 snippet tfcallupdate "call sdk Update() in sync manner" b
 if _, err := client.Update(ctx, id.ResourceGroup, id.Name, param); err != nil {
-	return fmt.Errorf("updateing $1 %q (Resource Group %q): %+v", name, resourceGroup, err)
+	return fmt.Errorf("updateing $1 %q: %+v", id, err)
 }
 endsnippet
 
