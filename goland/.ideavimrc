@@ -1,0 +1,5 @@
+" map <ESC> to jk
+inoremap jk <ESC>
+
+set visualbell
+set noerrorbells
