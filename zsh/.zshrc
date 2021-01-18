@@ -631,3 +631,9 @@ setup_keychain() {
 # X410
 ##########################################
 export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2; exit;}'):0.0
+
+##########################################
+# Disable Software Flow Control
+# See: https://unix.stackexchange.com/questions/72086/ctrl-s-hangs-the-terminal-emulator
+##########################################
+stty -ixon
