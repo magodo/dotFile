@@ -91,7 +91,7 @@ func resource$1CreateUpdate(d *schema.ResourceData, meta interface{}) error {
 		resp, err := client.Get(ctx, resourceGroup, name)
 		if err != nil {
 			if !utils.ResponseWasNotFound(resp.Response) {
-				return fmt.Errorf("checking for existing ${1/([A-Z][a-z]+)/$1 /g}%q: %+v", id, err)
+				return fmt.Errorf("checking for existing %s: %+v", id, err)
 			}
 		}
 
@@ -124,12 +124,12 @@ func resource$1Read(d *schema.ResourceData, meta interface{}) error {
 	resp, err := client.Get(ctx, id.ResourceGroup, id.$1Name)
 	if err != nil {
 		if utils.ResponseWasNotFound(resp.Response) {
-			log.Printf("[DEBUG] ${1/([A-Z][a-z]+)/$1 /g}%q was not found - removing from state!", id)
+			log.Printf("[DEBUG] %s was not found - removing from state!", id)
 			d.SetId("")
 			return nil
 		}
 
-		return fmt.Errorf("retrieving ${1/([A-Z][a-z]+)/$1 /g}%q: %+v", id, err)
+		return fmt.Errorf("retrieving %s: %+v", id, err)
 	}
 
 	d.Set("name", id.Name)
@@ -154,7 +154,7 @@ func resource$1Delete(d *schema.ResourceData, meta interface{}) error {
 
 	future, err := client.Delete(ctx, id.ResourceGroup, id.$1Name)
 	if err != nil {
-		return fmt.Errorf("deleting ${1/([A-Z][a-z]+)/$1 /g}%q: %+v", id, err)
+		return fmt.Errorf("deleting %s: %+v", id, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
@@ -162,7 +162,7 @@ func resource$1Delete(d *schema.ResourceData, meta interface{}) error {
 		if response.WasNotFound(future.Response()) {
 			return nil
 		}
-		return fmt.Errorf("waiting for deletion of ${1/([A-Z][a-z]+)/$1 /g}%q: %+v", id, err)
+		return fmt.Errorf("waiting for deletion of %s: %+v", id, err)
 	}
 
 	return nil
@@ -211,10 +211,10 @@ func dataSource$1Read(d *schema.ResourceData, meta interface{}) error {
 	resp, err := client.Get(ctx, resourceGroup, name)
 	if err != nil {
 		if utils.ResponseWasNotFound(resp.Response) {
-			return fmt.Errorf("${1/([A-Z][a-z]+)/$1 /g}%q was not found", id)
+			return fmt.Errorf("%s was not found", id)
 		}
 
-		return fmt.Errorf("retrieving ${1/([A-Z][a-z]+)/$1 /g}%q: %+v", id, err)
+		return fmt.Errorf("retrieving %s: %+v", id, err)
 	}
 
 	// TODO: d.Set()
@@ -243,24 +243,6 @@ ctx, cancel := timeouts.For$3(meta.(*clients.Client).StopContext, d)
 defer cancel()
 endsnippet
 
-snippet tfimport "check import" b
-name := d.Get("name").(string)
-resourceGroup := d.Get("resource_group_name").(string)
-
-if d.IsNewResource() {
-	resp, err := client.Get(ctx, resourceGroup, name)
-	if err != nil {
-		if !utils.ResponseWasNotFound(resp.Response) {
-			return fmt.Errorf("checking for existing $1 %q: %+v", id, err)
-		}
-	}
-
-	if !utils.ResponseWasNotFound(resp.Response) {
-		return tf.ImportAsExistsError("azurerm${1/(\w+)\s*/_\L$1\E/g}", *resp.ID)
-	}
-}
-endsnippet
-
 snippet tfgetok "d.GetOk()" b
 if v, ok := d.GetOk("$1"); ok {
 	$0
@@ -270,18 +252,18 @@ endsnippet
 
 snippet tfcallcreate "call sdk CreateOrUpdate() in sync manner" b
 if _, err := client.CreateOrUpdate(ctx, resourceGroup, name, param); err != nil {
-	return fmt.Errorf("creating $1 %q: %+v", id, err)
+	return fmt.Errorf("creating %s: %+v", id, err)
 }
 endsnippet
 
 snippet tfcallcreate_async "call sdk CreateOrUpdate() in async manner" b
 future, err := client.CreateOrUpdate(ctx, resourceGroup, name, param)
 if err != nil {
-	return fmt.Errorf("creating $1 %q: %+v", id, err)
+	return fmt.Errorf("creating %s: %+v", id, err)
 }
 
 if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
-	return fmt.Errorf("waiting for creation of $1 %q: %+v", id, err)
+	return fmt.Errorf("waiting for creation of %s: %+v", id, err)
 }
 endsnippet
 
@@ -300,12 +282,12 @@ snippet tfcallget "call sdk Get() in read callback" b
 resp, err := client.Get(ctx, id.ResourceGroup, id.Name, "")
 if err != nil {
 	if utils.ResponseWasNotFound(resp.Response) {
-		log.Printf("[DEBUG] $1 %q was not found - removing from state!", id)
+		log.Printf("[DEBUG] %s was not found - removing from state!", id)
 		d.SetId("")
 		return nil
 	}
 
-	return fmt.Errorf("retrieving $1 %q: %+v", id, err)
+	return fmt.Errorf("retrieving %s: %+v", id, err)
 }
 endsnippet
 
@@ -315,17 +297,17 @@ endsnippet
 
 snippet tfcallupdate "call sdk Update() in sync manner" b
 if _, err := client.Update(ctx, id.ResourceGroup, id.Name, param); err != nil {
-	return fmt.Errorf("updateing $1 %q: %+v", id, err)
+	return fmt.Errorf("updateing %s: %+v", id, err)
 }
 endsnippet
 
 snippet tfcallupdate_async "call sdk Update() in async manner" b
 future, err := client.Update(ctx, id.ResourceGroup, id.Name, param)
 if err != nil {
-	return fmt.Errorf("updating $1 %q: %+v", id, err)
+	return fmt.Errorf("updating %s: %+v", id, err)
 }
 if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
-	return fmt.Errorf("waiting for update of $1 %q: %+v", id, err)
+	return fmt.Errorf("waiting for update of %s: %+v", id, err)
 }
 endsnippet
 
@@ -336,19 +318,19 @@ endsnippet
 snippet tfcalldelete_async "call sdk Delete() in async manner" b
 future, err := client.Delete(ctx, id.ResourceGroup, id.Name)
 if err != nil {
-	return fmt.Errorf("deleting $1 %q: %+v", id, err)
+	return fmt.Errorf("deleting %s: %+v", id, err)
 }
 
 if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
 	if !response.WasNotFound(future.Response()) {
-		return fmt.Errorf("waiting for deleting $1 %q: %+v", id, err)
+		return fmt.Errorf("waiting for deleting %s: %+v", id, err)
 	}
 }
 endsnippet
 
 snippet tfcalldelete "call sdk Delete() in manner" b
 if _, err := client.Delete(ctx, id.ResourceGroup, id.Name); err != nil {
-	return fmt.Errorf("deleting $1 %q: %+v", id, err)
+	return fmt.Errorf("deleting %s: %+v", id, err)
 }
 endsnippet
 
@@ -506,7 +488,7 @@ func (r $1Resource) Exists(ctx context.Context, clients *clients.Client, state *
 		if utils.ResponseWasNotFound(resp.Response) {
 			return utils.Bool(false), nil
 		}
-		return nil, fmt.Errorf("retrieving ${1/([A-Z][a-z]+)/$1 /g}%q: %+v", id, err)
+		return nil, fmt.Errorf("retrieving %s: %+v", id, err)
 	}
 
 	return utils.Bool(true), nil
@@ -596,7 +578,7 @@ func import$1(expectKind $2.$3) func(d *schema.ResourceData, meta interface{}) (
 
 		resp, err := client.Get(ctx, id.ResourceGroup, id.Name)
 		if err != nil {
-			return nil, fmt.Errorf("retrieving ${1/([A-Z][a-z]+)/$1 /g}%q: %+v", id, err)
+			return nil, fmt.Errorf("retrieving %s: %+v", id, err)
 		}
 
 		if resp.Kind != expectKind {
@@ -621,7 +603,7 @@ func import$1(expectKind $2.$3) func(d *schema.ResourceData, meta interface{}) (
 
 		resp, err := client.Get(ctx, id.ResourceGroup, id.Name)
 		if err != nil {
-			return nil, fmt.Errorf("retrieving ${1/([A-Z][a-z]+)/$1 /g}%q: %+v", id, err)
+			return nil, fmt.Errorf("retrieving %s: %+v", id, err)
 		}
 
 		var kind $2.$5Kind
@@ -632,7 +614,7 @@ func import$1(expectKind $2.$3) func(d *schema.ResourceData, meta interface{}) (
 		}
 
 		if expectKind != kind {
-			return nil, fmt.Errorf("${1/([A-Z][a-z]+)/$1 /g}%q has mismatched kind, expected: %q, got %q", id, expectKind, kind)
+			return nil, fmt.Errorf("%s has mismatched kind, expected: %q, got %q", id, expectKind, kind)
 		}
 
 		return []*schema.ResourceData{d}, nil
