@@ -637,3 +637,9 @@ export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2; exit;}
 # See: https://unix.stackexchange.com/questions/72086/ctrl-s-hangs-the-terminal-emulator
 ##########################################
 stty -ixon
+
+mcli() {
+  . ~/venv/mycli/bin/activate
+  mycli "$@"
+  deactivate
+}
