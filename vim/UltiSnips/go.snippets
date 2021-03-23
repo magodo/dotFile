@@ -402,7 +402,7 @@ endsnippet
 snippet tfacctest_res "acc test scaffolding for resource" b
 type $1Resource struct{}
 
-func TestAccAzureRM$1_basic(t *testing.T) {
+func TestAcc$1_basic(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
 	r := $1Resource{}
 
@@ -417,7 +417,7 @@ func TestAccAzureRM$1_basic(t *testing.T) {
 	})
 }
 
-func TestAccAzureRM$1_complete(t *testing.T) {
+func TestAcc$1_complete(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
 	r := $1Resource{}
 
@@ -432,7 +432,7 @@ func TestAccAzureRM$1_complete(t *testing.T) {
 	})
 }
 
-func TestAccAzureRM$1_update(t *testing.T) {
+func TestAcc$1_update(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
 	r := $1Resource{}
 
@@ -461,7 +461,7 @@ func TestAccAzureRM$1_update(t *testing.T) {
 	})
 }
 
-func TestAccAzureRM$1_requiresImport(t *testing.T) {
+func TestAcc$1_requiresImport(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
 	r := $1Resource{}
 

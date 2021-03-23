@@ -643,3 +643,5 @@ mcli() {
   mycli "$@"
   deactivate
 }
+
+alias bfg="java -jar ~/.local/jar/bfg-1.14.0.jar"
