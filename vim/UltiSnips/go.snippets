@@ -95,11 +95,7 @@ func resource$1CreateUpdate(d *schema.ResourceData, meta interface{}) error {
 			}
 		}
 
-		if resp.ID != nil && *resp.ID != "" {
-			id, err := parse.$1ID(*resp.ID)
-			if err != nil {
-				return err
-			}
+		if !utils.ResponseWasNotFound(resp.Response) {
 			return tf.ImportAsExistsError("azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", id.ID())
 		}
 	}
