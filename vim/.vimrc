@@ -442,7 +442,7 @@ call plug#begin('~/.vim/plugged')
 "Plug 'Shougo/deoplete.nvim'
 "Plug 'zchee/deoplete-go', { 'do': 'make'}
 
-Plug 'Valloric/YouCompleteMe'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
 "Plug 'vim-scripts/taglist.vim'
@@ -518,63 +518,6 @@ hi Visual term=reverse cterm=reverse  guibg=Grey
 
 " source vimrc
 map <F6> :so $MYVIMRC<cr>
-
-"---------------------- YouCompleteMe -----------------------------
-let g:ycm_server_keep_logfiles = 1
-let g:ycm_server_log_level = 'debug'
-let g:ycm_server_python_interpreter = "/usr/bin/python"
-let g:ycm_python_binary_path = '/usr/bin/python'
-
-"let g:global_ycm_extra_conf = ""
-"let g:ycm_confirm_extra_conf=0
-
-autocmd InsertLeave * if pumvisible() == 0|pclose|endif
-
-" Below config might cause ycm server DOWN
-"let g:ycm_collect_identifiers_from_tags_files=1
-
-" this is the only way I find to disable semantic completion engine for C family(otherwise, '.', '->', ':' will trigger semantic completion for C family, which will somehow blocks)
-"let g:ycm_filetype_specific_completion_to_disable = {
-"    \ 'gitcommit': 1,
-"    \ 'c': 1,
-"    \ 'cpp': 1,
-"    \}
-"
-noremap <leader>i :YcmCompleter GetType<CR>
-nnoremap <leader>gd :YcmCompleter GoToDefinitionElseDeclaration<CR>
-nnoremap <leader>gr :YcmCompleter GoToReferences<CR>
-
-let g:ycm_auto_hover = ""
-
-" Avoid YCM process other file types
-let g:ycm_filetype_whitelist = { 
-            \"go": 1,
-            \"terraform": 1,
-            \"rust": 1,
-            \ "c": 1,
-            \ "python": 1,
-            \ "sh": 1,
-            \ "javascript": 1,
-            \ "javascript.jsx": 1,
-            \ "java": 1,
-            \ "uml": 1,
-            \ "yaml": 1,
-            \ "markdown": 1,
-            \ "yaml.ansible": 1}
-
-" Below will not overload the default one(i.e. "." and "->"), but append.
-let g:ycm_semantic_triggers =  {
-            \ 'c,cpp' : ['re!\w{3}']}
-
-let g:ycm_language_server =
-\ [
-\   {
-\     'name': 'rust',
-\     'cmdline': ['rust-analyzer'],
-\     'filetypes': ['rust'],
-\     'project_root_files': ['Cargo.toml']
-\   }
-\ ]
 
 "---------------------- Taglists -----------------------------
 "nmap tl :TlistToggle<cr>
@@ -793,7 +736,7 @@ let g:deoplete#enable_at_startup = 1
 let g:go_def_mode = 'gopls'
 let g:go_info_mode = 'gopls'
 
-"noremap <leader>i :GoInfo<CR>
+noremap <leader>i :GoInfo<CR>
 
 " run :GoBuild or :GoTestCompile based on the go file
 function! s:build_go_files()
@@ -827,3 +770,13 @@ let g:rustfmt_autosave=1
 
 "------------------- spell check -----------------------------
 "set spell spelllang=en_us
+
+"------------------- CoC ---------------------------------
+" Use tab for trigger completion with characters ahead and navigate.
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"

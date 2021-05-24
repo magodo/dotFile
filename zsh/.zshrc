@@ -144,7 +144,7 @@ def() {
 }
 
 # ruby gems
-if command -v ruby; then
+if command -v ruby > /dev/null; then
     GEM_HOME=$(ls -t -U | ruby -e 'puts Gem.user_dir')
     GEM_PATH=$GEM_HOME
     export PATH=$PATH:$GEM_HOME/bin
