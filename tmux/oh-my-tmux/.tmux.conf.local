@@ -286,3 +286,7 @@ bind-key S set-window-option synchronize-panes\;
 
 # history limit
 set-option -g history-limit 50000
+
+# Change the default terminal from "screen-256color" to "tmux-256color"
+# From: https://rsapkf.xyz/blog/enabling-italics-vim-tmux
+set -g default-terminal "tmux-256color"

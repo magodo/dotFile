@@ -597,4 +597,16 @@ alias icat="kitty icat --align=left"
 alias isvg="rsvg-convert"
 alias idot="dot -Tsvg"
 
+##########################################
+# fzf
+##########################################
+. /usr/share/fzf/key-bindings.zsh
+. /usr/share/fzf/completion.zsh
 
+##########################################
+# Terraform
+##########################################
+tfinit() {
+  rm .terraform.lock.hcl 2>/dev/null
+  terraform init "$@"
+}
