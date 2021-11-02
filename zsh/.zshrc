@@ -293,11 +293,9 @@ alias git_bigfile="git rev-list --objects --all \
 export PATH=$PATH:$HOME/fabric-samples/bin
 
 # node version manager
-setup_nvm() {
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-    [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-}
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # python version manager
 export PYENV_ROOT="$HOME/.pyenv"
@@ -401,6 +399,29 @@ azurerm_schema() {
   tf providers schema -json | jq ".provider_schemas.\"registry.terraform.io/hashicorp/azurerm\".resource_schemas.$1.block"
 }
 
+setup_tctest() {
+    export TCTEST_BUILDTYPEID="TerraformOpenSource_TerraformProviders_AzureRMPublic_AZURERM_SERVICE_PUBLIC"
+    export TCTEST_USER="magodo"
+    export TCTEST_SERVER="ci-oss.hashicorp.engineering"
+    export TCTEST_REPO="terraform-providers/terraform-provider-azurerm"
+    export TCTEST_FILEREGEX="^[a-z]*/internal/services/[a-z]*/[_a-zA-Z]*(resource|data_source)"
+    export TCTEST_SERVICEPACKAGESMODE="true"
+}
+
+tflint() {
+    package=$1
+    [[ -z $package ]] && { echo "please specify [package] to be lint"; return 1; }
+    tmpdir=$(mktemp -d)
+    tflint_path="$tmpdir/tflint"
+    pushd /home/magodo/github/terraform-azurerm-provider-linter > /dev/null 2>&1
+    go build -o "$tmpdir/tflint" || return 1
+    popd >/dev/null 2>&1
+    GO111MODULE=on go vet -vettool="$tflint_path" "$package"
+    rm "$tflint_path"
+}
+
+alias tfexample="terraform-provider-azurerm-example-gen ~/github/terraform-provider-azurerm"
+
 ####################################################################################
 # THIS SHOULD BE AT LAST LINE, OTHERWISE RVM WILL COMPLAIN
 # ruby: rvm
@@ -417,39 +438,7 @@ export PATH=$PATH:/home/magodo/.local/azure-cli/bin
 
 # allow cli to work behind a proxy 
 #export AZURE_CLI_DISABLE_CONNECTION_VERIFICATION=1
-
-####################################################################################
-# terraform team city test
-####################################################################################
-
-setup_tctest() {
-    export TCTEST_BUILDTYPEID="TerraformOpenSource_TerraformProviders_AzureRMPublic_AZURERM_SERVICE_PUBLIC"
-    export TCTEST_USER="magodo"
-    export TCTEST_SERVER="ci-oss.hashicorp.engineering"
-    export TCTEST_REPO="terraform-providers/terraform-provider-azurerm"
-    export TCTEST_FILEREGEX="^[a-z]*/internal/services/[a-z]*/[_a-zA-Z]*(resource|data_source)"
-    export TCTEST_SERVICEPACKAGESMODE="true"
-}
-
-# autoload -U +X bashcompinit && bashcompinit
-# complete -o nospace -C /usr/bin/terraform terraform
-
-####################################################################################
-# TF Linter
-####################################################################################
-
-tflint() {
-    package=$1
-    [[ -z $package ]] && { echo "please specify [package] to be lint"; return 1; }
-    tmpdir=$(mktemp -d)
-    tflint_path="$tmpdir/tflint"
-    pushd /home/magodo/github/terraform-azurerm-provider-linter > /dev/null 2>&1
-    go build -o "$tmpdir/tflint" || return 1
-    popd >/dev/null 2>&1
-    GO111MODULE=on go vet -vettool="$tflint_path" "$package"
-    rm "$tflint_path"
-}
-
+#
 ####################################################################################
 # RUST
 ####################################################################################
@@ -577,17 +566,13 @@ EOF
     docker run --rm -v "$spec_dir":"$spec_dir" -v "$out_dir":"$out_dir" -v "$tool_dir":/tool autorest bash -c "metadata-tool \"$readme\" && autorest \"${extra_option[@]}\" --trenton --use=/tool --intermediate --trenton-output-folder=\"$out_dir\" \"$readme\""
 }
 
-# Terraform Vault
-autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /usr/bin/vault vault
-
 ##########################################
 # git
 ##########################################
 gfm() {
     upstream=${1:-upstream}
     git fetch $upstream
-    git merge $upstream/master || git merge $upstream/main
+    git merge $upstream/main || git merge $upstream/master
 }
 
 
@@ -644,4 +629,8 @@ mcli() {
   deactivate
 }
 
+# github big file
 alias bfg="java -jar ~/.local/jar/bfg-1.14.0.jar"
+
+# trans
+alias transzh="trans :zh"
