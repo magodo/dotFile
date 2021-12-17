@@ -155,3 +155,6 @@ export PATH=$PATH:/home/magodo/.local/azure-cli/bin
 source '/home/magodo/.local/azure-cli/az.completion'
 
 complete -C /usr/bin/vault vault
+
+complete -C /media/storage/go/bin/terraform terraform
+complete -C /media/storage/go/bin/gocomplete go

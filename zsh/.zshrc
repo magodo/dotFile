@@ -132,9 +132,9 @@ alias l="ls"
 alias ll="ls -l"
 
 # input method
-# export GTK_IM_MODULE=ibus
-# export XMODIFIERS=@im=ibus
-# export QT_IM_MODULE=ibus
+GTK_IM_MODULE=fcitx
+QT_IM_MODULE=fcitx
+XMODIFIERS=@im=fcitx
 
 # dictionary
 def() {
@@ -186,6 +186,7 @@ hide()
 # golang
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
+export GOPROXY=https://goproxy.cn
 setup_gvm() {
     [[ -s "/home/magodo/.gvm/scripts/gvm" ]] && source "/home/magodo/.gvm/scripts/gvm"
 }
@@ -292,11 +293,7 @@ alias git_bigfile="git rev-list --objects --all \
 export PATH=$PATH:$HOME/fabric-samples/bin
 
 # node version manager
-setup_nvm() {
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-    [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-}
+. /usr/share/nvm/init-nvm.sh
 
 # python version manager
 export PYENV_ROOT="$HOME/.pyenv"
@@ -345,7 +342,7 @@ EOF
 ####################################################################################
 cow_env() {
     export http_proxy=http://127.0.0.1:7777
-    export https_proxy=http://127.0.0.1:7777
+    export https_proxy=https://127.0.0.1:7777
 }
 
 ####################################################################################
@@ -449,6 +446,7 @@ tflint() {
 export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
 export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
 export PATH=$PATH:$HOME/.cargo/bin
+export RUST_BACKTRACE=1
 
 ####################################################################################
 # SPACESHIP ZSH THEME
@@ -580,7 +578,7 @@ complete -o nospace -C /usr/bin/vault vault
 gfm() {
     upstream=${1:-upstream}
     git fetch $upstream
-    git merge $upstream/master
+    git merge $upstream/main
 }
 
 
@@ -610,3 +608,12 @@ tfinit() {
   rm .terraform.lock.hcl 2>/dev/null
   terraform init "$@"
 }
+
+# proxychains
+alias pchain=proxychains
+
+# Terraform completion
+complete -o nospace -C /media/storage/go/bin/terraform terraform
+
+# Terraform example gen
+alias tfegen="terraform-provider-azurerm-example-gen"

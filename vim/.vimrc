@@ -15,6 +15,7 @@ set encoding=utf-8
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugins
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 call plug#begin()
 
 " Semantic language support
@@ -32,13 +33,19 @@ Plug 'mengelbrecht/lightline-bufferline'
 Plug 'ghifarit53/tokyonight-vim'
 
 " fzf
-Plug 'airblade/vim-rooter'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+
+" Hashicorp
+Plug 'hashivim/vim-hashicorp-tools'
+Plug 'jvirtanen/vim-hcl'
 
 " Others
 Plug 'godlygeek/tabular'
 Plug 'tpope/vim-commentary'
+" :1,3GetCurrentBranchLink
+Plug 'knsh14/vim-github-link'
+Plug 'tpope/vim-surround'
 
 call plug#end()
 
@@ -108,6 +115,9 @@ let g:lightline = {
       \ },
       \ 'component_expand': {
       \   'buffers': 'lightline#bufferline#buffers'
+      \ },
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ], [ 'readonly', 'absolutepath', 'modified' ] ],
       \ },
       \ 'component_type': {
       \   'buffers': 'tabsel'
@@ -184,8 +194,20 @@ set linebreak
 " Copy indent from current line when starting a new line(via 'o'/'O')
 set autoindent 
 
-"Smart indent
+" Smart indent
 set smartindent
+
+" Copy the current indentation when creating a new line
+set autoindent
+
+" Smart case when searching
+set smartcase
+
+" Vim jump to the last position when reopening a file
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+    \| exe "normal! g'\"" | endif
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Navigation
@@ -208,3 +230,9 @@ map <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 " <leader><leader> toggles between buffers
 nnoremap <leader><leader> <c-^>
+
+" Visually select the characters that are wanted in the search, then type //
+" to search for the next occurrence of the selected text. Then press n to
+" search for the next occurrence.
+" https://vim.fandom.com/wiki/Search_for_visually_selected_text
+vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>

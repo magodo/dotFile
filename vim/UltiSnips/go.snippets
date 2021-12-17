@@ -38,28 +38,28 @@ endsnippet
 ###############################################
 
 snippet tfdeclres "declare resource" b
-func resource$1() *schema.Resource {
-	return &schema.Resource{
+func resource$1() *pluginsdk.Resource {
+	return &pluginsdk.Resource{
 		Create: resource$1CreateUpdate,
 		Read:   resource$1Read,
 		Update: resource$1CreateUpdate,
 		Delete: resource$1Delete,
 
-		Importer: azSchema.ValidateResourceIDPriorToImport(func(id string) error {
+		Importer: pluginsdk.ImporterValidatingResourceId(func(id string) error {
 			_, err := parse.$1ID(id)
 			return err
 		}),
 
-		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(30 * time.Minute),
-			Read:   schema.DefaultTimeout(5 * time.Minute),
-			Update: schema.DefaultTimeout(30 * time.Minute),
-			Delete: schema.DefaultTimeout(30 * time.Minute),
+		Timeouts: &pluginsdk.ResourceTimeout{
+			Create: pluginsdk.DefaultTimeout(30 * time.Minute),
+			Read:   pluginsdk.DefaultTimeout(5 * time.Minute),
+			Update: pluginsdk.DefaultTimeout(30 * time.Minute),
+			Delete: pluginsdk.DefaultTimeout(30 * time.Minute),
 		},
 
-		Schema: map[string]*schema.Schema{
+		Schema: map[string]*pluginsdk.Schema{
 			"name": {
-				Type:         schema.TypeString,
+				Type:         pluginsdk.TypeString,
 				Required:     true,
 				ForceNew:     true,
 				ValidateFunc: validate.$1Name(),
@@ -76,7 +76,7 @@ func resource$1() *schema.Resource {
 	}
 }
 
-func resource$1CreateUpdate(d *schema.ResourceData, meta interface{}) error {
+func resource$1CreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).$2.$3Client
 	subscriptionId := meta.(*clients.Client).Account.SubscriptionId
 	ctx, cancel := timeouts.ForCreateUpdate(meta.(*clients.Client).StopContext, d)
@@ -96,7 +96,7 @@ func resource$1CreateUpdate(d *schema.ResourceData, meta interface{}) error {
 		}
 
 		if !utils.ResponseWasNotFound(resp.Response) {
-			return tf.ImportAsExistsError("azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", id.ID())
+			return tf.ImportAsExistsError("azurerm_$4", id.ID())
 		}
 	}
 
@@ -107,7 +107,7 @@ func resource$1CreateUpdate(d *schema.ResourceData, meta interface{}) error {
 	return resource$1Read(d, meta)
 }
 
-func resource$1Read(d *schema.ResourceData, meta interface{}) error {
+func resource$1Read(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).$2.$3Client
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
 	defer cancel()
@@ -138,7 +138,7 @@ func resource$1Read(d *schema.ResourceData, meta interface{}) error {
 	return tags.FlattenAndSet(d, resp.Tags)
 }
 
-func resource$1Delete(d *schema.ResourceData, meta interface{}) error {
+func resource$1Delete(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).$2.$3Client
 	ctx, cancel := timeouts.ForDelete(meta.(*clients.Client).StopContext, d)
 	defer cancel()
@@ -166,17 +166,17 @@ func resource$1Delete(d *schema.ResourceData, meta interface{}) error {
 endsnippet
 
 snippet tfdeclds "declare data source" b
-func dataSource$1() *schema.Resource {
-	return &schema.Resource{
+func dataSource$1() *pluginsdk.Resource {
+	return &pluginsdk.Resource{
 		Read: dataSource$1Read,
 
-		Timeouts: &schema.ResourceTimeout{
-			Read: schema.DefaultTimeout(5 * time.Minute),
+		Timeouts: &pluginsdk.ResourceTimeout{
+			Read: pluginsdk.DefaultTimeout(5 * time.Minute),
 		},
 
-		Schema: map[string]*schema.Schema{
+		Schema: map[string]*pluginsdk.Schema{
 			"name": {
-				Type:         schema.TypeString,
+				Type:         pluginsdk.TypeString,
 				Required:     true,
 				ValidateFunc: validate$1Name(),
 			},
@@ -192,7 +192,7 @@ func dataSource$1() *schema.Resource {
 	}
 }
 
-func dataSource$1Read(d *schema.ResourceData, meta interface{}) error {
+func dataSource$1Read(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).$2.$3Client
 	subscriptionId := meta.(*clients.Client).Account.SubscriptionId
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
@@ -222,11 +222,11 @@ endsnippet
 
 snippet tfdeclblk "declare nested block" b
 "$1": {
-	Type: schema.TypeList,
+	Type: pluginsdk.TypeList,
 	MaxItems: 1,
 	$2: true,
-	Elem: &schema.Resource{
-		Schema: map[string]*schema.Schema {
+	Elem: &pluginsdk.Resource{
+		Schema: map[string]*pluginsdk.Schema {
 			$0
 		},
 	},
@@ -399,7 +399,7 @@ snippet tfacctest_res "acc test scaffolding for resource" b
 type $1Resource struct{}
 
 func TestAcc$1_basic(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
+	data := acceptance.BuildTestData(t, "azurerm_$4", "test")
 	r := $1Resource{}
 
 	data.ResourceTest(t, r, []resource.TestStep{
@@ -414,7 +414,7 @@ func TestAcc$1_basic(t *testing.T) {
 }
 
 func TestAcc$1_complete(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
+	data := acceptance.BuildTestData(t, "azurerm_$4", "test")
 	r := $1Resource{}
 
 	data.ResourceTest(t, r, []resource.TestStep{
@@ -429,7 +429,7 @@ func TestAcc$1_complete(t *testing.T) {
 }
 
 func TestAcc$1_update(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
+	data := acceptance.BuildTestData(t, "azurerm_$4", "test")
 	r := $1Resource{}
 
 	data.ResourceTest(t, r, []resource.TestStep{
@@ -458,7 +458,7 @@ func TestAcc$1_update(t *testing.T) {
 }
 
 func TestAcc$1_requiresImport(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
+	data := acceptance.BuildTestData(t, "azurerm_$4", "test")
 	r := $1Resource{}
 
 	data.ResourceTest(t, r, []resource.TestStep{
@@ -495,7 +495,7 @@ func (r $1Resource) basic(data acceptance.TestData) string {
 	return fmt.Sprintf(\`
 %s
 
-resource "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}" "test" {
+resource "azurerm_$4" "test" {
 }
 \`, template)
 }
@@ -505,7 +505,7 @@ func (r $1Resource) complete(data acceptance.TestData) string {
 	return fmt.Sprintf(\`
 %s
 
-resource "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}" "test" {
+resource "azurerm_$4" "test" {
 }
 \`, template)
 }
@@ -515,7 +515,7 @@ func (r $1Resource) requiresImport(data acceptance.TestData) string {
 	return fmt.Sprintf(\`
 %s
 
-resource "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}" "import" {
+resource "azurerm_$4" "import" {
 }
 \`, template)
 }
@@ -528,14 +528,14 @@ endsnippet
 
 snippet tfacctest_ds "acc test scaffolding for datasource" b
 func TestAccDataSource$1_basic(t *testing.T) {
-	data := acceptance.BuildTestData(t, "data.azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}", "test")
+	data := acceptance.BuildTestData(t, "azurerm_$2", "test")
 	d := $1DataSource{}
 
 	data.DataSourceTest(t, []resource.TestStep{
 		{
 			Config: d.basic(data),
 			Check: resource.ComposeTestCheckFunc(
-				check.That(data.ResourceName).Key("$2").Exists(),
+				check.That(data.ResourceName).Key("$3").Exists(),
 			),
 		},
 	})
@@ -546,8 +546,8 @@ func (d $1DataSource) basic(data acceptance.TestData, r $1Resource) string {
 	return fmt.Sprintf(\`
 %s
 
-data "azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}" "test" {
-  name = azurerm${1/([A-Z][a-z]+)/_\L$1\E/g}.test.name
+data "azurerm_$2" "test" {
+  name = azurerm_$2.test.name
 }
 \`, config)
 }
@@ -561,8 +561,8 @@ func $1(i interface{}, k string) (warnings []string, errors []error) {
 endsnippet
 
 snippet tfimportor_def "define importer to for fake descriminator resources" b
-func import$1(expectKind $2.$3) func(d *schema.ResourceData, meta interface{}) (data []*schema.ResourceData, err error) {
-	return func(d *schema.ResourceData, meta interface{}) (data []*schema.ResourceData, err error) {
+func import$1(expectKind $2.$3) func(d *pluginsdk.ResourceData, meta interface{}) (data []*pluginsdk.ResourceData, err error) {
+	return func(d *pluginsdk.ResourceData, meta interface{}) (data []*pluginsdk.ResourceData, err error) {
 		id, err := parse.$1ID(d.Id())
 		if err != nil {
 			return nil, err
@@ -578,16 +578,16 @@ func import$1(expectKind $2.$3) func(d *schema.ResourceData, meta interface{}) (
 		}
 
 		if resp.Kind != expectKind {
-			return nil, fmt.Errorf(\`${1/([A-Z][a-z]+)/$1 /g}"kind" mismatch, expected "%s", got "%s"\`, expectKind, resp.Kind)
+			return nil, fmt.Errorf(\`$6"kind" mismatch, expected "%s", got "%s"\`, expectKind, resp.Kind)
 		}
-		return []*schema.ResourceData{d}, nil
+		return []*pluginsdk.ResourceData{d}, nil
 	}
 }
 endsnippet
 
 snippet tfimportor_discriminator_def "define importer to for descriminator resources" b
-func import$1(expectKind $2.$3) func(d *schema.ResourceData, meta interface{}) (data []*schema.ResourceData, err error) {
-	return func(d *schema.ResourceData, meta interface{}) (data []*schema.ResourceData, err error) {
+func import$1(expectKind $2.$3) func(d *pluginsdk.ResourceData, meta interface{}) (data []*pluginsdk.ResourceData, err error) {
+	return func(d *pluginsdk.ResourceData, meta interface{}) (data []*pluginsdk.ResourceData, err error) {
 		id, err := parse.$1ID(d.Id())
 		if err != nil {
 			return nil, err
@@ -613,7 +613,7 @@ func import$1(expectKind $2.$3) func(d *schema.ResourceData, meta interface{}) (
 			return nil, fmt.Errorf("%s has mismatched kind, expected: %q, got %q", id, expectKind, kind)
 		}
 
-		return []*schema.ResourceData{d}, nil
+		return []*pluginsdk.ResourceData{d}, nil
 	}
 }
 endsnippet
@@ -692,4 +692,176 @@ case *ssa.Slice:
 case *ssa.Store:
 case *ssa.TypeAssert:
 case *ssa.UnOp:
+endsnippet
+
+snippet tfdeclres_new "declare TF resource (new)"
+
+type $1Resource struct {}
+
+var _ sdk.ResourceWithUpdate = $1Resource{}
+
+type $1Model struct {
+	Name           string                 \`tfschema:"name"\`
+	ResourceGroup  string                 \`tfschema:"resource_group_name"\`
+	Tags           map[string]interface{} \`tfschema:"tags"\`
+}
+
+func (r $1Resource) Arguments() map[string]*pluginsdk.Schema {
+	return map[string]*pluginsdk.Schema{
+		"name": {
+			Type:         pluginsdk.TypeString,
+			Required:     true,
+			ForceNew:     true,
+			ValidateFunc: validation.$1Name,
+		},
+		"resource_group_name": azure.SchemaResourceGroupName(),
+		"tags": tags.ForceNewSchema(),
+	}
+}
+
+func (r $1Resource) Attributes() map[string]*pluginsdk.Schema {
+	return map[string]*pluginsdk.Schema{}
+}
+
+func (r $1Resource) ResourceType() string {
+	return "azurerm${3}"
+}
+
+func (r $1Resource) ModelObject() interface{} {
+	return &$1Model{}
+}
+
+func (r $1Resource) IDValidationFunc() pluginsdk.SchemaValidateFunc {
+	return validate.$1ID
+}
+
+func (r $1Resource) Create() sdk.ResourceFunc {
+	return sdk.ResourceFunc{
+		Timeout: 30 * time.Minute,
+		Func: func(ctx context.Context, metadata sdk.ResourceMetaData) error {
+			client := metadata.Client.$2.$1sClient
+			subscriptionId := metadata.Client.Account.SubscriptionId
+
+			var model $1Model
+			if err := metadata.Decode(&model); err != nil {
+				return fmt.Errorf("decoding %+v", err)
+			}
+
+			id := parse.New$1ID(subscriptionId, model.ResourceGroup, model.Name)
+			existing, err := client.Get(ctx, id.ResourceGroup, id.Name)
+			if err != nil {
+				if !utils.ResponseWasNotFound(existing.Response) {
+					return fmt.Errorf("checking for presence of existing %s: %+v", id, err)
+				}
+			}
+			if !utils.ResponseWasNotFound(existing.Response) {
+				return metadata.ResourceRequiresImport(r.ResourceType(), id)
+			}
+
+			// TODO: construct params from model
+
+			future, err = client.CreateOrUpdate(ctx, id.ResourceGroup, id.Name, params)
+			if err != nil {
+				return fmt.Errorf("creating %s: %+v", id, err)
+			}
+			if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
+				return fmt.Errorf("waiting for creation of %s: %+v", id, err)
+			}
+			
+			metadata.SetID(id)
+			return nil
+		},
+	}
+}
+
+func (r $1Resource) Read() sdk.ResourceFunc {
+	return sdk.ResourceFunc{
+		Timeout: 5 * time.Minute,
+
+		Func: func(ctx context.Context, metadata sdk.ResourceMetaData) error {
+			client := metadata.Client.$2.$1sClient
+			id, err := parse.$1ID(metadata.ResourceData.Id())
+			if err != nil {
+				return err
+			}
+
+			existing, err := client.Get(ctx, id.ResourceGroup, id.Name)
+			if err != nil {
+				if utils.ResponseWasNotFound(existing.Response) {
+					return metadata.MarkAsGone(id)
+				}
+				return fmt.Errorf("retrieving %s: %+v", id, err)
+			}
+
+			// TODO: construct the params
+			model := $1Model{}
+
+			model.Tags = tags.Flatten(existing.Tags)
+
+			return metadata.Encode(&model)
+		},
+	}
+}
+
+func (r $1Resource) Delete() sdk.ResourceFunc {
+	return sdk.ResourceFunc{
+		Timeout: 30 * time.Minute,
+		Func: func(ctx context.Context, metadata sdk.ResourceMetaData) error {
+			client := metadata.Client.$2.$1sClient
+
+			id, err := parse.$1ID(metadata.ResourceData.Id())
+			if err != nil {
+				return err
+			}
+
+			future, err := client.Delete(ctx, id.ResourceGroup, id.Name)
+			if err != nil {
+				return fmt.Errorf("deleting %s: %+v", id, err)
+			}
+
+			if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
+				if !response.WasNotFound(future.Response()) {
+					return fmt.Errorf("waiting for removal of %s: %+v", id, err)
+				}
+			}
+
+			return nil
+		},
+	}
+}
+
+func (r $1Resource) Update() sdk.ResourceFunc {
+	return sdk.ResourceFunc{
+		Timeout: 30 * time.Minute,
+		Func: func(ctx context.Context, metadata sdk.ResourceMetaData) error {
+			id, err := parse.$1ID(metadata.ResourceData.Id())
+			if err != nil {
+				return err
+			}
+
+			var state $1Model
+			if err := metadata.Decode(&state); err != nil {
+				return err
+			}
+
+			client := metadata.Client.$2.$1sClient
+
+			// TODO: define the SDK patch object
+			// patch := {}
+			// if metadata.ResourceData.HasChange(?) {
+			// 	patch.? = ?
+			// }
+
+			future, err = client.Update(ctx, id.ResourceGroup, id.Name, patch)
+			if err != nil {
+				return fmt.Errorf("updating %s: %+v", id, err)
+			}
+			if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
+				return fmt.Errorf("waiting for update of %s: %+v", id, err)
+			}
+
+			return nil
+		},
+	}
+}
 endsnippet
