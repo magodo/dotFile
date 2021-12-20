@@ -420,7 +420,7 @@ tflint() {
     rm "$tflint_path"
 }
 
-alias tfexample="terraform-provider-azurerm-example-gen ~/github/terraform-provider-azurerm"
+alias tfexample=terraform-provider-azurerm-example-gen
 
 ####################################################################################
 # THIS SHOULD BE AT LAST LINE, OTHERWISE RVM WILL COMPLAIN
