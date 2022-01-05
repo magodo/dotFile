@@ -527,13 +527,16 @@ func (r $1Resource) template(data acceptance.TestData) string {
 endsnippet
 
 snippet tfacctest_ds "acc test scaffolding for datasource" b
+type $1DataSource struct{}
+
 func TestAccDataSource$1_basic(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurerm_$2", "test")
 	d := $1DataSource{}
+	r := $1Resource{}
 
 	data.DataSourceTest(t, []resource.TestStep{
 		{
-			Config: d.basic(data),
+			Config: d.basic(data, r),
 			Check: resource.ComposeTestCheckFunc(
 				check.That(data.ResourceName).Key("$3").Exists(),
 			),
