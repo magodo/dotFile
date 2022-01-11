@@ -47,6 +47,7 @@ Plug 'tpope/vim-commentary'
 " :1,3GetCurrentBranchLink
 Plug 'knsh14/vim-github-link'
 Plug 'tpope/vim-surround'
+Plug 'ruanyl/vim-gh-line'
 
 call plug#end()
 
