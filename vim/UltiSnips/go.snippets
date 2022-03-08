@@ -849,13 +849,18 @@ func (r $1Resource) Update() sdk.ResourceFunc {
 
 			client := metadata.Client.$2.$1sClient
 
-			// TODO: define the SDK patch object
-			// patch := {}
-			// if metadata.ResourceData.HasChange(?) {
-			// 	patch.? = ?
-			// }
+			params, err := client.Get(ctx, id.ResourceGroup, id.Name)
+			if err != nil {
+				return fmt.Errorf("retrieving %s: %+v", id, err)
+			}
 
-			future, err = client.Update(ctx, id.ResourceGroup, id.Name, patch)
+			// TODO: update the params
+			// if props := params.Properties; props != nil {
+			// 	if metadata.ResourceData.HasChange("xxx") {
+			// 		props.Xxx = state.Xxx
+			// 	}
+
+			future, err := client.CreateOrUpdate(ctx, id.ResourceGroup, id.Name, params)
 			if err != nil {
 				return fmt.Errorf("updating %s: %+v", id, err)
 			}
