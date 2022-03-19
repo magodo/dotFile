@@ -1,0 +1,65 @@
+{
+    "mydir": {
+      "prefix": "mydir",
+      "body": [
+        "MYDIR=\"\\$(cd \"\\$(dirname \"\\${BASH_SOURCE[0]}\")\" && pwd)\"",
+        "MYNAME=\"\\$(basename \"\\${BASH_SOURCE[0]}\")\"",
+        ""
+      ],
+      "description": "mydir"
+    },
+    "parse": {
+        "prefix": "parse",
+        "body": [
+            "while :; do",
+            "\tcase \\$1 in",
+            "\t\t-h|--help)",
+            "\t\t\t$1",
+            "\t\t\texit 1",
+            "\t\t\t;;",
+            "\t\t--)",
+            "\t\t\tshift",
+            "\t\t\tbreak",
+            "\t\t\t;;",
+            "\t\t*)",
+            "\t\t\tbreak",
+            "\t\t\t;;",
+            "\tesac",
+            "\tshift",
+            "done"
+        ],
+        "description": "parse input argument"
+    },
+    "usage": {
+        "prefix": "usage",
+        "body": [
+            "usage() {",
+            "\tcat << EOF",
+            "Usage: ./\\${MYNAME} [options] $1",
+            "",
+            "Options:",
+            "\t-h|--help           show this message",
+            "",
+            "Arguments:",
+            ""
+        ],
+        "description": "usage"
+    },
+    "expect n arg": {
+        "prefix": "expect_n_arg",
+        "body": [
+            "local expect_n_arg",
+            "expect_n_arg=$1",
+            "[[ \\$# = \"\\$expect_n_arg\" ]] || die \"wrong arguments (expected: \\$expect_n_arg, got: \\$#)\""
+        ]
+    },
+    "die": {
+        "prefix": "die",
+        "body": [
+            "die() {",
+            "\techo \"\\$@\" >&2",
+            "\texit 1",
+            "}"
+        ]
+    }
+}

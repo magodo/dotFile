@@ -1,0 +1,25 @@
+{
+    "AzureRM provider block": {
+        "prefix": ["azurerm"],
+        "body": [
+            "provider \"azurerm\" {",
+            "  features {}",
+            "}"
+        ],
+        "description": "azurerm provider block"
+    },
+    "Terraform block": {
+        "prefix": ["terraform"],
+        "body": [
+            "terraform {",
+            "  required_providers {",
+            "    $1 = {",
+            "      source = \"$2\"",
+            "      version = \"$3\"",
+            "    }",
+            "  }",
+            "}"
+        ],
+        "descripption": "terraform block"
+    }
+}
