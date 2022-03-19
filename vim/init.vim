@@ -17,9 +17,17 @@ set encoding=utf-8
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 call plug#begin()
 
-" Language specific support
+" Go
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+
+" Rust
 Plug 'rust-lang/rust.vim'
+Plug 'simrat39/rust-tools.nvim'
+" Debugging
+Plug 'nvim-lua/plenary.nvim'
+Plug 'mfussenegger/nvim-dap'
+
+" Other Language specific support
 Plug 'cespare/vim-toml'
 Plug 'stephpy/vim-yaml'
 Plug 'jasontbradshaw/pigeon.vim'
@@ -41,8 +49,10 @@ Plug 'rafamadriz/friendly-snippets'
 
 " UI
 Plug 'itchyny/lightline.vim'
-Plug 'mengelbrecht/lightline-bufferline'
-Plug 'ghifarit53/tokyonight-vim'
+Plug 'joshdick/onedark.vim'
+Plug 'kyazdani42/nvim-web-devicons' " Recommended (for coloured icons)
+Plug 'akinsho/bufferline.nvim'
+Plug 'kyazdani42/nvim-tree.lua'
 
 " fzf
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -59,6 +69,12 @@ Plug 'tpope/vim-surround'
 Plug 'ruanyl/vim-gh-line'
 
 call plug#end()
+
+"""
+" rust-tools
+lua <<EOF
+require('rust-tools').setup({})
+EOF
 
 """
 " nvim-cmp & lspconfig
@@ -90,22 +106,22 @@ cmp.setup({
 })
 
 -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
-cmp.setup.cmdline('/', {
-  sources = {
-    { name = 'buffer' }
-  }
-})
+--cmp.setup.cmdline('/', {
+--  sources = {
+--    { name = 'buffer' }
+--  }
+--})
 
 -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-cmp.setup.cmdline(':', {
-  sources = cmp.config.sources({
-    { name = 'path' },
-  },
-  {
-    { name = 'cmdline' },
-  }
-  )
-})
+-- cmp.setup.cmdline(':', {
+--   sources = cmp.config.sources({
+--     { name = 'path' },
+--   },
+--   {
+--     { name = 'cmdline' },
+--   }
+--   )
+-- })
 
 -- Setup lspconfig.
 
@@ -171,7 +187,6 @@ smap <expr> <c-f>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<c-f
 imap <expr> <c-b>   vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<c-b>'
 smap <expr> <c-b>   vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<c-b>'
 
-
 """
 " rust
 
@@ -191,10 +206,15 @@ command! -bang -nargs=* Rg
 nmap <c-p> :Files<CR>
 nmap <c-g> :Rg<CR>
 
+" " Colorscheme
+syntax on
+set termguicolors
+colorscheme onedark
+
 """
-" lightline + bufferline
+" lightline
 let g:lightline = {
-      \ 'colorscheme':  'tokyonight',
+      \ 'colorscheme':  'onedark',
       \ 'tabline': {
       \   'left': [ ['buffers'] ],
       \   'right': [ ['close'] ]
@@ -209,6 +229,20 @@ let g:lightline = {
       \   'buffers': 'tabsel'
       \ }
       \ }
+
+
+"""
+" bufferline
+lua << EOF
+require("bufferline").setup{}
+EOF
+
+"""
+" nvim-tree
+nnoremap <space>e :NvimTreeToggle<CR>
+lua << EOF
+require'nvim-tree'.setup {}
+EOF
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => UI
@@ -239,12 +273,6 @@ set laststatus=2
 
 " Show the tab line (bufferline)
 set showtabline=2
-
-" Colorscheme
-colorscheme tokyonight
-
-let g:tokyonight_style = 'night' " available: night, storm
-let g:tokyonight_enable_italic = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing
@@ -305,6 +333,7 @@ set hidden
 " Move to the next/previous buffer
 nmap <leader>n :bnext<CR>
 nmap <leader>p :bprevious<CR>
+nmap <leader>d :bd<CR>
 
 " Switch CWD to the directory of the open buffer
 map <leader>cd :cd %:p:h<cr>:pwd<cr>
