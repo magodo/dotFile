@@ -359,5 +359,74 @@
             "\t}",
             "}"
         ]
+    },
+    "terraform expand map": {
+        "prefix": "expand_map",
+        "body": [
+            "func expand$1(input []interface{}) *$2 {",
+            "\tif len(input) == 0 || input[0] == nil {",
+            "\t\treturn nil",
+            "\t}",
+            "",
+            "\traw := input[0].(map[string]interface{})",
+            "\toutput := &$2{",
+            "\t}",
+            "",
+            "\treturn output",
+            "}"
+        ]
+    },
+    "terraform expand slice": {
+        "prefix": "expand_slice",
+        "body": [
+            "func expand$1(input []interface{}) *[]$2 {",
+            "\tif len(input) == 0 {",
+            "\t\treturn nil",
+            "\t}",
+            "",
+            "\tresult := make([]$2, 0)",
+            "",
+            "\tfor _, e := range input {",
+            "\t\tresult = append(result, $3)\t\t\t",
+            "\t}",
+            "",
+            "\treturn &result",
+            "}"
+        ]
+    },
+    "terraform flatten map": {
+        "prefix": "flatten_map",
+        "body": [
+            "func flatten$1(input $2) []interface{} {",
+            "\tif input == nil {",
+            "\t\treturn []interface{}{}",
+            "\t}",
+            "",
+            "\t$0",
+            "",
+            "\treturn []interface{}{",
+            "\t\tmap[string]interface{}{",
+            "\t\t},",
+            "\t}",
+            "}"
+        ]
+    },
+    "terraform flatten slice": {
+        "prefix": "flatten_slice",
+        "body": [
+            "func flatten$1(input *[]$2) []interface{} {",
+            "\tif input == nil {",
+            "\t\treturn []interface{}{}",
+            "\t}",
+            "",
+            "\toutput := make([]interface{}, 0)",
+            "",
+            "\tfor _, e := range *input {",
+            "\t\toutput = append(output, map[string]interface{}{$3})",
+            "\t}",
+            "",
+            "\treturn output",
+            "}"
+        ]
     }
 }
