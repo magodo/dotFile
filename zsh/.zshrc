@@ -294,7 +294,9 @@ alias git_bigfile="git rev-list --objects --all \
 export PATH=$PATH:$HOME/fabric-samples/bin
 
 # node version manager
-. /usr/share/nvm/init-nvm.sh
+if command -v nvm; then
+    . /usr/share/nvm/init-nvm.sh
+fi
 
 # python version manager
 export PYENV_ROOT="$HOME/.pyenv"
@@ -594,12 +596,6 @@ alias xclip="xclip -selection c"
 alias icat="kitty icat --align=left"
 alias isvg="rsvg-convert"
 alias idot="dot -Tsvg"
-
-##########################################
-# fzf
-##########################################
-. /usr/share/fzf/key-bindings.zsh
-. /usr/share/fzf/completion.zsh
 
 ##########################################
 # Terraform
