@@ -609,7 +609,7 @@ tfinit() {
 alias pchain=proxychains
 
 # Terraform completion
-complete -o nospace -C ~/go/bin/terraform terraform
+complete -o nospace -C $(which terraform)
 
 # Terraform example gen
 alias tfegen="terraform-provider-azurerm-example-gen"
