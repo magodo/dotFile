@@ -31,6 +31,7 @@ Plug 'mfussenegger/nvim-dap'
 Plug 'cespare/vim-toml'
 Plug 'stephpy/vim-yaml'
 Plug 'jasontbradshaw/pigeon.vim'
+Plug 'pest-parser/pest.vim'
 
 " From nvim-cmp recommended setting
 Plug 'neovim/nvim-lspconfig'
@@ -69,12 +70,6 @@ Plug 'tpope/vim-surround'
 Plug 'ruanyl/vim-gh-line'
 
 call plug#end()
-
-"""
-" rust-tools
-lua <<EOF
-require('rust-tools').setup({})
-EOF
 
 """
 " nvim-cmp & lspconfig
@@ -156,7 +151,6 @@ local on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 end
 
-
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 local lspconfig =  require('lspconfig')
 
@@ -177,7 +171,16 @@ lspconfig.gopls.setup {
   capabilities = capabilities,
 }
 
+lspconfig.bashls.setup {}
+
 EOF
+
+"""
+" rust-tools
+lua <<EOF
+require('rust-tools').setup({})
+EOF
+
 
 """
 " vsnip
@@ -241,7 +244,23 @@ EOF
 " nvim-tree
 nnoremap <space>e :NvimTreeToggle<CR>
 lua << EOF
-require'nvim-tree'.setup {}
+require'nvim-tree'.setup {
+  view = {
+    width = 60,
+    height = 30,
+    side = "left",
+    preserve_window_proportions = false,
+    number = false,
+    relativenumber = false,
+    signcolumn = "yes",
+    mappings = {
+      custom_only = false,
+      list = {
+        -- user mappings go here
+      },
+    },
+  },
+}
 EOF
 
 """
