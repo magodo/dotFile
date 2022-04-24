@@ -156,7 +156,7 @@
             "type $1DataSource struct{}",
             "",
             "func TestAccDataSource$1_basic(t *testing.T) {",
-            "\tdata := acceptance.BuildTestData(t, \"azurerm_$2\", \"test\")",
+            "\tdata := acceptance.BuildTestData(t, \"data.azurerm_$2\", \"test\")",
             "\td := $1DataSource{}",
             "\tr := $1Resource{}",
             "",
