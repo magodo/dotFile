@@ -22,7 +22,7 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
 " Rust
 Plug 'rust-lang/rust.vim'
-Plug 'simrat39/rust-tools.nvim'
+"Plug 'simrat39/rust-tools.nvim'
 " Debugging
 Plug 'nvim-lua/plenary.nvim'
 Plug 'mfussenegger/nvim-dap'
@@ -177,9 +177,9 @@ EOF
 
 """
 " rust-tools
-lua <<EOF
-require('rust-tools').setup({})
-EOF
+" lua <<EOF
+" require('rust-tools').setup({})
+" EOF
 
 
 """
@@ -341,6 +341,9 @@ if has("autocmd")
   au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
     \| exe "normal! g'\"" | endif
 endif
+
+" Stops gitcommit from auto wrapping
+au Filetype gitcommit setlocal formatoptions-=t
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Navigation
