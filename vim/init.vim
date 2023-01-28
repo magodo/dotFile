@@ -219,14 +219,11 @@ colorscheme onedark
 
 """
 " lightline
+        
 let g:lightline = {
       \ 'colorscheme':  'onedark',
-      \ 'tabline': {
-      \   'left': [ ['buffers'] ],
-      \   'right': [ ['close'] ]
-      \ },
-      \ 'component_expand': {
-      \   'buffers': 'lightline#bufferline#buffers'
+      \ 'enable': {
+      \   'tabline': 0
       \ },
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ], [ 'readonly', 'absolutepath', 'modified' ] ],
@@ -240,6 +237,7 @@ let g:lightline = {
 """
 " bufferline
 lua << EOF
+vim.opt.termguicolors = true
 require("bufferline").setup{}
 EOF
 

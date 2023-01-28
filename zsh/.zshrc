@@ -186,7 +186,7 @@ hide()
 
 # golang
 export GOPATH=$HOME/go
-export PATH=$PATH:$GOPATH/bin
+export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
 export GOPROXY=https://goproxy.cn
 setup_gvm() {
     [[ -s "/home/magodo/.gvm/scripts/gvm" ]] && source "/home/magodo/.gvm/scripts/gvm"
