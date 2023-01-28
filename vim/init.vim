@@ -12,6 +12,9 @@ set pastetoggle=<F3>
 " Set internal encoding of vim, since coc.nvim using some unicode characters in the file autoload/float.vim
 set encoding=utf-8
 
+" Disable mouse mode
+set mouse=
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugins
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
