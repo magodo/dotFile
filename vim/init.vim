@@ -38,7 +38,7 @@ Plug 'pest-parser/pest.vim'
 
 " From nvim-cmp recommended setting
 Plug 'neovim/nvim-lspconfig'
-Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-nvim-lsp', {'branch': 'main'}
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
@@ -211,6 +211,7 @@ command! -bang -nargs=* Rg
 
 nmap <c-p> :Files<CR>
 nmap <c-g> :Rg<CR>
+nmap <c-b> :Buffers<CR>
 
 " " Colorscheme
 syntax on
