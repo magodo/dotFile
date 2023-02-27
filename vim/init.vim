@@ -12,6 +12,9 @@ set pastetoggle=<F3>
 " Set internal encoding of vim, since coc.nvim using some unicode characters in the file autoload/float.vim
 set encoding=utf-8
 
+" Disable mouse mode
+set mouse=
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugins
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -35,7 +38,7 @@ Plug 'pest-parser/pest.vim'
 
 " From nvim-cmp recommended setting
 Plug 'neovim/nvim-lspconfig'
-Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-nvim-lsp', {'branch': 'main'}
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
@@ -151,7 +154,7 @@ local on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 end
 
-local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
 local lspconfig =  require('lspconfig')
 
 lspconfig.rust_analyzer.setup {
@@ -208,6 +211,7 @@ command! -bang -nargs=* Rg
 
 nmap <c-p> :Files<CR>
 nmap <c-g> :Rg<CR>
+nmap <c-b> :Buffers<CR>
 
 " " Colorscheme
 syntax on
@@ -244,8 +248,7 @@ nnoremap <space>e :NvimTreeToggle<CR>
 lua << EOF
 require'nvim-tree'.setup {
   view = {
-    width = 60,
-    height = 30,
+    width = 50,
     side = "left",
     preserve_window_proportions = false,
     number = false,
