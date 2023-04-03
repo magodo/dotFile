@@ -293,11 +293,6 @@ alias git_bigfile="git rev-list --objects --all \
 # fabric
 export PATH=$PATH:$HOME/fabric-samples/bin
 
-# node version manager
-if command -v nvm; then
-    . /usr/share/nvm/init-nvm.sh
-fi
-
 # python version manager
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
