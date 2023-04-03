@@ -640,3 +640,8 @@ conda_activate() {
     unset __conda_setup
     # <<< conda initialize <<<
 }
+
+##########################################
+# aztfy
+##########################################
+alias aztfy=aztfexport
