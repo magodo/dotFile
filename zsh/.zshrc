@@ -293,11 +293,6 @@ alias git_bigfile="git rev-list --objects --all \
 # fabric
 export PATH=$PATH:$HOME/fabric-samples/bin
 
-# node version manager
-if command -v nvm; then
-    . /usr/share/nvm/init-nvm.sh
-fi
-
 # python version manager
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
@@ -612,6 +607,13 @@ complete -o nospace -C $(which terraform)
 
 # Terraform example gen
 alias tfegen="terraform-provider-azurerm-example-gen"
+
+##########################################
+# nvm
+##########################################
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 ##########################################
 # anaconda
