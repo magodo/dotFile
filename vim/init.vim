@@ -12,8 +12,8 @@ set pastetoggle=<F3>
 " Set internal encoding of vim, since coc.nvim using some unicode characters in the file autoload/float.vim
 set encoding=utf-8
 
-" Disable mouse mode
-set mouse=
+" Enable mouse mode
+set mouse=a
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugins
@@ -161,9 +161,20 @@ lspconfig.rust_analyzer.setup {
   on_attach = on_attach,
   settings = {
     ["rust-analyzer"] = {
-      cargo = {
-        allFeatures = true,
-      },
+        imports = {
+            granularity = {
+                group = "module",
+            },
+            prefix = "self",
+        },
+        cargo = {
+            buildScripts = {
+                enable = true,
+            },
+        },
+        procMacro = {
+            enable = true
+        },
     },
   },
   capabilities = capabilities,
