@@ -449,7 +449,6 @@ tflint() {
 export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
 export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
 export PATH=$PATH:$HOME/.cargo/bin
-export RUST_BACKTRACE=1
 
 ####################################################################################
 # SPACESHIP ZSH THEME
