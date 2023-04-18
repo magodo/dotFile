@@ -518,6 +518,12 @@ export PATH=$HOME/.dotnet/tools:$PATH
 #alias mitmproxy="docker run --rm -it -v ~/.mitmproxy:/home/mitmproxy/.mitmproxy -p 8080:8080 mitmproxy/mitmproxy mitmproxy --set block_global=false"
 #alias mitmweb="docker run --rm -it -v ~/.mitmproxy:/home/mitmproxy/.mitmproxy -p 8080:8080 -p 8081:8081 mitmproxy/mitmproxy mitmweb --web-host 0.0.0.0 --set block_global=false"
 
+# Print the cut to clip byte strings properly
+mitm_print() {
+    input="$(xsel -p)"
+    python -c "print(${input}.decode())"
+}
+
 ####################################################################################
 # Autorest
 ####################################################################################
