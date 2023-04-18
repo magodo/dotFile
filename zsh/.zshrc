@@ -293,11 +293,6 @@ alias git_bigfile="git rev-list --objects --all \
 # fabric
 export PATH=$PATH:$HOME/fabric-samples/bin
 
-# node version manager
-if command -v nvm; then
-    . /usr/share/nvm/init-nvm.sh
-fi
-
 # python version manager
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
@@ -449,7 +444,6 @@ tflint() {
 export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
 export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
 export PATH=$PATH:$HOME/.cargo/bin
-export RUST_BACKTRACE=1
 
 ####################################################################################
 # SPACESHIP ZSH THEME
@@ -621,6 +615,13 @@ complete -o nospace -C $(which terraform)
 alias tfegen="terraform-provider-azurerm-example-gen"
 
 ##########################################
+# nvm
+##########################################
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+##########################################
 # anaconda
 ##########################################
 conda_activate() {
@@ -639,3 +640,8 @@ conda_activate() {
     unset __conda_setup
     # <<< conda initialize <<<
 }
+
+##########################################
+# aztfy
+##########################################
+alias aztfy=aztfexport
