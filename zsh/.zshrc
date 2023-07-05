@@ -514,7 +514,7 @@ export PATH=$HOME/.dotnet/tools:$PATH
 
 # Print the cut to clip byte strings properly
 mitm_print() {
-    input="$(xsel -p)"
+    input="$(xsel -b)"
     python -c "print(${input}.decode())"
 }
 
