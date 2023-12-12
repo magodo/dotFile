@@ -12,6 +12,15 @@
         ],
         "description": "azurerm provider block"
     },
+    "Restful provider block": {
+        "prefix": ["restful"],
+        "body": [
+            "provider \"restful\" {",
+            "  base_url = \"http://localhost:3000\"",
+            "}"
+        ],
+        "description": "azurerm provider block"
+    },
     "Terraform block": {
         "prefix": ["terraform"],
         "body": [

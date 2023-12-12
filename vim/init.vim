@@ -65,6 +65,7 @@ Plug 'junegunn/fzf.vim'
 " Hashicorp
 Plug 'hashivim/vim-hashicorp-tools'
 Plug 'jvirtanen/vim-hcl'
+Plug 'fatih/vim-hclfmt'
 
 " Others
 Plug 'godlygeek/tabular'
@@ -291,6 +292,11 @@ EOF
 " terraform
 let g:terraform_fmt_on_save=1
 let g:terraform_align=1
+
+" Disable formatting for tf and nomad by the hclfmt plugin, only format for hcl
+" files.
+let g:tf_fmt_autosave = 0
+let g:nomad_fmt_autosave = 0
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => UI
