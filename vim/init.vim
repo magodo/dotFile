@@ -25,7 +25,7 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
 " Rust
 Plug 'rust-lang/rust.vim'
-"Plug 'simrat39/rust-tools.nvim'
+
 " Debugging
 Plug 'nvim-lua/plenary.nvim'
 Plug 'mfussenegger/nvim-dap'
@@ -62,9 +62,7 @@ Plug 'kyazdani42/nvim-tree.lua'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
-" Hashicorp
-Plug 'hashivim/vim-hashicorp-tools'
-Plug 'jvirtanen/vim-hcl'
+" HCL
 Plug 'fatih/vim-hclfmt'
 
 " Others
@@ -200,13 +198,14 @@ lspconfig.ccls.setup {
   }
 }
 
+lspconfig.terraformls.setup {}
+
 EOF
 
 """
-" rust-tools
-" lua <<EOF
-" require('rust-tools').setup({})
-" EOF
+" terraformls 
+autocmd BufWritePre *.tfvars lua vim.lsp.buf.format()
+autocmd BufWritePre *.tf lua vim.lsp.buf.format()
 
 
 """
@@ -281,11 +280,6 @@ require'nvim-tree'.setup {
   },
 }
 EOF
-
-"""
-" terraform
-let g:terraform_fmt_on_save=1
-let g:terraform_align=1
 
 " Disable formatting for tf and nomad by the hclfmt plugin, only format for hcl
 " files.
