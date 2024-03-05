@@ -198,7 +198,13 @@ lspconfig.ccls.setup {
   }
 }
 
-lspconfig.terraformls.setup {}
+lspconfig.terraformls.setup {
+    init_options = {
+      terraform = {
+        path = "/usr/bin/terraform"
+      }
+    }
+}
 
 EOF
 
