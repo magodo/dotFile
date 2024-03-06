@@ -37,7 +37,7 @@ Plug 'jasontbradshaw/pigeon.vim'
 Plug 'pest-parser/pest.vim'
 
 " From nvim-cmp recommended setting
-Plug 'neovim/nvim-lspconfig'
+Plug 'neovim/nvim-lspconfig', {'branch': 'master'}
 Plug 'hrsh7th/cmp-nvim-lsp', {'branch': 'main'}
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
@@ -198,13 +198,7 @@ lspconfig.ccls.setup {
   }
 }
 
-lspconfig.terraformls.setup {
-    init_options = {
-      terraform = {
-        path = "/usr/bin/terraform"
-      }
-    }
-}
+lspconfig.terraformls.setup {}
 
 EOF
 
