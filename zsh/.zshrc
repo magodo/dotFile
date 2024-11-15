@@ -513,9 +513,12 @@ export PATH=$HOME/.dotnet/tools:$PATH
 #alias mitmweb="docker run --rm -it -v ~/.mitmproxy:/home/mitmproxy/.mitmproxy -p 8080:8080 -p 8081:8081 mitmproxy/mitmproxy mitmweb --web-host 0.0.0.0 --set block_global=false"
 
 # Print the cut to clip byte strings properly
-mitm_print() {
+mitmfmt() {
     input="$(xsel -b)"
-    python -c "print(${input}.decode())"
+    f=$(mktemp)
+    echo -E "print(${input}.decode())" > $f
+    python3 $f
+    rm $f
 }
 
 ####################################################################################
