@@ -254,6 +254,9 @@ let g:lightline = {
       \ },
       \ 'component_type': {
       \   'buffers': 'tabsel'
+      \ },
+      \ 'component': {
+      \   'lineinfo': '%3l:%-2c %o'
       \ }
       \ }
 
