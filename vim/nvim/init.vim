@@ -20,6 +20,9 @@ set mouse=a
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 call plug#begin()
 
+" Zig
+Plug 'ziglang/zig.vim'
+
 " Go
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
@@ -199,7 +202,11 @@ lspconfig.ccls.setup {
 }
 
 lspconfig.terraformls.setup {}
-lspconfig.zls.setup {}
+
+lspconfig.zls.setup {
+  on_attach = on_attach,
+  capabilities = capabilities,
+}
 
 EOF
 
