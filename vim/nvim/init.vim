@@ -199,6 +199,7 @@ lspconfig.ccls.setup {
 }
 
 lspconfig.terraformls.setup {}
+lspconfig.zls.setup {}
 
 EOF
 
