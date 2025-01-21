@@ -20,6 +20,9 @@ set mouse=a
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 call plug#begin()
 
+" Zig
+Plug 'ziglang/zig.vim'
+
 " Go
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
@@ -200,6 +203,11 @@ lspconfig.ccls.setup {
 
 lspconfig.terraformls.setup {}
 
+lspconfig.zls.setup {
+  on_attach = on_attach,
+  capabilities = capabilities,
+}
+
 EOF
 
 """
@@ -254,6 +262,9 @@ let g:lightline = {
       \ },
       \ 'component_type': {
       \   'buffers': 'tabsel'
+      \ },
+      \ 'component': {
+      \   'lineinfo': '%3l:%-2c %o'
       \ }
       \ }
 

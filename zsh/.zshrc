@@ -662,3 +662,13 @@ alias aztfy=aztfexport
 # fzf
 ##########################################
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Zig
+zigfoo() {
+    if [[ -d /tmp/zigfoo ]]; then
+        cd /tmp/zigfoo
+        return
+    fi
+    mkdir /tmp/zigfoo
+    cd /tmp/zigfoo
+}
