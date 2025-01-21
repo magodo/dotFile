@@ -187,7 +187,7 @@ hide()
 # golang
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
-export GOPROXY=https://goproxy.cn
+#export GOPROXY=https://goproxy.cn
 setup_gvm() {
     [[ -s "/home/magodo/.gvm/scripts/gvm" ]] && source "/home/magodo/.gvm/scripts/gvm"
 }
@@ -498,7 +498,16 @@ urlencode() {
         echo -n "String to encode: "
         read input
     fi
-    python3 -c "import urllib.parse; print(urllib.parse.quote('$input', ''))"
+    python3 -c "import urllib.parse; print(urllib.parse.quote(\"$input\", ''))"
+}
+
+urldecode() {
+    input=$1
+    if [[ -z $input ]]; then
+        echo -n "String to decode: "
+        read input
+    fi
+    python3 -c "import urllib.parse; print(urllib.parse.unquote(\"$input\"))"
 }
 
 ####################################################################################
