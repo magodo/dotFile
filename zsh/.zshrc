@@ -365,7 +365,7 @@ athens_env_pub() {
     export GOPROXY=http://172.18.137.171:3000
 }
 
-export GOSUMDB=off
+#export GOSUMDB=off
 
 ####################################################################################
 # ngrok
@@ -664,6 +664,7 @@ alias aztfy=aztfexport
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Zig
+export PATH=$PATH:$HOME/zig
 zigfoo() {
     if [[ -d /tmp/zigfoo ]]; then
         cd /tmp/zigfoo
