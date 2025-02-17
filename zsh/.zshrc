@@ -661,7 +661,7 @@ alias aztfy=aztfexport
 ##########################################
 # fzf
 ##########################################
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+command -v fzf > /dev/null && source <(fzf --zsh)
 
 # Zig
 export PATH=$PATH:$HOME/zig
