@@ -126,6 +126,14 @@ cmp.setup({
 
 -- Setup lspconfig.
 
+-- Diags
+vim.diagnostic.config({
+  virtual_text = true,  -- Show diagnostics inline
+  signs = true,         -- Show signs in the sign column
+  update_in_insert = false,
+  severity_sort = true,
+})
+
 -- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
 local opts = { noremap=true, silent=true }
@@ -161,26 +169,13 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities()
 local lspconfig =  require('lspconfig')
 
 lspconfig.rust_analyzer.setup {
-  on_attach = on_attach,
   settings = {
     ["rust-analyzer"] = {
-        imports = {
-            granularity = {
-                group = "module",
-            },
-            prefix = "self",
-        },
-        cargo = {
-            buildScripts = {
-                enable = true,
-            },
-        },
-        procMacro = {
-            enable = true
-        },
+      diagnostics = {
+        enable = true;
+      },
     },
   },
-  capabilities = capabilities,
 }
 
 lspconfig.gopls.setup {
@@ -403,3 +398,4 @@ nnoremap <leader><leader> <c-^>
 " search for the next occurrence.
 " https://vim.fandom.com/wiki/Search_for_visually_selected_text
 vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
+
