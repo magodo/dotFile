@@ -7,7 +7,8 @@ let mapleader = ","
 set clipboard=unnamedplus
 
 " Press F3 before paste something to Vim. Afterwards, press again to enable ai
-set pastetoggle=<F3>
+" (This is not available in nvim any more)
+" set pastetoggle=<F3>
 
 " Set internal encoding of vim, since coc.nvim using some unicode characters in the file autoload/float.vim
 set encoding=utf-8
