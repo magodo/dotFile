@@ -21,6 +21,9 @@ set mouse=a
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 call plug#begin()
 
+" TreeSitter
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+
 " Zig
 Plug 'ziglang/zig.vim'
 
@@ -218,6 +221,13 @@ lspconfig.pyright.setup {
         typeCheckingMode = "off";
       }
     }
+  }
+}
+
+require'nvim-treesitter.configs'.setup{
+  auto_install = true,
+  highlight = {
+    enable = true
   }
 }
 
