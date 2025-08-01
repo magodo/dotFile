@@ -209,6 +209,11 @@ lspconfig.zls.setup {
   capabilities = capabilities,
 }
 
+lspconfig.pyright.setup {
+  on_attach = on_attach,
+  capabilities = capabilities,
+}
+
 EOF
 
 """
