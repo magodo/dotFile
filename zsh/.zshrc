@@ -663,7 +663,9 @@ alias aztfy=aztfexport
 ##########################################
 command -v fzf > /dev/null && source <(fzf --zsh)
 
+##########################################
 # Zig
+##########################################
 export PATH=$PATH:$HOME/zig
 zigfoo() {
     if [[ -d /tmp/zigfoo ]]; then
@@ -673,3 +675,8 @@ zigfoo() {
     mkdir /tmp/zigfoo
     cd /tmp/zigfoo
 }
+
+##########################################
+# WABT
+##########################################
+export PATH=$PATH:$HOME/.wabt

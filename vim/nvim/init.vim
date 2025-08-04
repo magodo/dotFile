@@ -179,6 +179,10 @@ lspconfig.rust_analyzer.setup {
       diagnostics = {
         enable = true;
       },
+      cargo = {
+        target = "wasm32-unknown-unknown",
+        features = { "wasm-bindgen" },
+      },
     },
   },
 }
