@@ -21,6 +21,9 @@ set mouse=a
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 call plug#begin()
 
+" TreeSitter
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+
 " Zig
 Plug 'ziglang/zig.vim'
 
@@ -211,6 +214,25 @@ lspconfig.terraformls.setup {}
 lspconfig.zls.setup {
   on_attach = on_attach,
   capabilities = capabilities,
+}
+
+lspconfig.pyright.setup {
+  on_attach = on_attach,
+  capabilities = capabilities,
+  settings = {
+    python = {
+      analysis = {
+        typeCheckingMode = "off";
+      }
+    }
+  }
+}
+
+require'nvim-treesitter.configs'.setup{
+  auto_install = true,
+  highlight = {
+    enable = true
+  }
 }
 
 EOF
