@@ -182,6 +182,7 @@ lspconfig.rust_analyzer.setup {
       diagnostics = {
         enable = true;
       },
+      cargo = {}
     },
   },
 }
