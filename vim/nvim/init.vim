@@ -27,9 +27,6 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 " Zig
 Plug 'ziglang/zig.vim'
 
-" Go
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-
 " Rust
 Plug 'rust-lang/rust.vim'
 
@@ -109,25 +106,82 @@ cmp.setup({
   })
 })
 
--- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
---cmp.setup.cmdline('/', {
---  sources = {
---    { name = 'buffer' }
---  }
---})
-
--- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
--- cmp.setup.cmdline(':', {
---   sources = cmp.config.sources({
---     { name = 'path' },
---   },
---   {
---     { name = 'cmdline' },
---   }
---   )
--- })
-
 -- Setup lspconfig.
+-- =============================
+-- Global diagnostic keymaps
+-- =============================
+local opts = { noremap = true, silent = true }
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
+vim.keymap.set('n', '[g', vim.diagnostic.goto_prev, opts)
+vim.keymap.set('n', ']g', vim.diagnostic.goto_next, opts)
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
+
+-- =============================
+-- LSP keymaps for attached buffers
+-- =============================
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = vim.api.nvim_create_augroup("UserLspKeymaps", {}),
+  callback = function(ev)
+    local bufnr = ev.buf
+    local opts = { buffer = bufnr, silent = true }
+
+    -- Enable completion triggered by <c-x><c-o>
+    vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
+
+    -- LSP navigation & actions
+    local keymap = {
+      -- Navigation
+      ["gD"] = vim.lsp.buf.declaration,          -- Go to declaration
+      ["gd"] = vim.lsp.buf.definition,           -- Go to definition
+      ["gi"] = vim.lsp.buf.implementation,       -- Go to implementation
+      ["gr"] = vim.lsp.buf.references,           -- References
+      ["K"]  = vim.lsp.buf.hover,                -- Hover doc
+      ["<C-k>"] = vim.lsp.buf.signature_help,   -- Signature help
+      ["<leader>D"] = vim.lsp.buf.type_definition, -- Type definition
+
+      -- Workspace
+      ["<leader>wa"] = vim.lsp.buf.add_workspace_folder,
+      ["<leader>wr"] = vim.lsp.buf.remove_workspace_folder,
+      ["<leader>wl"] = function()
+        print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+      end,
+
+      -- Actions
+      ["<leader>rn"] = vim.lsp.buf.rename,
+      ["<leader>ca"] = vim.lsp.buf.code_action,
+      ["<leader>f"] = function() vim.lsp.buf.format({ async = false }) end,
+    }
+
+    for k, v in pairs(keymap) do
+      vim.keymap.set('n', k, v, opts)
+    end
+  end,
+})
+
+-- =============================
+-- Auto Format (if LSP is capable)
+-- =============================
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = vim.api.nvim_create_augroup("LspAutoFormat", { clear = true }),
+  callback = function(ev)
+    local bufnr = ev.buf
+    local client = vim.lsp.get_client_by_id(ev.data.client_id)
+
+    if client.supports_method("textDocument/formatting") then
+      -- Remove previous autocmds for this buffer in this group
+      vim.api.nvim_clear_autocmds({ group = "LspAutoFormat", buffer = bufnr })
+
+      -- Create BufWritePre autocmd to format on save
+      vim.api.nvim_create_autocmd("BufWritePre", {
+        group = "LspAutoFormat",
+        buffer = bufnr,
+        callback = function()
+          vim.lsp.buf.format({ async = false, bufnr = bufnr })
+        end,
+      })
+    end
+  end,
+})
 
 -- Diags
 vim.diagnostic.config({
@@ -137,67 +191,20 @@ vim.diagnostic.config({
   severity_sort = true,
 })
 
--- Mappings.
--- See `:help vim.diagnostic.*` for documentation on any of the below functions
-local opts = { noremap=true, silent=true }
-vim.api.nvim_set_keymap('n', '<leader>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-vim.api.nvim_set_keymap('n', '[g', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
-vim.api.nvim_set_keymap('n', ']g', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
-vim.api.nvim_set_keymap('n', '<leader>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
+vim.lsp.enable({'rust_analyzer', 'gopls', 'bashls', 'ccls', 'terraformls', 'zls', 'pyright', 'tombi'})
 
--- Use an on_attach function to only map the following keys
--- after the language server attaches to the current buffer
-local on_attach = function(client, bufnr)
-  -- Enable completion triggered by <c-x><c-o>
-  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-  -- Mappings.
-  -- See `:help vim.lsp.*` for documentation on any of the below functions
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
-end
-
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
-local lspconfig =  require('lspconfig')
-
-lspconfig.rust_analyzer.setup {
-  on_attach = on_attach,
-  capabilities = capabilities,
+vim.lsp.config('rust_analyzer', {
   settings = {
     ["rust-analyzer"] = {
-      check = {
-        command = "clippy";
-      },
-      diagnostics = {
-        enable = true;
-      },
       cargo = {
-        target = "wasm32-unknown-unknown",
-        features = { "wasm-bindgen" },
+        -- targets = "",
+        -- features = {},
       },
     },
   },
-}
+})
 
-lspconfig.gopls.setup {
-  on_attach = on_attach,
-  capabilities = capabilities,
-}
-
-lspconfig.bashls.setup {}
-
-lspconfig.ccls.setup {
+vim.lsp.config('ccls', {
   init_options = {
     compilationDatabaseDirectory = "build";
     index = {
@@ -207,18 +214,9 @@ lspconfig.ccls.setup {
       excludeArgs = { "-frounding-math"} ;
     };
   }
-}
+})
 
-lspconfig.terraformls.setup {}
-
-lspconfig.zls.setup {
-  on_attach = on_attach,
-  capabilities = capabilities,
-}
-
-lspconfig.pyright.setup {
-  on_attach = on_attach,
-  capabilities = capabilities,
+vim.lsp.config('pyright', {
   settings = {
     python = {
       analysis = {
@@ -226,7 +224,7 @@ lspconfig.pyright.setup {
       }
     }
   }
-}
+})
 
 require'nvim-treesitter.configs'.setup{
   auto_install = true,
