@@ -1,6 +1,6 @@
 [character]
-success_symbol = "💤 "
-error_symbol = "💢 "
+success_symbol = "💤"
+error_symbol = "💢"
 
 [git_status]
 disabled= true
