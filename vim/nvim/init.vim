@@ -23,12 +23,16 @@ call plug#begin()
 
 " TreeSitter
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 
 " Zig
 Plug 'ziglang/zig.vim'
 
 " Rust
 Plug 'rust-lang/rust.vim'
+
+" Go
+Plug 'fatih/vim-go'
 
 " Debugging
 Plug 'nvim-lua/plenary.nvim'
@@ -191,7 +195,17 @@ vim.diagnostic.config({
   severity_sort = true,
 })
 
-vim.lsp.enable({'rust_analyzer', 'gopls', 'bashls', 'ccls', 'terraformls', 'zls', 'pyright', 'tombi'})
+vim.lsp.enable({'azure', 'rust_analyzer', 'gopls', 'bashls', 'ccls', 'terraformls', 'zls', 'pyright', 'tombi'})
+
+vim.filetype.add({
+    extension = {
+        az = "az",
+    }
+})
+vim.lsp.config('azure', {
+  filetypes = {"az"},
+  cmd = {"/home/magodo/github/az-rs/target/debug/azure", "lsp"},
+})
 
 vim.lsp.config('rust_analyzer', {
   settings = {
@@ -228,9 +242,26 @@ vim.lsp.config('pyright', {
 
 require'nvim-treesitter.configs'.setup{
   auto_install = true,
+
   highlight = {
     enable = true
-  }
+  },
+
+  textobjects = {
+    select = {
+      enable = true,
+      -- Automatically jump forward to textobj, similar to targets.vim
+      lookahead = true,
+      keymaps = {
+        ["af"] = "@function.outer",
+        ["if"] = "@function.inner",
+        ["ac"] = "@class.outer",
+        ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+        ["as"] = { query = "@local.scope", query_group = "locals", desc = "Select language scope" },
+      },
+      include_surrounding_whitespace = true,
+    },
+  },
 }
 
 EOF
