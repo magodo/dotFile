@@ -195,7 +195,7 @@ vim.diagnostic.config({
   severity_sort = true,
 })
 
-vim.lsp.enable({'azure', 'rust_analyzer', 'gopls', 'bashls', 'ccls', 'terraformls', 'zls', 'pyright', 'tombi'})
+vim.lsp.enable({'azure', 'rust_analyzer', 'gopls', 'bashls', 'ccls', 'zls', 'pyright', 'tombi'})
 
 vim.filetype.add({
     extension = {
