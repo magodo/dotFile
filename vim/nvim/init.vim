@@ -22,7 +22,7 @@ set mouse=a
 call plug#begin()
 
 " TreeSitter
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate', 'branch': 'master'}
 Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 
 " Zig
@@ -240,7 +240,7 @@ vim.lsp.config('pyright', {
   }
 })
 
-require'nvim-treesitter.config'.setup{
+require('nvim-treesitter.configs').setup{
   auto_install = true,
 
   highlight = {
