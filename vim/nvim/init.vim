@@ -195,7 +195,7 @@ vim.diagnostic.config({
   severity_sort = true,
 })
 
-vim.lsp.enable({'azure', 'rust_analyzer', 'gopls', 'bashls', 'ccls', 'zls', 'pyright', 'tombi', 'terraformls'})
+vim.lsp.enable({'azure', 'rust_analyzer', 'gopls', 'bashls', 'ccls', 'zls', 'pyright', 'tombi', 'terraformls', 'vtsls'})
 
 vim.filetype.add({
     extension = {
@@ -239,6 +239,8 @@ vim.lsp.config('pyright', {
     }
   }
 })
+
+vim.lsp.config('vtsls', {})
 
 require('nvim-treesitter.configs').setup{
   auto_install = true,
