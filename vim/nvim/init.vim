@@ -22,7 +22,7 @@ set mouse=a
 call plug#begin()
 
 " TreeSitter
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate', 'branch': 'master'}
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate', 'branch': 'main'}
 Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 
 " Zig
