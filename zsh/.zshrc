@@ -680,3 +680,9 @@ zigfoo() {
 # WABT
 ##########################################
 export PATH=$PATH:$HOME/.wabt
+
+# BEGIN Agency MANAGED BLOCK
+if [[ ":${PATH}:" != *":/home/magodo/.config/agency/CurrentVersion:"* ]]; then
+    export PATH="/home/magodo/.config/agency/CurrentVersion:${PATH}"
+fi
+# END Agency MANAGED BLOCK
