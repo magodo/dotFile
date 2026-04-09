@@ -30,5 +30,6 @@ keymap("n", "<leader>cd", ":cd %:p:h<cr>:pwd<cr>")
 -- CTRL-S (Insert mode) is mapped to vim.lsp.buf.signature_help()
 -- v_an and v_in fall back to LSP vim.lsp.buf.selection_range() if treesitter is not active.
 -- gx handles textDocument/documentLink. Example: with gopls, invoking gx on "os" in this Go code will open documentation externally:
+keymap('n', '<C-k>', vim.lsp.buf.hover, {desc = "Hoever"})
 keymap('n', '[g', vim.diagnostic.goto_prev, {desc = "Previous diagnostic"})
 keymap('n', ']g', vim.diagnostic.goto_next, {desc = "Next diagnostic"})
