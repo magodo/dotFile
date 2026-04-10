@@ -53,3 +53,7 @@ opt.smartindent = true
 
 -- Copy the current indentation when creating a new line
 opt.autoindent = true
+
+-- Cursor has top/bottom buffer lines
+opt.scrolloff = 5
+
