@@ -3,12 +3,6 @@ local keymap = vim.keymap.set
 -- Use jk to escape insert mode
 keymap("i", "jk", "<ESC>")
 
--- Window Navigation
-keymap("n", "<C-j>", "<C-w>j")
-keymap("n", "<C-k>", "<C-w>k")
-keymap("n", "<C-h>", "<C-w>h")
-keymap("n", "<C-l>", "<C-w>l")
-
 -- Buffer Navigation
 keymap("n", "<leader>n", ":bnext<CR>")
 keymap("n", "<leader>p", ":bprevious<CR>")
