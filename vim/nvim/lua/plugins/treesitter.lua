@@ -25,7 +25,8 @@ return {
                 end
                 if vim.treesitter.language.add(lang) then
                     vim.treesitter.start(args.buf, lang)
-                    vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+                    -- Treesitter's indent is not working properly for many file types, comment it out.
+                    -- vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
                 end
             end,
         })

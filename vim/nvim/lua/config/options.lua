@@ -48,9 +48,6 @@ opt.tabstop = 4    -- a <Tab> width in other place
 -- Wrap a long line at a character in 'breakat'(just visually)
 opt.linebreak = true
 
--- Smart indent
-opt.smartindent = true
-
 -- Copy the current indentation when creating a new line
 opt.autoindent = true
 
