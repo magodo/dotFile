@@ -522,8 +522,9 @@ export PATH=$HOME/.dotnet/tools:$PATH
 #alias mitmweb="docker run --rm -it -v ~/.mitmproxy:/home/mitmproxy/.mitmproxy -p 8080:8080 -p 8081:8081 mitmproxy/mitmproxy mitmweb --web-host 0.0.0.0 --set block_global=false"
 
 # Print the cut to clip byte strings properly
+# Prerequisite: pacman -S wl-clipboard
 mitmfmt() {
-    input="$(xsel -b)"
+    input="$(wl-paste)"
     f=$(mktemp)
     echo -E "print(${input}.decode())" > $f
     python3 $f
@@ -595,12 +596,6 @@ gfm() {
     git fetch $upstream
     git merge $upstream/main
 }
-
-
-##########################################
-# xclip
-##########################################
-alias xclip="xclip -selection c"
 
 ##########################################
 # kitty stuff
