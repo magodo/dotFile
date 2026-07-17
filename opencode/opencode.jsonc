@@ -1,0 +1,13 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "read": "allow",
+    "external_directory": {
+      "/mnt/ext1/github/**": "allow",
+      "/mnt/ext1/go/**": "allow",
+      "/home/magodo/github/**": "allow",
+      "/home/magodo/go/**": "allow",
+      "/tmp": "allow"
+    }
+  }
+}
