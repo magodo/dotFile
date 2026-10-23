@@ -12,6 +12,9 @@ keymap("n", "<leader><leader>", "<c-^>")
 -- Working Directory
 keymap("n", "<leader>cd", ":cd %:p:h<cr>:pwd<cr>")
 
+-- Treesitter Context
+keymap("n", "<leader>tc", "<cmd>TSContext toggle<CR>", { silent = true, desc = "Toggle Treesitter Context" })
+
 -- LSP
 -- These GLOBAL keymaps are created unconditionally when Nvim starts:
 -- "gra" (Normal and Visual mode) is mapped to vim.lsp.buf.code_action()
