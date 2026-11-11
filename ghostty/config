@@ -24,12 +24,13 @@ keybind = super+ctrl+shift+o=write_screen_file:open,plain
 # Scroll
 keybind = shift+end=scroll_to_bottom
 keybind = shift+home=scroll_to_top
-keybind = shift+j=scroll_page_down
-keybind = shift+k=scroll_page_up
+keybind = page_down=scroll_page_down
+keybind = page_up=scroll_page_up
 
 # Tab
 keybind = ctrl+shift+t=new_tab
 keybind = ctrl+shift+w=close_tab
+keybind = ctrl+shift+r=prompt_tab_title
 keybind = ctrl+tab=next_tab
 keybind = ctrl+shift+tab=previous_tab
 keybind = alt+digit_1=goto_tab:1
