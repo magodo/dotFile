@@ -7,6 +7,9 @@ theme = 0x96f
 font-family = UbuntuMono Nerd Font Mono
 font-size = 16
 
+gtk-wide-tabs = false
+gtk-tabs-location = bottom
+
 #################
 # Keybindings
 
